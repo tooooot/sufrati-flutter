@@ -1,0 +1,93 @@
+{
+ "programs": [
+  {
+   "label": "نظام الكلى",
+   "icon": "🩺",
+   "blurb": "نظام غذائي لمرضى الكلى — مبني على دليل غذائي طبي منشور. ليس بديلاً عن متابعة طبيبك",
+   "status": "active",
+   "category": "medical",
+   "id": "kidney_salama"
+  },
+  {
+   "label": "تنقيص وزن عام",
+   "icon": "⚖️",
+   "blurb": "نظام متوازن لعجز سعرات معتدل — بروتين وخضار وحبوب كاملة بحصص محسوبة",
+   "status": "active",
+   "category": "general",
+   "id": "weight_loss_general"
+  },
+  {
+   "label": "كيتو (Keto)",
+   "icon": "🥑",
+   "blurb": "دهون عالية، بروتين معتدل، كارب منخفض جداً",
+   "status": "active",
+   "category": "general",
+   "id": "keto_general"
+  },
+  {
+   "label": "لوكارب (Low-Carb)",
+   "icon": "🥩",
+   "blurb": "كارب منخفض بدون تشديد الكيتو — مرونة أكبر بالخيارات",
+   "status": "active",
+   "category": "general",
+   "id": "low_carb"
+  },
+  {
+   "label": "كارب سايكل (Carb Cycling)",
+   "icon": "🔄",
+   "blurb": "تبديل بين أيام كارب منخفض وأيام كارب أعلى خلال الأسبوع",
+   "status": "active",
+   "category": "general",
+   "id": "carb_cycle"
+  },
+  {
+   "label": "تنشيف (Cutting)",
+   "icon": "🔥",
+   "blurb": "بروتين عالٍ وعجز سعرات لإظهار العضلات مع الحفاظ عليها",
+   "status": "active",
+   "category": "general",
+   "id": "cutting_gym"
+  },
+  {
+   "label": "بناء عضلات (Bulking)",
+   "icon": "💪",
+   "blurb": "فائض سعرات وبروتين عالٍ وكارب كافٍ لدعم التمرين والنمو",
+   "status": "active",
+   "category": "general",
+   "id": "muscle_gain"
+  },
+  {
+   "label": "الحمل",
+   "icon": "🤰",
+   "blurb": "قريباً — يحتاج مصدراً طبياً موثوقاً قبل إطلاقه",
+   "status": "coming_soon",
+   "category": "medical",
+   "id": "pregnancy"
+  },
+  {
+   "label": "ضغط الدم",
+   "icon": "❤️",
+   "blurb": "قريباً — يحتاج مصدراً طبياً موثوقاً قبل إطلاقه",
+   "status": "coming_soon",
+   "category": "medical",
+   "id": "hypertension"
+  },
+  {
+   "label": "السكري",
+   "icon": "🩸",
+   "blurb": "قريباً — يحتاج مصدراً طبياً موثوقاً قبل إطلاقه",
+   "status": "coming_soon",
+   "category": "medical",
+   "id": "diabetes"
+  }
+ ],
+ "day_names": [
+  "السبت",
+  "الأحد",
+  "الاثنين",
+  "الثلاثاء",
+  "الأربعاء",
+  "الخميس",
+  "الجمعة"
+ ]
+}

@@ -1,0 +1,743 @@
+{
+ "MEAL_SLOTS": [
+  {
+   "id": "meal1",
+   "name": "الفطور",
+   "icon": "🌅",
+   "default_time": "07:00",
+   "options": [
+    {
+     "id": "cu1o1",
+     "label": "بياض بيض وشوفان",
+     "tags": [
+      "egg"
+     ],
+     "items": [
+      [
+       "egg_white",
+       5
+      ],
+      [
+       "oats",
+       0.5
+      ],
+      [
+       "berries",
+       0.5
+      ]
+     ]
+    },
+    {
+     "id": "cu1o2",
+     "label": "زبادي يوناني وبروتين باودر",
+     "tags": [
+      "dairy"
+     ],
+     "items": [
+      [
+       "greek_yogurt",
+       1
+      ],
+      [
+       "protein_powder",
+       0.5
+      ],
+      [
+       "berries",
+       0.5
+      ]
+     ]
+    },
+    {
+     "id": "cu1o3",
+     "label": "بيض كامل وخبز أسمر",
+     "tags": [
+      "egg"
+     ],
+     "items": [
+      [
+       "egg",
+       2
+      ],
+      [
+       "egg_white",
+       3
+      ],
+      [
+       "whole_bread",
+       1
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "meal2",
+   "name": "الغداء",
+   "icon": "☀️",
+   "default_time": "13:00",
+   "options": [
+    {
+     "id": "cu2o1",
+     "label": "صدر دجاج وأرز وخضار سلق",
+     "tags": [
+      "poultry"
+     ],
+     "items": [
+      [
+       "chicken_breast",
+       2
+      ],
+      [
+       "rice",
+       1
+      ],
+      [
+       "broccoli",
+       1
+      ]
+     ]
+    },
+    {
+     "id": "cu2o2",
+     "label": "تونة وبطاطا حلوة وسلطة",
+     "tags": [
+      "seafood"
+     ],
+     "items": [
+      [
+       "tuna",
+       2
+      ],
+      [
+       "sweet_potato",
+       1
+      ],
+      [
+       "mixed_salad",
+       2
+      ]
+     ]
+    },
+    {
+     "id": "cu2o3",
+     "label": "سمك مشوي وكينوا وخضار",
+     "tags": [
+      "seafood"
+     ],
+     "recipe": "gr1",
+     "items": [
+      [
+       "salmon",
+       1
+      ],
+      [
+       "quinoa",
+       0.5
+      ],
+      [
+       "broccoli",
+       1
+      ],
+      [
+       "lemon",
+       0.5
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "meal3",
+   "name": "السناك",
+   "icon": "🥤",
+   "default_time": "16:30",
+   "options": [
+    {
+     "id": "cu3o1",
+     "label": "بروتين شيك وموزة",
+     "tags": [],
+     "items": [
+      [
+       "protein_powder",
+       1
+      ],
+      [
+       "banana",
+       1
+      ]
+     ]
+    },
+    {
+     "id": "cu3o2",
+     "label": "جبنة قريش وخيار",
+     "tags": [
+      "dairy"
+     ],
+     "items": [
+      [
+       "cottage_cheese",
+       1
+      ],
+      [
+       "cucumber",
+       1
+      ]
+     ]
+    },
+    {
+     "id": "cu3o3",
+     "label": "تفاحة ولوز قليل",
+     "tags": [
+      "nuts"
+     ],
+     "items": [
+      [
+       "apple",
+       1
+      ],
+      [
+       "almonds",
+       8
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "meal4",
+   "name": "العشاء",
+   "icon": "🌙",
+   "default_time": "19:30",
+   "options": [
+    {
+     "id": "cu4o1",
+     "label": "صدر دجاج وخضار مشوية بلا دهون زائدة",
+     "tags": [
+      "poultry"
+     ],
+     "items": [
+      [
+       "chicken_breast",
+       2
+      ],
+      [
+       "zucchini",
+       1
+      ],
+      [
+       "bell_pepper",
+       1
+      ],
+      [
+       "olive_oil",
+       0.5
+      ]
+     ]
+    },
+    {
+     "id": "cu4o2",
+     "label": "روبيان وسلطة كبيرة",
+     "tags": [
+      "seafood"
+     ],
+     "items": [
+      [
+       "shrimp",
+       2
+      ],
+      [
+       "mixed_salad",
+       2
+      ],
+      [
+       "lemon",
+       0.5
+      ]
+     ]
+    },
+    {
+     "id": "cu4o3",
+     "label": "بياض بيض وسبانخ وفطر",
+     "tags": [
+      "egg"
+     ],
+     "items": [
+      [
+       "egg_white",
+       6
+      ],
+      [
+       "spinach",
+       1
+      ],
+      [
+       "mushroom",
+       1
+      ]
+     ]
+    }
+   ]
+  }
+ ],
+ "INGREDIENTS": {
+  "egg": {
+   "label": "بيض",
+   "icon": "🥚",
+   "unit": "بيضة",
+   "buy_unit": "كرتون بيض (30 حبة)",
+   "buy_qty": 30,
+   "buy_price": 15
+  },
+  "egg_white": {
+   "label": "بياض بيض",
+   "icon": "🥚",
+   "unit": "حبة",
+   "buy_unit": "كرتون بيض (30 حبة)",
+   "buy_qty": 30,
+   "buy_price": 15
+  },
+  "chicken_breast": {
+   "label": "صدر دجاج",
+   "icon": "🍗",
+   "unit": "قطعة",
+   "buy_unit": "كيلو صدور دجاج (≈3 قطع)",
+   "buy_qty": 3,
+   "buy_price": 22
+  },
+  "salmon": {
+   "label": "سلمون",
+   "icon": "🐟",
+   "unit": "قطعة",
+   "buy_unit": "كيلو سلمون (≈3 قطع)",
+   "buy_qty": 3,
+   "buy_price": 55
+  },
+  "tuna": {
+   "label": "تونة",
+   "icon": "🐟",
+   "unit": "علبة",
+   "buy_unit": "كرتون تونة (12 علبة)",
+   "buy_qty": 12,
+   "buy_price": 45
+  },
+  "beef": {
+   "label": "لحم بقري",
+   "icon": "🥩",
+   "unit": "قطعة",
+   "buy_unit": "كيلو لحم بقري",
+   "buy_qty": 4,
+   "buy_price": 50
+  },
+  "shrimp": {
+   "label": "روبيان",
+   "icon": "🍤",
+   "unit": "كوب",
+   "buy_unit": "كيلو روبيان",
+   "buy_qty": 4,
+   "buy_price": 45
+  },
+  "greek_yogurt": {
+   "label": "زبادي يوناني",
+   "icon": "🥛",
+   "unit": "كوب",
+   "buy_unit": "عبوة زبادي يوناني (4 أكواب)",
+   "buy_qty": 4,
+   "buy_price": 18
+  },
+  "cottage_cheese": {
+   "label": "جبنة قريش",
+   "icon": "🧀",
+   "unit": "كوب",
+   "buy_unit": "علبة جبنة قريش",
+   "buy_qty": 4,
+   "buy_price": 14
+  },
+  "cheddar": {
+   "label": "جبنة شيدر",
+   "icon": "🧀",
+   "unit": "شريحة",
+   "buy_unit": "علبة شيدر (16 شريحة)",
+   "buy_qty": 16,
+   "buy_price": 16
+  },
+  "whole_milk": {
+   "label": "حليب كامل الدسم",
+   "icon": "🥛",
+   "unit": "كوب",
+   "buy_unit": "كرتون حليب (1 لتر ≈ 4 أكواب)",
+   "buy_qty": 4,
+   "buy_price": 7
+  },
+  "butter": {
+   "label": "زبدة",
+   "icon": "🧈",
+   "unit": "ملعقة",
+   "buy_unit": "عبوة زبدة (250غ ≈ 30 ملعقة)",
+   "buy_qty": 30,
+   "buy_price": 15
+  },
+  "olive_oil": {
+   "label": "زيت زيتون",
+   "icon": "🫒",
+   "unit": "ملعقة",
+   "buy_unit": "عبوة زيت زيتون 500 مل (~30 ملعقة)",
+   "buy_qty": 30,
+   "buy_price": 22
+  },
+  "coconut_oil": {
+   "label": "زيت جوز الهند",
+   "icon": "🥥",
+   "unit": "ملعقة",
+   "buy_unit": "عبوة زيت جوز الهند (~25 ملعقة)",
+   "buy_qty": 25,
+   "buy_price": 25
+  },
+  "avocado": {
+   "label": "أفوكادو",
+   "icon": "🥑",
+   "unit": "حبة",
+   "buy_unit": "كيلو أفوكادو (≈4 حبات)",
+   "buy_qty": 4,
+   "buy_price": 20
+  },
+  "almonds": {
+   "label": "لوز",
+   "icon": "🌰",
+   "unit": "حبة",
+   "buy_unit": "كيس لوز (200غ)",
+   "buy_qty": 40,
+   "buy_price": 18
+  },
+  "walnuts": {
+   "label": "جوز",
+   "icon": "🌰",
+   "unit": "حبة",
+   "buy_unit": "كيس جوز (200غ)",
+   "buy_qty": 30,
+   "buy_price": 22
+  },
+  "peanut_butter": {
+   "label": "زبدة الفول السوداني",
+   "icon": "🥜",
+   "unit": "ملعقة",
+   "buy_unit": "عبوة زبدة فول سوداني",
+   "buy_qty": 20,
+   "buy_price": 18
+  },
+  "chia_seeds": {
+   "label": "بذور شيا",
+   "icon": "🌱",
+   "unit": "ملعقة",
+   "buy_unit": "كيس بذور شيا (200غ)",
+   "buy_qty": 20,
+   "buy_price": 15
+  },
+  "spinach": {
+   "label": "سبانخ",
+   "icon": "🥬",
+   "unit": "كوب",
+   "buy_unit": "ربطة سبانخ",
+   "buy_qty": 4,
+   "buy_price": 4
+  },
+  "lettuce": {
+   "label": "خس",
+   "icon": "🥬",
+   "unit": "كوب",
+   "buy_unit": "حبة خس",
+   "buy_qty": 6,
+   "buy_price": 3
+  },
+  "cucumber": {
+   "label": "خيار",
+   "icon": "🥒",
+   "unit": "حبة",
+   "buy_unit": "كيلو خيار",
+   "buy_qty": 6,
+   "buy_price": 4
+  },
+  "tomato": {
+   "label": "طماطم",
+   "icon": "🍅",
+   "unit": "حبة",
+   "buy_unit": "كيلو طماطم",
+   "buy_qty": 6,
+   "buy_price": 4
+  },
+  "broccoli": {
+   "label": "بروكلي",
+   "icon": "🥦",
+   "unit": "كوب",
+   "buy_unit": "كيلو بروكلي",
+   "buy_qty": 4,
+   "buy_price": 8
+  },
+  "zucchini": {
+   "label": "كوسة",
+   "icon": "🥒",
+   "unit": "حبة",
+   "buy_unit": "كيلو كوسة",
+   "buy_qty": 6,
+   "buy_price": 6
+  },
+  "bell_pepper": {
+   "label": "فلفل رومي",
+   "icon": "🫑",
+   "unit": "حبة",
+   "buy_unit": "كيلو فلفل رومي",
+   "buy_qty": 5,
+   "buy_price": 8
+  },
+  "mushroom": {
+   "label": "فطر",
+   "icon": "🍄",
+   "unit": "كوب",
+   "buy_unit": "كيلو فطر",
+   "buy_qty": 4,
+   "buy_price": 12
+  },
+  "onion": {
+   "label": "بصل",
+   "icon": "🧅",
+   "unit": "حبة",
+   "buy_unit": "كيلو بصل",
+   "buy_qty": 6,
+   "buy_price": 4
+  },
+  "garlic": {
+   "label": "ثوم",
+   "icon": "🧄",
+   "unit": "فص",
+   "buy_unit": "كيس ثوم",
+   "buy_qty": 20,
+   "buy_price": 5
+  },
+  "mixed_salad": {
+   "label": "سلطة خضار مشكلة",
+   "icon": "🥗",
+   "unit": "كوب",
+   "buy_unit": "كيلو خضار سلطة مشكلة",
+   "buy_qty": 5,
+   "buy_price": 10
+  },
+  "banana": {
+   "label": "موز",
+   "icon": "🍌",
+   "unit": "حبة",
+   "buy_unit": "كيلو موز (≈6 حبات)",
+   "buy_qty": 6,
+   "buy_price": 5
+  },
+  "apple": {
+   "label": "تفاح",
+   "icon": "🍎",
+   "unit": "حبة",
+   "buy_unit": "كيلو تفاح",
+   "buy_qty": 6,
+   "buy_price": 8
+  },
+  "berries": {
+   "label": "توت مشكل",
+   "icon": "🫐",
+   "unit": "كوب",
+   "buy_unit": "علبة توت مجمد",
+   "buy_qty": 4,
+   "buy_price": 15
+  },
+  "rice": {
+   "label": "أرز مطبوخ",
+   "icon": "🍚",
+   "unit": "كوب",
+   "buy_unit": "كيس أرز (كيلو ≈ 5 أكواب مطبوخ)",
+   "buy_qty": 5,
+   "buy_price": 8
+  },
+  "brown_rice": {
+   "label": "أرز بني مطبوخ",
+   "icon": "🍚",
+   "unit": "كوب",
+   "buy_unit": "كيس أرز بني (كيلو ≈ 5 أكواب)",
+   "buy_qty": 5,
+   "buy_price": 12
+  },
+  "oats": {
+   "label": "شوفان",
+   "icon": "🌾",
+   "unit": "كوب",
+   "buy_unit": "كيس شوفان (500غ ≈ 6 أكواب)",
+   "buy_qty": 6,
+   "buy_price": 12
+  },
+  "whole_bread": {
+   "label": "خبز أسمر",
+   "icon": "🍞",
+   "unit": "شريحة",
+   "buy_unit": "كيس خبز أسمر (20 شريحة)",
+   "buy_qty": 20,
+   "buy_price": 9
+  },
+  "sweet_potato": {
+   "label": "بطاطا حلوة",
+   "icon": "🍠",
+   "unit": "حبة",
+   "buy_unit": "كيلو بطاطا حلوة",
+   "buy_qty": 4,
+   "buy_price": 8
+  },
+  "potato": {
+   "label": "بطاطس",
+   "icon": "🥔",
+   "unit": "حبة",
+   "buy_unit": "كيلو بطاطس",
+   "buy_qty": 6,
+   "buy_price": 5
+  },
+  "quinoa": {
+   "label": "كينوا مطبوخة",
+   "icon": "🌾",
+   "unit": "كوب",
+   "buy_unit": "كيس كينوا (كيلو ≈ 5 أكواب)",
+   "buy_qty": 5,
+   "buy_price": 20
+  },
+  "lentils": {
+   "label": "عدس",
+   "icon": "🫘",
+   "unit": "كوب",
+   "buy_unit": "كيس عدس (كيلو ≈ 4 أكواب)",
+   "buy_qty": 4,
+   "buy_price": 8
+  },
+  "chickpeas": {
+   "label": "حمص",
+   "icon": "🫘",
+   "unit": "كوب",
+   "buy_unit": "كيس حمص (كيلو ≈ 4 أكواب)",
+   "buy_qty": 4,
+   "buy_price": 8
+  },
+  "protein_powder": {
+   "label": "بروتين باودر",
+   "icon": "🥤",
+   "unit": "سكوب",
+   "buy_unit": "عبوة بروتين (30 سكوب)",
+   "buy_qty": 30,
+   "buy_price": 140
+  },
+  "lemon": {
+   "label": "ليمون",
+   "icon": "🍋",
+   "unit": "حبة",
+   "buy_unit": "كيلو ليمون",
+   "buy_qty": 8,
+   "buy_price": 6
+  },
+  "coffee": {
+   "label": "قهوة",
+   "icon": "☕",
+   "unit": "كوب",
+   "buy_unit": "عبوة قهوة",
+   "buy_qty": 20,
+   "buy_price": 15
+  },
+  "dark_chocolate": {
+   "label": "شوكولاتة داكنة (85%+)",
+   "icon": "🍫",
+   "unit": "قطعة",
+   "buy_unit": "لوح شوكولاتة داكنة",
+   "buy_qty": 10,
+   "buy_price": 15
+  }
+ },
+ "RECIPES": {
+  "gr1": {
+   "title": "سمك مشوي وكينوا وخضار",
+   "icon": "🐟",
+   "steps": [
+    "يُتبَّل السمك بالليمون والملح القليل ويُشوى بالفرن.",
+    "تُطبخ الكينوا بالماء حتى تنضج.",
+    "يُقدَّم مع البروكلي المسلوق."
+   ]
+  }
+ },
+ "WEEKLY_LIMITS": {
+  "seafood": {
+   "min_meals": 3
+  },
+  "poultry": {
+   "max_meals": 6
+  }
+ },
+ "DAY_TYPE_PATTERN": null,
+ "COOK_INSTRUCTIONS": [
+  {
+   "icon": "⚖️",
+   "text": "زِني حصص البروتين قدر الإمكان — الدقة بالكمية مهمة جداً بهذا النظام"
+  },
+  {
+   "icon": "🧈",
+   "text": "أقل زيت ممكن (نصف ملعقة أو أقل) — لا تزيدي الدهون"
+  },
+  {
+   "icon": "🍟",
+   "text": "بدون قلي نهائياً — شوي أو سلق أو فرن فقط"
+  },
+  {
+   "icon": "🍯",
+   "text": "بدون سكر أو صلصات جاهزة مُحلّاة"
+  },
+  {
+   "icon": "🥗",
+   "text": "الخضار غير النشوية (بروكلي، خيار، سبانخ) بلا حد أقصى"
+  }
+ ],
+ "USER_TIPS": [
+  {
+   "icon": "💪",
+   "text": "البروتين العالي (٢غ لكل كيلوغرام من وزنك تقريباً) يحافظ على عضلاتك أثناء العجز"
+  },
+  {
+   "icon": "🔥",
+   "text": "عجز سعرات معتدل (لا حاد) يحافظ على أدائك الرياضي أثناء التنشيف"
+  },
+  {
+   "icon": "🍚",
+   "text": "الكارب المعقّد يُركَّز حول وقت التمرين لأفضل استفادة منه"
+  },
+  {
+   "icon": "💧",
+   "text": "الماء الكافي مهم جداً — قلته تُبطئ الأداء والتعافي"
+  },
+  {
+   "icon": "😴",
+   "text": "النوم الكافي لا يقل أهمية عن الأكل بمرحلة التنشيف"
+  },
+  {
+   "icon": "📉",
+   "text": "التنشيف التدريجي (لا الحاد) يحافظ على العضلة بشكل أفضل"
+  }
+ ],
+ "COOK_TIPS": [
+  {
+   "icon": "🧼",
+   "text": "اغسلي يديك جيداً قبل تحضير كل وجبة"
+  },
+  {
+   "icon": "⚖️",
+   "text": "استخدمي ميزان مطبخ لو متوفر — الدقة بالكمية جزء أساسي من النظام"
+  },
+  {
+   "icon": "🔪",
+   "text": "استخدمي لوح تقطيع منفصل للحوم النيئة"
+  },
+  {
+   "icon": "❄️",
+   "text": "احفظي بواقي الطعام بالثلاجة بسرعة بعد أن تبرد"
+  },
+  {
+   "icon": "🍗",
+   "text": "تأكدي من نضج الدجاج والسمك والروبيان جيداً قبل التقديم"
+  }
+ ]
+}

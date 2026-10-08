@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "316270990440",
+    "project_id": "sufrati-8555a",
+    "storage_bucket": "sufrati-8555a.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:316270990440:android:c20f155059ca77f10417dd",
+        "android_client_info": {
+          "package_name": "net.wardyat.sufrati"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "316270990440-vgfn3fg2p0vp84g086hsicf8nq8obcfj.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "net.wardyat.sufrati",
+            "certificate_hash": "e0f2e187d7e24d4db9e20124c2c8a2504b0e491e"
+          }
+        },
+        {
+          "client_id": "316270990440-1ib2j1c8ntuakk3jt9c3kf571sipej89.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBb-AGnqglLk8r9pNJ1v6cxcw3WY1ogiJM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "316270990440-1ib2j1c8ntuakk3jt9c3kf571sipej89.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "316270990440-ka10806tdhrcqgfp9o93e5r464m77ftc.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "net.wardyat.sufrati"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,484 @@
+{
+ "COOK_INSTRUCTIONS_TR": {
+  "en": [
+   "Only one teaspoon of salt for the whole day — do not exceed it",
+   "No ready-made tomato sauce or stock cubes",
+   "No canned food, pickles, or salted nuts",
+   "Trim all visible fat from meat before cooking",
+   "No frying — grilling, boiling or baking is preferred",
+   "Soak potatoes and starchy vegetables in water before cooking",
+   "Stick exactly to the written quantity — don't add or reduce",
+   "Serve the meal at its scheduled time"
+  ],
+  "am": [
+   "ለቀኑ ሙሉ አንድ ማንኪያ ጨው ብቻ — አትብለጡ",
+   "ያለ ዝግጁ የቲማቲም ሶስ ወይም ማጎሚያ ኩብ",
+   "ያለ ታሸገ ምግብ፣ ጨው የተጨመረበት፣ ወይም ጨው የበዛበት ለውዝ",
+   "ከማብሰያ በፊት ከስጋ ላይ የሚታየውን ስብ ሁሉ ይቁረጡ",
+   "ያለ መጥበስ — መጥበሻ ወይም ማብሰያ ወይም ምድጃ ይመረጣል",
+   "ድንችና ስታርች ያለበት አትክልት ከማብሰያ በፊት በውሃ ያጥቡ",
+   "በጽሑፍ የተጠቀሰውን መጠን በትክክል ይከተሉ — አይጨምሩ አይቀንሱ",
+   "ምግቡን በተወሰነው ሰዓት ያቅርቡ"
+  ]
+ },
+ "DAY_NAMES_TR": {
+  "en": [
+   "Saturday",
+   "Sunday",
+   "Monday",
+   "Tuesday",
+   "Wednesday",
+   "Thursday",
+   "Friday"
+  ],
+  "am": [
+   "ቅዳሜ",
+   "እሁድ",
+   "ሰኞ",
+   "ማክሰኞ",
+   "ረቡዕ",
+   "ሐሙስ",
+   "ዓርብ"
+  ]
+ },
+ "INGREDIENT_LABEL_TR": {
+  "en": {
+   "egg": "Eggs",
+   "toast": "Toast",
+   "arabic_bread": "Arabic bread",
+   "samouli": "Samouli bread",
+   "millet_bread": "Millet bread",
+   "cucumber": "Cucumber",
+   "lettuce": "Lettuce",
+   "bell_pepper": "Bell pepper",
+   "olive_oil": "Olive oil",
+   "feta": "Low-fat feta/cottage cheese",
+   "labneh": "Labneh",
+   "honey": "Honey or jam",
+   "berries": "Strawberry or berries",
+   "yogurt": "Low-fat yogurt",
+   "oats": "Oats",
+   "milk": "Low-fat milk",
+   "coffee": "Coffee",
+   "rice": "Cooked rice",
+   "fish": "Fish fillet",
+   "veg_soup": "Vegetables / vegetable soup",
+   "pasta": "Pasta",
+   "chicken_breast": "Chicken breast",
+   "arugula": "Arugula",
+   "mixed_veg_low_k": "Low-potassium mixed vegetables",
+   "rusk": "Rusk",
+   "tea": "Tea",
+   "nuts": "Raw unsalted nuts",
+   "low_k_fruit": "Low-potassium fruit",
+   "zaatar": "Zaatar",
+   "carrot": "Carrot",
+   "homemade_cake": "Homemade cake or maamoul",
+   "tuna": "Tuna",
+   "cheese_slice": "Low-fat cheese slice",
+   "lentils": "Lentils or fava beans",
+   "grilled_chicken": "Grilled chicken",
+   "zucchini": "Zucchini",
+   "onion": "Onion",
+   "lean_meat": "Lean meat",
+   "eggplant": "Eggplant",
+   "lemon": "Lemon",
+   "garlic": "Garlic",
+   "white_beans": "Green beans",
+   "jareesh": "White jareesh",
+   "egg_white": "Egg white",
+   "thin_dough": "Thin dough (samosa/phyllo)"
+  },
+  "am": {
+   "egg": "እንቁላል",
+   "toast": "ቶስት",
+   "arabic_bread": "አረብ ዳቦ",
+   "samouli": "ሳሙሊ ዳቦ",
+   "millet_bread": "የማሽላ ዳቦ",
+   "cucumber": "ኩከምበር",
+   "lettuce": "ሰላጣ ቅጠል",
+   "bell_pepper": "ቀይ/አረንጓዴ በርበሬ",
+   "olive_oil": "የወይራ ዘይት",
+   "feta": "ዝቅተኛ ቅባት አይብ",
+   "labneh": "ለብነ",
+   "honey": "ማር ወይም ጃም",
+   "berries": "እንጆሪ ወይም ቤሪ",
+   "yogurt": "ዝቅተኛ ቅባት እርጎ",
+   "oats": "አጃ",
+   "milk": "ዝቅተኛ ቅባት ወተት",
+   "coffee": "ቡና",
+   "rice": "የበሰለ ሩዝ",
+   "fish": "የዓሳ ፍሌት",
+   "veg_soup": "አትክልት / የአትክልት ሾርባ",
+   "pasta": "ፓስታ",
+   "chicken_breast": "የዶሮ ደረት",
+   "arugula": "አሩጉላ",
+   "mixed_veg_low_k": "ዝቅተኛ ፖታሲየም የተቀላቀለ አትክልት",
+   "rusk": "ብስኩት",
+   "tea": "ሻይ",
+   "nuts": "ያልበሰለ ያልጨመረ ለውዝ",
+   "low_k_fruit": "ዝቅተኛ ፖታሲየም ፍራፍሬ",
+   "zaatar": "ዛዕታር",
+   "carrot": "ካሮት",
+   "homemade_cake": "የቤት ኬክ ወይም መዓሙል",
+   "tuna": "ቱና",
+   "cheese_slice": "ዝቅተኛ ቅባት አይብ ቁራጭ",
+   "lentils": "ምስር ወይም ባቄላ",
+   "grilled_chicken": "የተጠበሰ ዶሮ",
+   "zucchini": "ዙኪኒ",
+   "onion": "ሽንኩርት",
+   "lean_meat": "ቅባት የሌለው ስጋ",
+   "eggplant": "እንቁላል ፍራፍሬ (ኦበርጂን)",
+   "lemon": "ሎሚ",
+   "garlic": "ነጭ ሽንኩርት",
+   "white_beans": "አረንጓዴ ባቄላ",
+   "jareesh": "ነጭ ጅሪሽ",
+   "egg_white": "የእንቁላል ነጭ",
+   "thin_dough": "ቀጭን ሊጥ (ሳምቡሳ)"
+  }
+ },
+ "LANGS": {
+  "ar": "العربية",
+  "en": "English",
+  "am": "አማርኛ"
+ },
+ "MAID_TIPS_TR": {
+  "en": [
+   "Wash your hands well before preparing every meal",
+   "Wash vegetables and fruits well with water before use",
+   "Less salt protects the father's heart — don't add more than the recipe says",
+   "Don't leave food outside the fridge for more than two hours",
+   "Use a separate cutting board for raw meat",
+   "Refrigerate leftovers quickly after they cool",
+   "Make sure meat and chicken are fully cooked before serving",
+   "Your cooking today helps the father's health — thank you for your effort 🌸"
+  ],
+  "am": [
+   "እያንዳንዱን ምግብ ከማዘጋጀትዎ በፊት እጅዎን በደንብ ይታጠቡ",
+   "አትክልትና ፍራፍሬን ከመጠቀምዎ በፊት በውሃ በደንብ ይታጠቡ",
+   "ያነሰ ጨው የአባትን ልብ ይጠብቃል — ከምግብ አዘገጃጀቱ በላይ አይጨምሩ",
+   "ምግብን ከማቀዝቀዣ ውጭ ከሁለት ሰዓት በላይ አይተዉ",
+   "ለጥሬ ስጋ የተለየ መቁረጫ ሰሌዳ ይጠቀሙ",
+   "የቀረውን ምግብ ከቀዘቀዘ በኋላ በፍጥነት ወደ ማቀዝቀዣ ያስገቡ",
+   "ስጋና ዶሮ ከማቅረብዎ በፊት በደንብ መብሰላቸውን ያረጋግጡ",
+   "የዛሬው ምግብዎ የአባትን ጤና ይረዳል — ስለ ጥረትዎ እናመሰግናለን 🌸"
+  ]
+ },
+ "MEAL_SLOT_NAME_TR": {
+  "en": {
+   "meal1": "Breakfast",
+   "meal2": "Lunch",
+   "meal3": "Snack",
+   "meal4": "Dinner"
+  },
+  "am": {
+   "meal1": "ቁርስ",
+   "meal2": "ምሳ",
+   "meal3": "ቀላል ምግብ",
+   "meal4": "እራት"
+  }
+ },
+ "OPTION_LABEL_TR": {
+  "en": {
+   "m1o1": "Eggs & toast",
+   "m1o2": "Cheese, bread & fruit",
+   "m1o3": "Yogurt & oats",
+   "m1o4": "Milk, coffee & eggs",
+   "m2o1": "Rice, fish & vegetables",
+   "m2o2": "Pasta, chicken & salad",
+   "m2o3": "Chicken & vegetable tray with rice",
+   "m2r1": "Stuffed zucchini with rice & chicken",
+   "m2r2": "Grilled white fish with rice & vegetables",
+   "m2r5": "Baked chicken tray, no potatoes",
+   "m3o1": "Rusks & tea",
+   "m3o2": "Nuts (once a week only)",
+   "m3o3": "Low-potassium fruit",
+   "m3o4": "Toast & labneh with zaatar",
+   "m3o5": "Labneh & vegetables",
+   "m3o6": "Homemade cake or maamoul",
+   "m4o1": "Tuna, cheese & vegetable bread",
+   "m4o2": "Lentils or fava beans (max twice a week)",
+   "m4o3": "Soup, grilled chicken & rice",
+   "m4r3": "Eggplant stew, no tomato",
+   "m4r6": "Light modified jareesh",
+   "m4r7": "Meat stew with zucchini, no tomato",
+   "m4r8": "Light wrap"
+  },
+  "am": {
+   "m1o1": "እንቁላል እና ቶስት",
+   "m1o2": "አይብ፣ ዳቦ እና ፍራፍሬ",
+   "m1o3": "እርጎ እና አጃ",
+   "m1o4": "ወተት፣ ቡና እና እንቁላል",
+   "m2o1": "ሩዝ፣ ዓሳ እና አትክልት",
+   "m2o2": "ፓስታ፣ ዶሮ እና ሰላጣ",
+   "m2o3": "የዶሮ እና አትክልት ትሪ ከሩዝ ጋር",
+   "m2r1": "በሩዝ እና ዶሮ የተሞላ ዙኪኒ",
+   "m2r2": "የተጠበሰ ነጭ ዓሳ ከሩዝ እና አትክልት ጋር",
+   "m2r5": "የተጋገረ ዶሮ ትሪ ያለ ድንች",
+   "m3o1": "ብስኩት እና ሻይ",
+   "m3o2": "ለውዝ (በሳምንት አንድ ጊዜ ብቻ)",
+   "m3o3": "ዝቅተኛ ፖታሲየም ፍራፍሬ",
+   "m3o4": "ቶስት እና ለብነ ከዛዕታር ጋር",
+   "m3o5": "ለብነ እና አትክልት",
+   "m3o6": "የቤት ውስጥ ኬክ ወይም መዓሙል",
+   "m4o1": "ቱና፣ አይብ እና የአትክልት ዳቦ",
+   "m4o2": "ምስር ወይም ባቄላ (በሳምንት ከሁለት ጊዜ አይበልጥ)",
+   "m4o3": "ሾርባ፣ የተጠበሰ ዶሮ እና ሩዝ",
+   "m4r3": "የእንቁላል ፍራፍሬ ወጥ ያለ ቲማቲም",
+   "m4r6": "ቀላል የተሻሻለ ጅሪሽ",
+   "m4r7": "የስጋ ወጥ ከዙኪኒ ጋር ያለ ቲማቲም",
+   "m4r8": "ቀላል ራፕ"
+  }
+ },
+ "RECIPE_TR": {
+  "en": {
+   "r1": {
+    "title": "Stuffed zucchini with rice & chicken",
+    "steps": [
+     "Half-boil the rice and drain it.",
+     "Sauté onion with oil, then add chicken.",
+     "Mix chicken with rice and stuff the zucchini.",
+     "Cook in water only — no tomato sauce."
+    ]
+   },
+   "r2": {
+    "title": "Grilled white fish with rice & vegetables",
+    "steps": [
+     "Bake the fish without adding ready-made sauces.",
+     "Serve with white rice and green beans."
+    ]
+   },
+   "r3": {
+    "title": "Eggplant stew, no tomato",
+    "steps": [
+     "Lightly fry the onion, add eggplant then meat and water.",
+     "Cook without tomato or paste.",
+     "Good served with white rice."
+    ]
+   },
+   "r4": {
+    "title": "Cucumber & lettuce salad with lemon",
+    "steps": [
+     "Chop the cucumber and lettuce.",
+     "Add lemon juice and olive oil."
+    ]
+   },
+   "r5": {
+    "title": "Baked chicken tray with vegetables, no potatoes",
+    "steps": [
+     "Bake chicken breasts with zucchini, bell pepper, garlic and spices.",
+     "No ready-made sauces or stock cubes."
+    ]
+   },
+   "r6": {
+    "title": "Light modified jareesh",
+    "steps": [
+     "Sauté onion with oil.",
+     "Add chicken, then jareesh and water.",
+     "Cook on low heat until soft.",
+     "No milk/yogurt — water instead of stock."
+    ]
+   },
+   "r7": {
+    "title": "Meat stew with zucchini, no tomato",
+    "steps": [
+     "Sauté onion, add zucchini, meat and water.",
+     "Cook without tomato.",
+     "Serve with white rice."
+    ]
+   },
+   "r8": {
+    "title": "Light wrap",
+    "steps": [
+     "Whisk egg white with onion and bell pepper.",
+     "Fill into thin dough.",
+     "Cook without extra fat — no cheese or banana."
+    ]
+   }
+  },
+  "am": {
+   "r1": {
+    "title": "በሩዝ እና ዶሮ የተሞላ ዙኪኒ",
+    "steps": [
+     "ሩዙን በግማሽ አብስለው አጣሩ።",
+     "ሽንኩርቱን በዘይት ጥብሱ፣ ከዚያ ዶሮውን ጨምሩ።",
+     "ዶሮውን ከሩዝ ጋር ቀላቅሉ እና ዙኪኒውን ሙሉ።",
+     "በውሃ ብቻ ያብስሉ — ያለ ቲማቲም ሶስ።"
+    ]
+   },
+   "r2": {
+    "title": "የተጠበሰ ነጭ ዓሳ ከሩዝ እና አትክልት ጋር",
+    "steps": [
+     "ዓሳውን በምድጃ ውስጥ ያለ ዝግጁ ሶስ ይጋግሩ።",
+     "ከነጭ ሩዝ እና አረንጓዴ ባቄላ ጋር ያቅርቡ።"
+    ]
+   },
+   "r3": {
+    "title": "የእንቁላል ፍራፍሬ ወጥ ያለ ቲማቲም",
+    "steps": [
+     "ሽንኩርቱን ትንሽ ይጥበሱ፣ እንቁላል ፍራፍሬውን ከዚያ ስጋና ውሃ ይጨምሩ።",
+     "ያለ ቲማቲም ወይም ፓስታ ያብስሉ።",
+     "ከነጭ ሩዝ ጋር ጥሩ ነው።"
+    ]
+   },
+   "r4": {
+    "title": "የኩከምበር እና ሰላጣ ሰላጣ በሎሚ",
+    "steps": [
+     "ኩከምበሩን እና ሰላጣውን ይቁረጡ።",
+     "የሎሚ ጭማቂ እና የወይራ ዘይት ይጨምሩ።"
+    ]
+   },
+   "r5": {
+    "title": "የተጋገረ ዶሮ ትሪ ከአትክልት ጋር ያለ ድንች",
+    "steps": [
+     "የዶሮ ደረትን ከዙኪኒ፣ በርበሬ፣ ነጭ ሽንኩርት እና ቅመማ ቅመም ጋር ይጋግሩ።",
+     "ያለ ዝግጁ ሶስ ወይም ማጎሚያ ኩብ።"
+    ]
+   },
+   "r6": {
+    "title": "ቀላል የተሻሻለ ጅሪሽ",
+    "steps": [
+     "ሽንኩርቱን በዘይት ይጥበሱ።",
+     "ዶሮውን ከዚያ ጅሪሽ እና ውሃ ይጨምሩ።",
+     "በዝግታ እሳት እስኪለሰልስ ያብስሉ።",
+     "ያለ ወተት/እርጎ — ውሃ በምትክ ማጎሚያ።"
+    ]
+   },
+   "r7": {
+    "title": "የስጋ ወጥ ከዙኪኒ ጋር ያለ ቲማቲም",
+    "steps": [
+     "ሽንኩርቱን ይጥበሱ፣ ዙኪኒ፣ ስጋ እና ውሃ ይጨምሩ።",
+     "ያለ ቲማቲም ያብስሉ።",
+     "ከነጭ ሩዝ ጋር ያቅርቡ።"
+    ]
+   },
+   "r8": {
+    "title": "ቀላል ራፕ",
+    "steps": [
+     "የእንቁላል ነጭውን ከሽንኩርት እና በርበሬ ጋር ይምቱ።",
+     "ቀጭን ሊጥ ውስጥ ይሙሉ።",
+     "ያለ ተጨማሪ ቅባት ያብስሉ — ያለ አይብ ወይም ሙዝ።"
+    ]
+   }
+  }
+ },
+ "UI": {
+  "nav_today": {
+   "en": "Today",
+   "am": "ዛሬ"
+  },
+  "nav_info": {
+   "en": "Instructions",
+   "am": "መመሪያ"
+  },
+  "nav_next": {
+   "en": "Next Week",
+   "am": "ቀጣይ ሳምንት"
+  },
+  "kitchen_default": {
+   "en": "Sufrati Kitchen",
+   "am": "የሱፍራቲ ማብሰያ ቤት"
+  },
+  "hello": {
+   "en": "Hello",
+   "am": "ሰላም"
+  },
+  "cooking_for": {
+   "en": "Cooking for",
+   "am": "ለ"
+  },
+  "important": {
+   "en": "⚠️ Important Instructions",
+   "am": "⚠️ አስፈላጊ መመሪያዎች"
+  },
+  "tip_of_day": {
+   "en": "💡 Tip of the Day",
+   "am": "💡 የዛሬ ምክር"
+  },
+  "how_to_prepare": {
+   "en": "📋 How to prepare",
+   "am": "📋 አዘገጃጀት"
+  },
+  "mark_ready": {
+   "en": "👉 Tap when ready",
+   "am": "👉 ከተዘጋጀ በኋላ ይጫኑ"
+  },
+  "marked_ready": {
+   "en": "✅ Ready",
+   "am": "✅ ተዘጋጅቷል"
+  },
+  "next_shopping": {
+   "en": "🛒 Next Week's Groceries",
+   "am": "🛒 የሚቀጥለው ሳምንት ግዢ"
+  },
+  "shopping_note": {
+   "en": "For your information — the father does the shopping",
+   "am": "ለመረጃ ብቻ — ግዢውን የሚያደርገው አባት ራሱ ነው"
+  },
+  "time_for": {
+   "en": "Time for",
+   "am": "የ"
+  },
+  "language": {
+   "en": "Language",
+   "am": "ቋንቋ"
+  },
+  "enable_alerts": {
+   "en": "🔔 Turn on meal alerts",
+   "am": "🔔 የምግብ ማሳሰቢያዎችን ያብሩ"
+  },
+  "alerts_on": {
+   "en": "🔔 Meal alerts are on",
+   "am": "🔔 የምግብ ማሳሰቢያዎች በርተዋል"
+  },
+  "alerts_denied": {
+   "en": "Alerts are blocked — allow notifications for Sufrati in phone settings",
+   "am": "ማሳሰቢያዎች ታግደዋል — በስልክ ቅንብሮች ውስጥ ለሱፍራቲ ማሳወቂያዎችን ይፍቀዱ"
+  },
+  "battery_tip": {
+   "en": "If alerts come late: Settings → Apps → Sufrati → Battery → Unrestricted",
+   "am": "ማሳሰቢያዎች ከዘገዩ፦ ቅንብሮች → መተግበሪያዎች → ሱፍራቲ → ባትሪ → ያልተገደበ"
+  },
+  "notif_prep": {
+   "en": "Start preparing",
+   "am": "ማዘጋጀት ይጀምሩ"
+  },
+  "notif_serve": {
+   "en": "Time to serve",
+   "am": "የማቅረቢያ ሰዓት"
+  },
+  "test_alert": {
+   "en": "Try an alert now",
+   "am": "አሁን ማሳሰቢያ ይሞክሩ"
+  },
+  "test_alert_body": {
+   "en": "Alerts work ✅ — you'll be reminded before every meal",
+   "am": "ማሳሰቢያዎች ይሰራሉ ✅ — ከእያንዳንዱ ምግብ በፊት ይታወሳሉ"
+  }
+ },
+ "_AR_UI": {
+  "nav_today": "اليوم",
+  "nav_info": "تعليمات",
+  "nav_next": "القادم",
+  "kitchen_default": "مطبخ سفرتي",
+  "hello": "أهلاً",
+  "cooking_for": "الطبخ لعدد",
+  "important": "⚠️ تعليمات مهمة",
+  "tip_of_day": "💡 معلومة اليوم",
+  "how_to_prepare": "📋 طريقة التحضير",
+  "mark_ready": "👉 اضغط بعد التحضير",
+  "marked_ready": "✅ تم التحضير",
+  "next_shopping": "🛒 مشتريات الأسبوع القادم",
+  "shopping_note": "للعلم فقط — أبي هو من يحضر المشتريات",
+  "time_for": "حان وقت",
+  "enable_alerts": "🔔 فعّل تنبيهات الوجبات",
+  "alerts_on": "🔔 تنبيهات الوجبات مفعّلة",
+  "alerts_denied": "التنبيهات مقفلة — اسمح بإشعارات سفرتي من إعدادات الجوال",
+  "battery_tip": "لو تأخرت التنبيهات: الإعدادات ← التطبيقات ← سفرتي ← البطارية ← غير مقيّد",
+  "notif_prep": "ابدأ التحضير",
+  "notif_serve": "وقت التقديم",
+  "test_alert": "جرّب تنبيهاً الآن",
+  "test_alert_body": "التنبيهات تعمل ✅ — سيصلك تنبيه قبل كل وجبة",
+  "language": "اللغة"
+ }
+}

@@ -1,0 +1,123 @@
+rules_version = '2';
+// قواعد أمان سفرتي — تنفّذ «جدول الصلاحيات» في FLUTTER_PLAN.md على الخادم (لا يكفي إخفاء الأزرار).
+// الأدوار داخل البيت: owner (صاحب البيت) / cook (الطباخ) / doctor (الطبيب). المدير = claim اسمه admin.
+service cloud.firestore {
+  match /databases/{db}/documents {
+
+    function signedIn() { return request.auth != null; }
+    function isAdmin() { return signedIn() && request.auth.token.get('admin', false) == true; }
+    function household(hid) { return get(/databases/$(db)/documents/households/$(hid)).data; }
+    function hasRole(hid, roles) {
+      return signedIn() && request.auth.uid in household(hid).members
+        && household(hid).members[request.auth.uid] in roles;
+    }
+    function isMember(hid) { return signedIn() && request.auth.uid in household(hid).members; }
+    function canManage(hid) { return isAdmin() || hasRole(hid, ['owner', 'doctor']); }
+
+    // ---- المستخدمون ----
+    match /users/{uid} {
+      allow read: if isAdmin() || (signedIn() && request.auth.uid == uid);
+      // isDoctor يمنحه المدير وحده
+      allow create: if isAdmin() || (signedIn() && request.auth.uid == uid
+                       && request.resource.data.get('isDoctor', false) == false);
+      allow update: if isAdmin() || (signedIn() && request.auth.uid == uid
+                       && !request.resource.data.diff(resource.data).affectedKeys().hasAny(['isDoctor']));
+      allow delete: if isAdmin() || (signedIn() && request.auth.uid == uid);
+    }
+
+    // ---- البيوت ----
+    match /households/{hid} {
+      allow read: if isAdmin() || isMember(hid);
+
+      // إنشاء بيت: المنشئ عضو وحيد؛ صاحب بيت، أو طبيب معتمد (يجهّز بيت مريضه ثم يدعوه)
+      allow create: if signedIn()
+        && request.resource.data.members.keys().hasOnly([request.auth.uid])
+        && (request.resource.data.members[request.auth.uid] == 'owner'
+            || (request.resource.data.members[request.auth.uid] == 'doctor'
+                && get(/databases/$(db)/documents/users/$(request.auth.uid)).data.get('isDoctor', false) == true));
+
+      allow update: if isAdmin()
+        // الطبيب والصاحب يعدّلان كل شيء عدا قائمة الأعضاء
+        || (hasRole(hid, ['owner', 'doctor'])
+            && !request.resource.data.diff(resource.data).affectedKeys().hasAny(['members', 'lastInvite']))
+        // الصاحب يدير الأعضاء بشرط أن يبقى صاحباً
+        || (hasRole(hid, ['owner']) && request.resource.data.members.get(request.auth.uid, '') == 'owner')
+        || redeemsInvite(hid);
+
+      // حذف البيت: المدير، أو الصاحب، أو الطبيب إن لم يكن للبيت صاحب بعد
+      allow delete: if isAdmin() || hasRole(hid, ['owner'])
+        || (hasRole(hid, ['doctor']) && !('owner' in resource.data.members.values()));
+
+      // قبول دعوة: يضيف المستخدم نفسه فقط، بالدور المحدد في الدعوة، وفي الدفعة نفسها تُعلَّم الدعوة مستخدَمة
+      function redeemsInvite(hid) {
+        let code = request.resource.data.get('lastInvite', '');
+        let invPath = /databases/$(db)/documents/invites/$(code);
+        let diffM = request.resource.data.members.diff(resource.data.members);
+        return signedIn() && code != ''
+          && exists(invPath)
+          && get(invPath).data.hid == hid
+          && get(invPath).data.get('usedBy', null) == null
+          && get(invPath).data.expiresAt > request.time
+          && getAfter(invPath).data.usedBy == request.auth.uid
+          && diffM.affectedKeys().hasOnly([request.auth.uid])
+          && diffM.addedKeys().hasOnly([request.auth.uid])
+          && request.resource.data.members[request.auth.uid] == get(invPath).data.role
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['members', 'lastInvite']);
+      }
+
+      // الخطط الأسبوعية: الطباخ يعدّل «جاهز» فقط
+      match /weeks/{ws} {
+        allow read: if isAdmin() || isMember(hid);
+        allow create, delete: if canManage(hid);
+        allow update: if canManage(hid)
+          || (hasRole(hid, ['cook'])
+              && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['prepared']));
+      }
+
+      // المشتريات: الطباخ عرض فقط
+      match /shopping/{ws} {
+        allow read: if isAdmin() || isMember(hid);
+        allow write: if canManage(hid);
+      }
+
+      // البيانات الصحية (النظام المخصّص، ملاحظات الطبيب، مرجع الملف): الطباخ لا يراها أبداً
+      match /private/{doc} {
+        allow read, write: if canManage(hid);
+      }
+    }
+
+    // ---- الدعوات ----
+    match /invites/{code} {
+      // يُقرأ بالمعرّف فقط (الرمز عشوائي طويل)، لا قائمة
+      allow get: if signedIn();
+      allow list: if isAdmin();
+      allow create: if signedIn()
+        && request.resource.data.createdBy == request.auth.uid
+        && request.resource.data.get('usedBy', null) == null
+        && request.resource.data.expiresAt is timestamp
+        && (isAdmin()
+            || (hasRole(request.resource.data.hid, ['owner']) && request.resource.data.role in ['cook', 'doctor'])
+            || (hasRole(request.resource.data.hid, ['doctor']) && request.resource.data.role == 'owner'));
+      allow update: if signedIn() && resource.data.get('usedBy', null) == null
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['usedBy', 'usedAt'])
+        && request.resource.data.usedBy == request.auth.uid;
+      allow delete: if isAdmin() || (signedIn() && resource.data.createdBy == request.auth.uid);
+    }
+
+    // ---- طلبات الأنظمة المخصّصة ----
+    match /programRequests/{id} {
+      allow create: if signedIn() && request.resource.data.createdBy == request.auth.uid
+        && hasRole(request.resource.data.hid, ['owner', 'doctor']);
+      allow read: if isAdmin() || (signedIn() && resource.data.createdBy == request.auth.uid);
+      allow update, delete: if isAdmin();
+    }
+
+    // ---- بلاغات المحتوى (شرط المتاجر) ----
+    match /reports/{id} {
+      allow create: if signedIn() && request.resource.data.createdBy == request.auth.uid;
+      allow read, update, delete: if isAdmin();
+    }
+
+    match /{other=**} { allow read, write: if false; }
+  }
+}

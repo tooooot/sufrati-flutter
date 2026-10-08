@@ -1,0 +1,114 @@
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:url_launcher/url_launcher.dart';
+
+import '../auth/auth_service.dart';
+import '../theme.dart';
+import '../widgets/common.dart';
+
+/// الدخول الرسمي: Google وApple فقط (Apple إلزامية متى وُجد Google في iOS). لا كلمات سر ولا روابط سرية.
+class LoginScreen extends StatefulWidget {
+  final AuthService auth;
+  /// الوجهة بعد نجاح الدخول (الافتراضي: «بيوتي»).
+  final String next;
+  const LoginScreen({super.key, required this.auth, this.next = '/'});
+
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+  SignInMethod? _busy;
+  String? _error;
+
+  Future<void> _go(SignInMethod m) async {
+    setState(() { _busy = m; _error = null; });
+    try {
+      await widget.auth.signIn(m);
+      if (mounted) context.go(widget.next);
+    } on SignInCancelled {
+      // المستخدم أغلق النافذة — لا رسالة
+    } catch (_) {
+      if (mounted) setState(() => _error = 'تعذّر تسجيل الدخول. تأكد من الاتصال وحاول مرة أخرى.');
+    } finally {
+      if (mounted) setState(() => _busy = null);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final a = widget.auth;
+    return Scaffold(
+      body: ListView(padding: EdgeInsets.zero, children: [
+        const GreenHeader(icon: '🍽️', title: 'سفرتي', subtitle: 'سجّل دخولك لتصل إلى بيتك وخطتك'),
+        Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 420),
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(16, 28, 16, 32),
+              child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+                if (_error != null)
+                  Container(
+                    margin: const EdgeInsets.only(bottom: 16),
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(color: const Color(0xFFFEF2F2), borderRadius: BorderRadius.circular(16),
+                        border: Border.all(color: const Color(0xFFFECACA))),
+                    child: Text('⚠️ $_error', textAlign: TextAlign.center,
+                        style: const TextStyle(color: Color(0xFFB91C1C), fontWeight: FontWeight.bold)),
+                  ),
+                if (a.isAvailable(SignInMethod.google))
+                  _Btn(label: 'المتابعة بحساب Google', icon: 'G', busy: _busy == SignInMethod.google,
+                      disabled: _busy != null, onTap: () => _go(SignInMethod.google),
+                      bg: Colors.white, fg: const Color(0xFF1F2937), border: const Color(0xFFD1D5DB)),
+                if (a.isAvailable(SignInMethod.google) && a.isAvailable(SignInMethod.apple)) const SizedBox(height: 12),
+                if (a.isAvailable(SignInMethod.apple))
+                  _Btn(label: 'المتابعة بحساب Apple', icon: '', busy: _busy == SignInMethod.apple,
+                      disabled: _busy != null, onTap: () => _go(SignInMethod.apple), bg: Colors.black, fg: Colors.white),
+                const SizedBox(height: 20),
+                const Text('بالمتابعة توافق على تخزين بياناتك الغذائية لتشغيل التطبيق. لا نشاركها مع أحد.',
+                    textAlign: TextAlign.center, style: TextStyle(fontSize: 12, color: Brand.grey, height: 1.6)),
+                TextButton(
+                  onPressed: () => launchUrl(Uri.parse('https://maeda.wardyat.net/privacy'), mode: LaunchMode.externalApplication),
+                  child: const Text('سياسة الخصوصية'),
+                ),
+                const Divider(height: 40),
+                TextButton(onPressed: () => context.go('/start'), child: const Text('تصفّح الأنظمة بلا تسجيل')),
+              ]),
+            ),
+          ),
+        ),
+      ]),
+    );
+  }
+}
+
+class _Btn extends StatelessWidget {
+  final String label, icon;
+  final bool busy, disabled;
+  final VoidCallback onTap;
+  final Color bg, fg;
+  final Color? border;
+  const _Btn({required this.label, required this.icon, required this.busy, required this.disabled,
+      required this.onTap, required this.bg, required this.fg, this.border});
+
+  @override
+  Widget build(BuildContext context) => SizedBox(
+        height: 54,
+        child: ElevatedButton(
+          onPressed: disabled ? null : onTap,
+          style: ElevatedButton.styleFrom(
+            backgroundColor: bg, foregroundColor: fg, disabledBackgroundColor: bg.withValues(alpha: .6),
+            elevation: 1,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16),
+                side: border == null ? BorderSide.none : BorderSide(color: border!)),
+          ),
+          child: busy
+              ? SizedBox(width: 22, height: 22, child: CircularProgressIndicator(strokeWidth: 2.5, color: fg))
+              : Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                  Text(icon, style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w900)),
+                  const SizedBox(width: 10),
+                  Text(label, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800)),
+                ]),
+        ),
+      );
+}
