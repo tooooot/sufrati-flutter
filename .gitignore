@@ -53,3 +53,4 @@ app.*.map.json
 *.jks
 key.properties
 /preview_out/
+/release/

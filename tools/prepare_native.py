@@ -21,8 +21,10 @@ def android():
         if GS_PLUGIN not in s:
             s = s.replace('id("com.android.application")\n', 'id("com.android.application")\n    ' + GS_PLUGIN + '\n', 1)
         s = s.replace('minSdk = flutter.minSdkVersion', 'minSdk = maxOf(23, flutter.minSdkVersion) // firebase_auth يتطلب 23+')
+        if 'import java.util.Properties' not in s:
+            s = 'import java.util.Properties\n\n' + s  # `java` داخل سكربت Gradle يشير لإضافة Java، فنستورد الصنف صراحةً
         if 'key.properties' not in s:
-            s = s.replace('android {\n', '''val keyProps = java.util.Properties().apply {
+            s = s.replace('android {\n', '''val keyProps = Properties().apply {
     val f = rootProject.file("key.properties")
     if (f.exists()) f.inputStream().use { load(it) }
 }
@@ -50,6 +52,8 @@ android {
             s = s.replace('<application', '<uses-permission android:name="android.permission.INTERNET"/>\n    <application', 1)
         return re.sub(r'android:label="[^"]*"', 'android:label="سفرتي"', s, 1)
     patch(a / 'app' / 'src' / 'main' / 'AndroidManifest.xml', manifest)
+    # قالب Flutter يضبط -Xmx8G؛ السيرفر 4GB فقط (قُتل البناء الأول) — نستعمل 1.5GB كبقية بناءات أندرويد عندنا
+    patch(a / 'gradle.properties', lambda s: re.sub(r'org\.gradle\.jvmargs=.*', 'org.gradle.jvmargs=-Xmx1536m -XX:MaxMetaspaceSize=512m', s, 1))
 
 def ios():
     r = ROOT / 'ios' / 'Runner'
