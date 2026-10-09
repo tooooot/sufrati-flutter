@@ -25,10 +25,10 @@ class RoleScreen extends StatelessWidget {
             child: Padding(
               padding: const EdgeInsets.fromLTRB(16, 24, 16, 32),
               child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-                for (final (role, icon, title, sub, next) in const [
-                  (Role.owner, '🏠', 'صاحب البيت', 'أتابع نظامي الغذائي أو نظام أحد أفراد بيتي', '/household'),
-                  (Role.cook, '👨‍🍳', 'الطاهي', 'دعاني صاحب البيت وعندي رمز الدعوة', '/join/cook'),
-                  (Role.doctor, '🩺', 'الطبيب', 'أتابع مرضاي وأجهّز أنظمتهم', '/join/doctor'),
+                for (final (role, icon, title, sub) in const [
+                  (Role.owner, '🏠', 'صاحب البيت', 'أتابع نظامي الغذائي أو نظام أحد أفراد بيتي'),
+                  (Role.cook, '👨‍🍳', 'الطاهي', 'دعاني صاحب البيت وعندي رمز الدعوة'),
+                  (Role.doctor, '🩺', 'الطبيب', 'أتابع مرضاي وأجهّز أنظمتهم'),
                 ]) ...[
                   CardBox(
                     onTap: () async {
