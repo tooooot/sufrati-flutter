@@ -49,7 +49,7 @@ class _LandingScreenState extends State<LandingScreen> {
           _Section(color: Brand.cream, child: Column(children: [
             // الشريط العلوي
             Row(children: [
-              const Text('🍽️', style: TextStyle(fontSize: 30)),
+              const Icon(Icons.restaurant, size: 30, color: Brand.green),
               const SizedBox(width: 8),
               const Text('سفرتي', style: TextStyle(fontSize: 26, fontWeight: black, color: Brand.green)),
               const Spacer(),

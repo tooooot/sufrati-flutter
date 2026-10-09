@@ -86,7 +86,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 Container(
                   width: 78, height: 78,
                   decoration: const BoxDecoration(shape: BoxShape.circle, color: Brand.cream),
-                  child: const Center(child: Text('🍽️', style: TextStyle(fontSize: 40))),
+                  child: const Center(child: Icon(Icons.restaurant, size: 42, color: Brand.green)),
                 ),
                 const SizedBox(height: 8),
                 const Text('سفرتي', style: TextStyle(color: Brand.cream, fontSize: 36, fontWeight: black)),

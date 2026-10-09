@@ -203,6 +203,24 @@ class FirestoreLinkService extends LinkService {
   }
 
   @override
+  Future<void> removeRole(Role role) async {
+    final hid = _ownerHid;
+    if (hid == null) return;
+    final b = db.batch();
+    final codes = _invitesOf(hid).where((i) => i.role == role).map((i) => i.code).toList();
+    // من انضم: يُحذف من خريطة الأعضاء (مفتاح uid من الدعوة المستهلكة)
+    for (final c in codes) {
+      final used = (await db.doc('invites/$c').get()).data()?['usedBy'] as String?;
+      if (used != null) b.update(db.doc('households/$hid'), {'members.$used': FieldValue.delete()});
+      b.delete(db.doc('invites/$c'));
+    }
+    if (codes.isNotEmpty) b.update(db.doc('households/$hid'), {'inviteCodes': FieldValue.arrayRemove(codes)});
+    await b.commit();
+    for (final c in codes) { _invSubs.remove(c)?.cancel(); _invites.remove(c); }
+    notifyListeners();
+  }
+
+  @override
   Future<Role?> inviteRoleOf(String raw) async {
     final code = normalizeCode(raw);
     if (code.isEmpty) return null;

@@ -3,6 +3,20 @@ import 'package:sufrati/auth/roles.dart';
 import 'package:sufrati/data/links.dart';
 
 void main() {
+  test('صاحب الخطة يلغي دعوة معلّقة ويزيل من انضم', () async {
+    final l = MemoryLinkService();
+    await l.createHousehold('بيت', 'keto_general', 1);
+    final inv = await l.createInvite(Role.cook);
+    await l.removeRole(Role.cook);
+    expect(l.inviteFor(Role.cook), isNull);
+    expect(await l.redeem(inv.code, Role.cook), isNotNull, reason: 'الدعوة الملغاة لا تعمل');
+    final inv2 = await l.createInvite(Role.cook);
+    await l.redeem(inv2.code, Role.cook, who: 'ماريا');
+    expect(l.joinedBy(Role.cook), isNotNull);
+    await l.removeRole(Role.cook);
+    expect(l.joinedBy(Role.cook), isNull);
+  });
+
   test('صاحب الخطة يدعو الطاهي والطاهي يدخل الرمز مرة واحدة فقط', () async {
     final l = MemoryLinkService();
     await l.createHousehold('بيت أبو عبدالله', 'kidney_salama', 2);

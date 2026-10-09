@@ -84,7 +84,8 @@ class HouseholdBody extends StatelessWidget {
 class _Member extends StatelessWidget {
   final String icon, title, sub;
   final bool done;
-  const _Member({required this.icon, required this.title, required this.sub, required this.done});
+  final Widget? trailing;
+  const _Member({required this.icon, required this.title, required this.sub, required this.done, this.trailing});
   @override
   Widget build(BuildContext context) => CardBox(
         child: Row(children: [
@@ -94,6 +95,7 @@ class _Member extends StatelessWidget {
             Text(title, style: const TextStyle(fontWeight: black, fontSize: 16)),
             Text(sub, style: const TextStyle(fontSize: 12, color: Brand.grey)),
           ])),
+          ?trailing,
           if (done) const Icon(Icons.check_circle, color: Brand.green),
         ]),
       );
@@ -110,7 +112,8 @@ class _Slot extends StatelessWidget {
     final joined = links.joinedBy(role);
     final pending = links.inviteFor(role);
     if (joined != null) {
-      return _Member(icon: icon, title: title, sub: 'انضم ✓ (${joined.usedBy})', done: true);
+      return _Member(icon: icon, title: title, sub: 'انضم ✓ (${joined.usedBy})', done: true,
+          trailing: TextButton(onPressed: () => _confirmRemove(context, links, role, title), child: const Text('إزالة', style: TextStyle(color: Colors.red))));
     }
     return CardBox(
       child: Row(children: [
@@ -120,6 +123,12 @@ class _Slot extends StatelessWidget {
           Text(title, style: const TextStyle(fontWeight: black, fontSize: 16)),
           Text(pending == null ? empty : 'بانتظار أن يدخل الرمز', style: const TextStyle(fontSize: 12, color: Brand.grey)),
         ])),
+        if (pending != null)
+          IconButton(
+            tooltip: 'إلغاء الدعوة',
+            icon: const Icon(Icons.close, color: Colors.red),
+            onPressed: () => links.removeRole(role),
+          ),
         FilledButton(
           style: FilledButton.styleFrom(backgroundColor: Brand.green),
           onPressed: () => inviteFlow(context, links, role),
@@ -176,4 +185,19 @@ Future<void> inviteFlow(BuildContext context, LinkService links, Role role) asyn
       ]),
     ),
   );
+}
+
+Future<void> _confirmRemove(BuildContext context, LinkService links, Role role, String title) async {
+  final ok = await showDialog<bool>(
+    context: context,
+    builder: (c) => AlertDialog(
+      title: Text('إزالة $title؟'),
+      content: const Text('سيخرج من بيتك ولن يرى خطتك بعد الآن. يمكنك دعوة غيره لاحقاً.'),
+      actions: [
+        TextButton(onPressed: () => Navigator.pop(c, false), child: const Text('تراجع')),
+        TextButton(onPressed: () => Navigator.pop(c, true), child: const Text('إزالة', style: TextStyle(color: Colors.red))),
+      ],
+    ),
+  );
+  if (ok == true) await links.removeRole(role);
 }

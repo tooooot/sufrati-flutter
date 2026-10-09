@@ -54,6 +54,9 @@ abstract class LinkService extends ChangeNotifier {
   bool get doctorRequested;
   Future<void> requestDoctor();
 
+  /// صاحب الخطة: إلغاء دعوة معلّقة أو إزالة من انضم بهذا الدور (يخرج من البيت وتُحذف دعواته).
+  Future<void> removeRole(Role role);
+
   /// يدخل الطاهي/الطبيب رمزاً. يرجع نص الخطأ أو null عند النجاح.
   Future<String?> redeem(String raw, Role asRole, {String who = 'مستخدم'});
 
@@ -132,6 +135,13 @@ class MemoryLinkService extends LinkService {
     _joined.add(Membership('mem-j', _label ?? 'بيت', _programId ?? '', asRole));
     notifyListeners();
     return null;
+  }
+
+  @override
+  Future<void> removeRole(Role role) async {
+    _invites.removeWhere((_, i) => i.role == role);
+    _joined.removeWhere((m) => m.role == role);
+    notifyListeners();
   }
 
   @override
