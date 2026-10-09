@@ -15,20 +15,19 @@ class GreenHeader extends StatelessWidget {
     return Container(
       width: double.infinity,
       decoration: const BoxDecoration(color: Brand.green, boxShadow: [BoxShadow(color: Colors.black26, blurRadius: 6)]),
-      padding: EdgeInsets.fromLTRB(16, top + 20, 16, 20),
-      child: Stack(children: [
-        Column(children: [
-          Text(icon, style: const TextStyle(fontSize: 46)),
+      padding: EdgeInsets.fromLTRB(16, top + (leading == null ? 20 : 8), 16, 20),
+      // الأزرار (رجوع/ملف شخصي/لغات) في صف مستقل أعلى الترويسة: لا تراكب مع الأيقونة مهما ضاقت الشاشة
+      child: Column(children: [
+        if (leading != null) Align(alignment: AlignmentDirectional.centerStart, child: leading!),
+        Text(icon, style: const TextStyle(fontSize: 46)),
+        const SizedBox(height: 4),
+        Text(title, textAlign: TextAlign.center,
+            style: TextStyle(color: Colors.white, fontSize: title.length > 18 ? 21 : 26, fontWeight: black)),
+        if (subtitle != null) ...[
           const SizedBox(height: 4),
-          Text(title, textAlign: TextAlign.center,
-              style: TextStyle(color: Colors.white, fontSize: title.length > 18 ? 21 : 26, fontWeight: black)),
-          if (subtitle != null) ...[
-            const SizedBox(height: 4),
-            Text(subtitle!, textAlign: TextAlign.center,
-                style: TextStyle(color: Colors.white.withValues(alpha: .8), fontSize: 13)),
-          ],
-        ]),
-        if (leading != null) Positioned(right: 0, top: 0, child: leading!),
+          Text(subtitle!, textAlign: TextAlign.center,
+              style: TextStyle(color: Colors.white.withValues(alpha: .8), fontSize: 13)),
+        ],
       ]),
     );
   }

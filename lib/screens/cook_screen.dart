@@ -135,43 +135,33 @@ class _CookScreenState extends State<CookScreen> {
     );
   }
 
-  Widget _header(String cookName, String dayName, int eaters) => Stack(children: [
-        GreenHeader(
-          icon: '👩‍🍳',
-          title: cookName.isNotEmpty ? '${ui('hello')} $cookName 👋' : ui('kitchen_default'),
-          subtitle: '$dayName — ${ui('cooking_for')} $eaters 👤',
-        ),
-        PositionedDirectional(
-          start: 8,
-          top: MediaQuery.paddingOf(context).top + 8,
-          child: const ProfileButton(),
-        ),
-        PositionedDirectional(
-          end: 12,
-          top: MediaQuery.paddingOf(context).top + 12,
-          child: Row(children: [
+  Widget _header(String cookName, String dayName, int eaters) => GreenHeader(
+        icon: '👩‍🍳',
+        title: cookName.isNotEmpty ? '${ui('hello')} $cookName 👋' : ui('kitchen_default'),
+        subtitle: '$dayName — ${ui('cooking_for')} $eaters 👤',
+        leading: Row(children: [
+          const ProfileButton(),
+          const Spacer(),
+          Wrap(spacing: 6, children: [
             for (final e in widget.i18n.langs.entries)
-              Padding(
-                padding: const EdgeInsetsDirectional.only(start: 6),
-                child: GestureDetector(
-                  onTap: () {
-                    setState(() => lang = e.key);
-                    if (_alertsOn) _syncAlerts(ask: false); // عناوين التنبيهات تتبع اللغة
-                  },
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                    decoration: BoxDecoration(
-                      color: lang == e.key ? Colors.white : Colors.white24,
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    child: Text(e.value, style: TextStyle(fontSize: 12, fontWeight: black,
-                        color: lang == e.key ? Brand.green : Colors.white)),
+              GestureDetector(
+                onTap: () {
+                  setState(() => lang = e.key);
+                  if (_alertsOn) _syncAlerts(ask: false); // عناوين التنبيهات تتبع اللغة
+                },
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: lang == e.key ? Colors.white : Colors.white24,
+                    borderRadius: BorderRadius.circular(16),
                   ),
+                  child: Text(e.value, style: TextStyle(fontSize: 12, fontWeight: black,
+                      color: lang == e.key ? Brand.green : Colors.white)),
                 ),
               ),
           ]),
-        ),
-      ]);
+        ]),
+      );
 
   /// الوجبة «الآن»: من قبل وقتها بربع ساعة إلى ساعة ونصف بعده — نفس checkNextMeal.
   SlotView? _active(DayView day, DateTime now) {
