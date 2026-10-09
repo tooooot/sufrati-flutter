@@ -8,7 +8,7 @@ void main() {
     await l.createHousehold('بيت أبو عبدالله', 'kidney_salama', 2);
     expect(l.hasHousehold, isTrue);
     final inv = await l.createInvite(Role.cook);
-    expect(inv.code.length, 6);
+    expect(inv.code.length, 8);
     expect(l.inviteFor(Role.cook), isNotNull);
 
     expect(await l.redeem('ZZZZZZ', Role.cook), contains('غير صحيح'));

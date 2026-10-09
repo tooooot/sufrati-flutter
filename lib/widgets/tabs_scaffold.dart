@@ -13,7 +13,8 @@ class TabItem {
 class TabsScaffold extends StatefulWidget {
   final Widget header;
   final List<TabItem> tabs;
-  const TabsScaffold({super.key, required this.header, required this.tabs});
+  final String? programId;
+  const TabsScaffold({super.key, required this.header, required this.tabs, this.programId});
 
   @override
   State<TabsScaffold> createState() => _TabsScaffoldState();
@@ -31,7 +32,7 @@ class _TabsScaffoldState extends State<TabsScaffold> {
               constraints: const BoxConstraints(maxWidth: 512),
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(12, 16, 12, 32),
-                child: Column(children: [Builder(builder: widget.tabs[_i].builder), const MedicalNote()]),
+                child: Column(children: [Builder(builder: widget.tabs[_i].builder), MedicalNote(programId: widget.programId)]),
               ),
             ),
           ),

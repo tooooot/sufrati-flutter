@@ -13,5 +13,12 @@ target.build_configurations.each do |c|
   c.build_settings['CODE_SIGN_ENTITLEMENTS'] = 'Runner/Runner.entitlements'
   c.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '15.0'
 end
+# Crashlytics: رفع رموز التصحيح (dSYM) ليقرأ الانهيار بأسماء الدوال
+unless target.shell_script_build_phases.any? { |ph| ph.name == 'Crashlytics dSYM' }
+  ph = target.new_shell_script_build_phase('Crashlytics dSYM')
+  ph.shell_script = '"${PODS_ROOT}/FirebaseCrashlytics/run"'
+  ph.input_paths = ['${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Resources/DWARF/${TARGET_NAME}',
+                    '$(SRCROOT)/$(BUILT_PRODUCTS_DIR)/$(INFOPLIST_PATH)']
+end
 proj.save
 puts 'xcode project registered'

@@ -23,6 +23,7 @@ class PatientScreen extends StatelessWidget {
     return ListenableBuilder(
       listenable: store,
       builder: (context, _) => TabsScaffold(
+        programId: store.household.programId,
         header: GreenHeader(icon: meta.icon, title: 'سفرتي', subtitle: '${store.household.label} — ${meta.label}'),
         tabs: [
           TabItem('🍽️', 'الوجبات', (_) => _MealsTab(store: store, library: library)),

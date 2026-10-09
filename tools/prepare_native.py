@@ -17,11 +17,16 @@ def android():
     # أيقونة سفرتي الأصلية (تكيّفية + دائرية + أيقونة الإشعار) بدل أيقونة Flutter الافتراضية
     shutil.copytree(NATIVE / 'android-res', a / 'app' / 'src' / 'main' / 'res', dirs_exist_ok=True)
     shutil.copy(NATIVE / 'google-services.json', a / 'app' / 'google-services.json')
+    CR_PLUGIN = 'id("com.google.firebase.crashlytics")'
     patch(a / 'settings.gradle.kts', lambda s: s if GS_PLUGIN in s else s.replace(
         'id("com.android.application") version', GS_PLUGIN + ' version "4.4.4" apply false\n    id("com.android.application") version', 1))
+    patch(a / 'settings.gradle.kts', lambda s: s if CR_PLUGIN in s else s.replace(
+        'id("com.android.application") version', CR_PLUGIN + ' version "3.0.6" apply false\n    id("com.android.application") version', 1))
     def app(s):
         if GS_PLUGIN not in s:
             s = s.replace('id("com.android.application")\n', 'id("com.android.application")\n    ' + GS_PLUGIN + '\n', 1)
+        if CR_PLUGIN not in s:
+            s = s.replace(GS_PLUGIN + '\n', GS_PLUGIN + '\n    ' + CR_PLUGIN + '\n', 1)
         if 'isCoreLibraryDesugaringEnabled' not in s:
             s = s.replace('sourceCompatibility = JavaVersion.VERSION_17', 'isCoreLibraryDesugaringEnabled = true // flutter_local_notifications\n        sourceCompatibility = JavaVersion.VERSION_17', 1)
             s += '\ndependencies {\n    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")\n}\n'

@@ -132,10 +132,12 @@ class MemoryLinkService extends LinkService {
   }
 }
 
-/// رمز من 6 خانات بلا حروف ملتبسة.
+/// رمز من 8 خانات بلا حروف ملتبسة (32^8 ≈ 1.1 تريليون: تخمينه غير عملي). تبقى الرموز القديمة بـ6 خانات صالحة.
+const inviteCodeLength = 8;
+
 String newInviteCode(Random rnd) {
   const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-  return List.generate(6, (_) => chars[rnd.nextInt(chars.length)]).join();
+  return List.generate(inviteCodeLength, (_) => chars[rnd.nextInt(chars.length)]).join();
 }
 
 String normalizeCode(String raw) => raw.trim().toUpperCase().replaceAll(RegExp(r'[^A-Z0-9]'), '');

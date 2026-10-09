@@ -64,10 +64,10 @@ class _JoinScreenState extends State<JoinScreen> {
                   textAlign: TextAlign.center,
                   textCapitalization: TextCapitalization.characters,
                   textDirection: TextDirection.ltr,
-                  maxLength: 7,
-                  style: const TextStyle(fontSize: 34, fontWeight: black, letterSpacing: 8, color: Brand.green),
+                  maxLength: 10,
+                  style: const TextStyle(fontSize: 28, fontWeight: black, letterSpacing: 5, color: Brand.green),
                   decoration: InputDecoration(
-                    hintText: '••••••', counterText: '', filled: true, fillColor: Colors.white,
+                    hintText: '••••••••', counterText: '', filled: true, fillColor: Colors.white,
                     border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
                     errorText: _error,
                   ),

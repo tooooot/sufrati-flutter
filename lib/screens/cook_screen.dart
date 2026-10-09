@@ -120,6 +120,7 @@ class _CookScreenState extends State<CookScreen> {
             final pid = program.meta.id;
             final dayName = widget.i18n.dayName(day.dayIndex, lang, widget.library.dayNames[day.dayIndex]);
             return TabsScaffold(
+              programId: pid,
               header: _header(h.cookName, dayName, h.eaters),
               tabs: [
                 TabItem('🍽️', ui('nav_today'), (_) => _today(program, day, now)),

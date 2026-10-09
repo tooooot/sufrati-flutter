@@ -147,7 +147,7 @@ class _Slot extends StatelessWidget {
             padding: const EdgeInsets.symmetric(vertical: 16),
             decoration: BoxDecoration(color: Brand.cream, borderRadius: BorderRadius.circular(16)),
             child: Text(inv.code, textAlign: TextAlign.center, textDirection: TextDirection.ltr,
-                style: const TextStyle(fontSize: 38, fontWeight: black, letterSpacing: 8, color: Brand.green)),
+                style: const TextStyle(fontSize: 30, fontWeight: black, letterSpacing: 6, color: Brand.green)),
           ),
           const SizedBox(height: 6),
           const Text('يعمل مرة واحدة · ينتهي بعد 7 أيام', textAlign: TextAlign.center,

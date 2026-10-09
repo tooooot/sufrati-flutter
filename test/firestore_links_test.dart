@@ -31,7 +31,7 @@ void main() {
 
     final inv = await owner.createInvite(Role.cook);
     await settle();
-    expect(inv.code.length, 6);
+    expect(inv.code.length, 8);
     expect(owner.inviteFor(Role.cook)?.code, inv.code);
 
     final (cook, _) = await user(db, 'u-cook');

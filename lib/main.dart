@@ -1,6 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_web_plugins/url_strategy.dart';
@@ -44,6 +47,20 @@ Future<void> main() async {
   FirebaseFirestore? db;
   if (!kIsWeb) {
     await Firebase.initializeApp(options: SufratiFirebase.current);
+    // App Check: يثبت أن الطلبات من تطبيقنا الحقيقي (Play Integrity / App Attest) لا من سكربت بمفتاحنا.
+    // الإنفاذ على Firestore معطّل عمداً حتى نتأكد من الأجهزة؛ وفشل التفعيل لا يوقف التطبيق.
+    try {
+      await FirebaseAppCheck.instance.activate(
+        providerAndroid: const AndroidPlayIntegrityProvider(),
+        providerApple: const AppleAppAttestWithDeviceCheckFallbackProvider(),
+      );
+    } catch (_) {}
+    // Crashlytics: أعطال الجوال الحقيقية (بلا بيانات شخصية: لا نضبط معرّف مستخدم).
+    FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
+    PlatformDispatcher.instance.onError = (error, stack) {
+      FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
+      return true;
+    };
     auth = FirebaseAuthService();
     db = FirebaseFirestore.instance;
     links = FirestoreLinkService(db, auth);

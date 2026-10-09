@@ -10,8 +10,10 @@ dependencies:
   adhan: ^2.0.0+1
   cloud_firestore: ^6.10.0
   crypto: ^3.0.7
+  firebase_app_check: ^0.4.8
   firebase_auth: ^6.7.0
   firebase_core: ^4.15.0
+  firebase_crashlytics: ^5.4.0
   flutter:
     sdk: flutter
   flutter_local_notifications: ^22.3.1

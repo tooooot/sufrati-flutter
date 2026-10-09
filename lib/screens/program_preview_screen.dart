@@ -6,6 +6,7 @@ import '../data/repository.dart';
 import '../logic/planner.dart';
 import '../theme.dart';
 import '../widgets/common.dart';
+import '../widgets/medical_note.dart';
 
 /// معاينة نظام قبل التسجيل — نقل لـ program_preview.html (معرض الأطباق + أسبوع تجريبي بلا حساب).
 class ProgramPreviewScreen extends StatefulWidget {
@@ -46,11 +47,12 @@ class _ProgramPreviewScreenState extends State<ProgramPreviewScreen> {
               title: meta.label,
               subtitle: meta.blurb,
               leading: TextButton(
-                onPressed: () => context.go('/'),
+                onPressed: () => context.go('/browse'),
                 child: Text('‹ كل الأنظمة',
                     style: TextStyle(color: Colors.white.withValues(alpha: .85), decoration: TextDecoration.underline)),
               ),
             ),
+            Padding(padding: const EdgeInsets.symmetric(horizontal: 12), child: MedicalNote(programId: program.meta.id)),
             if (gallery.isNotEmpty) ...[
               const Padding(
                 padding: EdgeInsets.fromLTRB(12, 16, 12, 8),
