@@ -51,7 +51,8 @@ jobs:
           keyPassword=$KEY_PASS
           EOF
       - name: Build AAB
-        run: flutter build appbundle --release
+        # رقم النسخة يزيد تلقائياً مع كل تشغيل (أعلى من ٥ المرفوعة سابقاً)
+        run: flutter build appbundle --release --build-number=$((10 + ${{ github.run_number }}))
       - name: Verify signature (must be the upload key)
         run: |
           keytool -printcert -jarfile build/app/outputs/bundle/release/app-release.aab | grep -E "SHA1|SHA256"
