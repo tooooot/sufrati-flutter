@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -47,6 +48,16 @@ class _LoginScreenState extends State<LoginScreen> {
             child: Padding(
               padding: const EdgeInsets.fromLTRB(16, 28, 16, 32),
               child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+                if (kIsWeb)
+                  Container(
+                    margin: const EdgeInsets.only(bottom: 16),
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(color: Brand.amber50, borderRadius: BorderRadius.circular(16),
+                        border: Border.all(color: Brand.honey)),
+                    child: const Text('نسخة المعاينة على الويب: الدخول هنا تجريبي لاستعراض الشاشات فقط. '
+                        'الدخول الحقيقي بحساب Google أو Apple في تطبيق الجوال.',
+                        textAlign: TextAlign.center, style: TextStyle(fontSize: 12, height: 1.6)),
+                  ),
                 if (_error != null)
                   Container(
                     margin: const EdgeInsets.only(bottom: 16),

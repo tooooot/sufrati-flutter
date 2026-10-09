@@ -71,8 +71,6 @@ class _JoinScreenState extends State<JoinScreen> {
                 ),
                 const SizedBox(height: 22),
                 const LinkExplainer(),
-                const SizedBox(height: 12),
-                TextButton(onPressed: () => context.go('/role'), child: const Text('‹ تغيير الدور')),
               ]),
             ),
           ),

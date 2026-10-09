@@ -20,6 +20,7 @@ import 'data/household.dart';
 import 'data/i18n.dart';
 import 'data/repository.dart';
 import 'data/store.dart';
+import 'routing.dart';
 import 'screens/coming_next_screen.dart';
 import 'screens/cook_screen.dart';
 import 'screens/demo_screen.dart';
@@ -58,16 +59,7 @@ class SufratiApp extends StatelessWidget {
   late final _session = Session(auth);
   final _links = LinkService();
 
-  static bool _isPublic(String p) =>
-      p == '/login' || p == '/browse' || p.startsWith('/programs/') || p.startsWith('/demo');
-
-  late final _router = GoRouter(refreshListenable: _session, redirect: (_, state) {
-    final p = state.matchedLocation;
-    if (!_session.signedIn) return _isPublic(p) ? null : '/login';
-    if (p == '/login') return _session.needsRole ? '/role' : '/';
-    if (_session.needsRole && !_isPublic(p) && p != '/role') return '/role';
-    return null;
-  }, routes: [
+  late final _router = GoRouter(refreshListenable: _session, redirect: (_, state) => appRedirect(_session, state.matchedLocation), routes: [
     GoRoute(path: '/role', builder: (_, _) => RoleScreen(session: _session)),
     GoRoute(path: '/browse', builder: (_, _) => StartScreen(library: library)),
     GoRoute(path: '/household', builder: (_, _) => HouseholdScreen(links: _links, library: library)),
