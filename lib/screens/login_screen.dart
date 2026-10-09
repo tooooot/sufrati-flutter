@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -31,8 +32,10 @@ class _LoginScreenState extends State<LoginScreen> {
       if (mounted) context.go(widget.next);
     } on SignInCancelled {
       // المستخدم أغلق النافذة — لا رسالة
+    } on AuthFailure catch (f) {
+      if (mounted) setState(() => _error = f.message);
     } catch (_) {
-      if (mounted) setState(() => _error = 'تعذّر تسجيل الدخول. تأكد من الاتصال وحاول مرة أخرى.');
+      if (mounted) setState(() => _error = const AuthFailure(AuthFailureKind.other).message);
     } finally {
       if (mounted) setState(() => _busy = null);
     }
@@ -43,8 +46,10 @@ class _LoginScreenState extends State<LoginScreen> {
     try {
       await widget.auth.signInWithPassword(_email.text, _pass.text);
       if (mounted) context.go(widget.next);
+    } on AuthFailure catch (f) {
+      if (mounted) setState(() => _error = f.message);
     } catch (_) {
-      if (mounted) setState(() => _error = 'البريد أو كلمة السر غير صحيحة.');
+      if (mounted) setState(() => _error = const AuthFailure(AuthFailureKind.other).message);
     } finally {
       if (mounted) setState(() => _reviewBusy = false);
     }
@@ -55,7 +60,8 @@ class _LoginScreenState extends State<LoginScreen> {
     final a = widget.auth;
     return Scaffold(
       body: ListView(padding: EdgeInsets.zero, children: [
-        const GreenHeader(icon: '🍽️', title: 'سفرتي', subtitle: 'سجّل دخولك بحساب Google أو Apple ثم حدّد دورك'),
+        GreenHeader(icon: '🍽️', title: 'سفرتي',
+            subtitle: a.isAvailable(SignInMethod.apple) ? 'سجّل دخولك بحساب Google أو Apple ثم حدّد دورك' : 'سجّل دخولك بحساب Google ثم حدّد دورك'),
         Center(
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 420),
@@ -80,7 +86,8 @@ class _LoginScreenState extends State<LoginScreen> {
                         style: const TextStyle(color: Color(0xFFB91C1C), fontWeight: FontWeight.bold)),
                   ),
                 if (a.isAvailable(SignInMethod.google))
-                  _Btn(label: 'المتابعة بحساب Google', icon: 'G', busy: _busy == SignInMethod.google,
+                  _Btn(label: 'المتابعة بحساب Google', icon: '',
+                      iconWidget: SvgPicture.asset('assets/images/google_g.svg', width: 22, height: 22), busy: _busy == SignInMethod.google,
                       disabled: _busy != null, onTap: () => _go(SignInMethod.google),
                       bg: Colors.white, fg: const Color(0xFF1F2937), border: const Color(0xFFD1D5DB)),
                 if (a.isAvailable(SignInMethod.google) && a.isAvailable(SignInMethod.apple)) const SizedBox(height: 12),
@@ -130,11 +137,12 @@ class _LoginScreenState extends State<LoginScreen> {
 
 class _Btn extends StatelessWidget {
   final String label, icon;
+  final Widget? iconWidget;
   final bool busy, disabled;
   final VoidCallback onTap;
   final Color bg, fg;
   final Color? border;
-  const _Btn({required this.label, required this.icon, required this.busy, required this.disabled,
+  const _Btn({required this.label, required this.icon, this.iconWidget, required this.busy, required this.disabled,
       required this.onTap, required this.bg, required this.fg, this.border});
 
   @override
@@ -151,7 +159,7 @@ class _Btn extends StatelessWidget {
           child: busy
               ? SizedBox(width: 22, height: 22, child: CircularProgressIndicator(strokeWidth: 2.5, color: fg))
               : Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                  Text(icon, style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w900)),
+                  iconWidget ?? Text(icon, style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w900)),
                   const SizedBox(width: 10),
                   Text(label, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800)),
                 ]),

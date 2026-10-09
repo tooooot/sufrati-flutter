@@ -17,8 +17,27 @@ class SignInCancelled implements Exception {
   const SignInCancelled();
 }
 
+/// سبب فشل الدخول بلغة المستخدم (لا نعرض «بيانات خاطئة» لكل خطأ).
+enum AuthFailureKind { credentials, network, tooMany, disabled, other }
+
+class AuthFailure implements Exception {
+  final AuthFailureKind kind;
+  const AuthFailure(this.kind);
+
+  String get message => switch (kind) {
+        AuthFailureKind.credentials => 'البريد أو كلمة السر غير صحيحة.',
+        AuthFailureKind.network => 'تعذّر الاتصال بالإنترنت. تأكد من الشبكة وحاول مرة أخرى.',
+        AuthFailureKind.tooMany => 'محاولات كثيرة. انتظر قليلاً ثم حاول مرة أخرى.',
+        AuthFailureKind.disabled => 'هذا الحساب موقوف. تواصل معنا.',
+        AuthFailureKind.other => 'تعذّر تسجيل الدخول. حاول مرة أخرى.',
+      };
+}
+
 abstract class AuthService extends ChangeNotifier {
   AppUser? get user;
+
+  /// يكتمل بعد استعادة الجلسة المحفوظة (حتى لا نومض شاشة الدخول لمن هو مسجَّل أصلاً).
+  Future<void> get initialized async {}
   /// Apple متاح على iOS/macOS/الويب؛ على أندرويد يظهر Google فقط.
   bool isAvailable(SignInMethod method);
   Future<void> signIn(SignInMethod method);

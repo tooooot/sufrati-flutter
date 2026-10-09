@@ -6,7 +6,7 @@ class Brand {
   static const honey = Color(0xFFBF8630);
   static const cream = Color(0xFFFAF4E6);
   static const amber50 = Color(0xFFFFFBEB);
-  static const grey = Color(0xFF6B7280);
+  static const grey = Color(0xFF4B5563); // أغمق من السابق لتباين أفضل على الكريمي
 }
 
 ThemeData sufratiTheme() => ThemeData(

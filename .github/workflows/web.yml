@@ -18,7 +18,7 @@ jobs:
       - name: Build web
         run: |
           flutter pub get
-          flutter build web --release --no-wasm-dry-run --base-href /preview/ --no-web-resources-cdn
+          flutter build web --release --no-wasm-dry-run --base-href /preview/
       - uses: actions/upload-artifact@v4
         with:
           name: sufrati-web

@@ -7,6 +7,7 @@ import '../data/models.dart';
 import '../data/repository.dart';
 import '../data/store.dart';
 import '../notify/cook_alerts.dart';
+import '../widgets/profile_button.dart';
 import '../notify/notification_service.dart';
 import '../logic/day_view.dart';
 import '../logic/planner.dart';
@@ -141,22 +142,30 @@ class _CookScreenState extends State<CookScreen> {
           subtitle: '$dayName — ${ui('cooking_for')} $eaters 👤',
         ),
         PositionedDirectional(
+          start: 8,
+          top: MediaQuery.paddingOf(context).top + 8,
+          child: const ProfileButton(),
+        ),
+        PositionedDirectional(
           end: 12,
           top: MediaQuery.paddingOf(context).top + 12,
           child: Row(children: [
-            for (final code in widget.i18n.langs.keys)
+            for (final e in widget.i18n.langs.entries)
               Padding(
-                padding: const EdgeInsets.only(left: 4),
+                padding: const EdgeInsetsDirectional.only(start: 6),
                 child: GestureDetector(
                   onTap: () {
-                    setState(() => lang = code);
+                    setState(() => lang = e.key);
                     if (_alertsOn) _syncAlerts(ask: false); // عناوين التنبيهات تتبع اللغة
                   },
-                  child: CircleAvatar(
-                    radius: 18,
-                    backgroundColor: lang == code ? Colors.white : Colors.white24,
-                    child: Text(code.toUpperCase(), style: TextStyle(fontSize: 11, fontWeight: black,
-                        color: lang == code ? Brand.green : Colors.white)),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: lang == e.key ? Colors.white : Colors.white24,
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: Text(e.value, style: TextStyle(fontSize: 12, fontWeight: black,
+                        color: lang == e.key ? Brand.green : Colors.white)),
                   ),
                 ),
               ),

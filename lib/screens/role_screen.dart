@@ -5,6 +5,7 @@ import '../auth/roles.dart';
 import '../auth/session.dart';
 import '../routing.dart';
 import '../widgets/medical_note.dart';
+import '../widgets/profile_button.dart';
 import '../theme.dart';
 import '../widgets/common.dart';
 
@@ -18,7 +19,7 @@ class RoleScreen extends StatelessWidget {
     final name = session.user?.name ?? '';
     return Scaffold(
       body: ListView(padding: EdgeInsets.zero, children: [
-        GreenHeader(icon: '👋', title: name.isEmpty ? 'أهلاً بك' : 'أهلاً $name', subtitle: 'كيف ستستخدم سفرتي؟'),
+        GreenHeader(leading: const ProfileButton(), icon: '👋', title: name.isEmpty ? 'أهلاً بك' : 'أهلاً $name', subtitle: 'كيف ستستخدم سفرتي؟'),
         Center(
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 480),
@@ -28,7 +29,7 @@ class RoleScreen extends StatelessWidget {
                 for (final (role, icon, title, sub) in const [
                   (Role.owner, '🏠', 'صاحب البيت', 'أتابع نظامي الغذائي أو نظام أحد أفراد بيتي'),
                   (Role.cook, '👨‍🍳', 'الطاهي', 'دعاني صاحب البيت وعندي رمز الدعوة'),
-                  (Role.doctor, '🩺', 'الطبيب', 'أتابع مرضاي وأجهّز أنظمتهم'),
+                  (Role.doctor, '🩺', 'الطبيب', 'أتابع مرضاي وأجهّز أنظمتهم — يتطلب موافقة مدير سفرتي'),
                 ]) ...[
                   CardBox(
                     onTap: () async {

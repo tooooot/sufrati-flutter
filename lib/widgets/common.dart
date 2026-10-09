@@ -21,7 +21,7 @@ class GreenHeader extends StatelessWidget {
           Text(icon, style: const TextStyle(fontSize: 46)),
           const SizedBox(height: 4),
           Text(title, textAlign: TextAlign.center,
-              style: const TextStyle(color: Colors.white, fontSize: 26, fontWeight: black)),
+              style: TextStyle(color: Colors.white, fontSize: title.length > 18 ? 21 : 26, fontWeight: black)),
           if (subtitle != null) ...[
             const SizedBox(height: 4),
             Text(subtitle!, textAlign: TextAlign.center,

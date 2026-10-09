@@ -25,11 +25,11 @@ class MedicalNote extends StatelessWidget {
           'سفرتي أداة لتنظيم الوجبات ولا تغني عن استشارة طبيبك أو أخصائي التغذية، '
           'خاصة لمرضى الكلى والأمراض المزمنة. استشر طبيبك قبل أي تغيير في نظامك الغذائي.',
           textAlign: TextAlign.center,
-          style: TextStyle(fontSize: 11.5, color: Brand.grey, height: 1.7),
+          style: TextStyle(fontSize: 12.5, color: Brand.grey, height: 1.7),
         ),
         if (src.isNotEmpty) ...[
           const SizedBox(height: 6),
-          Text(src, textAlign: TextAlign.center, style: const TextStyle(fontSize: 11.5, color: Brand.grey, height: 1.7)),
+          Text(src, textAlign: TextAlign.center, style: const TextStyle(fontSize: 12.5, color: Brand.grey, height: 1.7)),
         ],
       ]),
     );

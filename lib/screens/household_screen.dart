@@ -9,6 +9,7 @@ import '../data/repository.dart';
 import '../theme.dart';
 import '../widgets/common.dart';
 import '../widgets/link_explainer.dart';
+import '../widgets/profile_button.dart';
 
 /// «بيتي» لصاحب البيت: ملخص البيت + أعضاؤه (الطاهي والطبيب) + إصدار دعوات الربط.
 class HouseholdScreen extends StatelessWidget {
@@ -22,6 +23,7 @@ class HouseholdScreen extends StatelessWidget {
         builder: (context, _) => Scaffold(
           body: ListView(padding: EdgeInsets.zero, children: [
             GreenHeader(
+              leading: const ProfileButton(),
               icon: '🏠',
               title: links.hasHousehold ? links.label : 'بيتي',
               subtitle: links.hasHousehold ? (library.meta(links.programId)?.label ?? '') : 'لم تنشئ بيتاً بعد',

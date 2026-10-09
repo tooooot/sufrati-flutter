@@ -1,4 +1,5 @@
 // الدخول الحقيقي: Google على أندرويد وآيفون، وApple على آيفون (Apple إلزامية عند وجود Google).
+import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
 
@@ -17,19 +18,27 @@ class FirebaseAuthService extends AuthService {
   final FirebaseFirestore _db;
   AppUser? _user;
   bool _googleReady = false;
+  final _initDone = Completer<void>();
 
   FirebaseAuthService({fb.FirebaseAuth? auth, FirebaseFirestore? db})
       : _auth = auth ?? fb.FirebaseAuth.instance,
         _db = db ?? FirebaseFirestore.instance {
     // الجلسة تُستعاد تلقائياً عند فتح التطبيق، وتتحدّث عند تغيّر الدخول/الخروج
     _auth.authStateChanges().listen((u) async {
-      _user = u == null ? null : await _load(u);
-      notifyListeners();
+      try {
+        _user = u == null ? null : await _load(u);
+      } finally {
+        notifyListeners();
+        if (!_initDone.isCompleted) _initDone.complete();
+      }
     });
   }
 
   @override
   AppUser? get user => _user;
+
+  @override
+  Future<void> get initialized => _initDone.future;
 
   @override
   bool isAvailable(SignInMethod m) => switch (m) {
@@ -55,10 +64,15 @@ class FirebaseAuthService extends AuthService {
 
   @override
   Future<void> signIn(SignInMethod m) async {
-    final cred = switch (m) {
-      SignInMethod.google => await _google(),
-      SignInMethod.apple => await _apple(),
-    };
+    final fb.UserCredential cred;
+    try {
+      cred = switch (m) {
+        SignInMethod.google => await _google(),
+        SignInMethod.apple => await _apple(),
+      };
+    } on fb.FirebaseAuthException catch (e) {
+      throw _failure(e);
+    }
     await _afterSignIn(cred.user!);
   }
 
@@ -67,9 +81,21 @@ class FirebaseAuthService extends AuthService {
 
   @override
   Future<void> signInWithPassword(String email, String password) async {
-    final cred = await _auth.signInWithEmailAndPassword(email: email.trim(), password: password);
-    await _afterSignIn(cred.user!);
+    try {
+      final cred = await _auth.signInWithEmailAndPassword(email: email.trim(), password: password);
+      await _afterSignIn(cred.user!);
+    } on fb.FirebaseAuthException catch (e) {
+      throw _failure(e);
+    }
   }
+
+  AuthFailure _failure(fb.FirebaseAuthException e) => AuthFailure(switch (e.code) {
+        'invalid-credential' || 'wrong-password' || 'user-not-found' || 'invalid-email' => AuthFailureKind.credentials,
+        'network-request-failed' => AuthFailureKind.network,
+        'too-many-requests' => AuthFailureKind.tooMany,
+        'user-disabled' => AuthFailureKind.disabled,
+        _ => AuthFailureKind.other,
+      });
 
   Future<void> _afterSignIn(fb.User u) async {
     // أول دخول: سجلّ المستخدم. isDoctor يبقى false (القواعد تمنع المستخدم من منح نفسه)

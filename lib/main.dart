@@ -62,6 +62,8 @@ Future<void> main() async {
   final AuthService auth = FirebaseAuthService();
   final FirebaseFirestore db = FirebaseFirestore.instance;
   final LinkService links = FirestoreLinkService(db, auth);
+  // نستعيد الجلسة المحفوظة قبل رسم أي شاشة: لا وميض لشاشة الدخول، ولا تضيع الروابط العميقة.
+  await auth.initialized.timeout(const Duration(seconds: 6), onTimeout: () {});
   runApp(SufratiApp(library: library, i18n: i18n, auth: auth, links: links, db: db));
 }
 
@@ -78,7 +80,8 @@ class SufratiApp extends StatelessWidget {
 
   late final _router = GoRouter(
     refreshListenable: _session,
-    redirect: (_, state) => appRedirect(_session, state.matchedLocation),
+    redirect: (_, state) => appRedirect(_session, state.matchedLocation,
+        full: state.uri.toString(), next: state.uri.queryParameters['next']),
     routes: [
       GoRoute(path: '/loading', builder: (_, _) => const Scaffold(body: Center(child: CircularProgressIndicator()))),
       GoRoute(path: '/role', builder: (_, _) => RoleScreen(session: _session)),
@@ -120,28 +123,5 @@ class SufratiApp extends StatelessWidget {
         supportedLocales: const [Locale('ar'), Locale('en')],
         localizationsDelegates: GlobalMaterialLocalizations.delegates,
         routerConfig: _router,
-        builder: (context, child) => ListenableBuilder(
-          listenable: Listenable.merge([_session, _router.routeInformationProvider]),
-          builder: (context, _) {
-            final path = _router.routeInformationProvider.value.uri.path;
-            final show = _session.signedIn && path != '/login' && path != '/profile';
-            return Stack(children: [
-              child ?? const SizedBox.shrink(),
-              if (show)
-                PositionedDirectional(
-                  start: 10, // الجهة المقابلة لأزرار اللغات في لوحة الطاهي
-                  top: MediaQuery.paddingOf(context).top + 6,
-                  child: Material(
-                    color: Colors.white24, shape: const CircleBorder(),
-                    child: IconButton(
-                      tooltip: 'ملفي الشخصي',
-                      icon: const Icon(Icons.account_circle, color: Colors.white, size: 30),
-                      onPressed: () => _router.go('/profile'),
-                    ),
-                  ),
-                ),
-            ]);
-          },
-        ),
       );
 }

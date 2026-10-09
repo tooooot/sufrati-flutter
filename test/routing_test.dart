@@ -9,9 +9,9 @@ import 'package:sufrati/routing.dart';
 void main() {
   test('بلا دخول: كل شيء يذهب للدخول عدا التصفح', () {
     final s = Session(FakeAuthService(), MemoryLinkService());
-    expect(appRedirect(s, '/'), '/login');
-    expect(appRedirect(s, '/profile'), '/login');
-    expect(appRedirect(s, '/household'), '/login');
+    expect(appRedirect(s, '/'), startsWith('/login'));
+    expect(appRedirect(s, '/profile'), '/login?next=%2Fprofile');
+    expect(appRedirect(s, '/household', full: '/household?x=1'), '/login?next=%2Fhousehold%3Fx%3D1');
     expect(appRedirect(s, '/login'), isNull);
     expect(appRedirect(s, '/browse'), isNull);
     expect(appRedirect(s, '/programs/keto_general'), isNull);
@@ -67,5 +67,18 @@ void main() {
     await auth.signIn(SignInMethod.google);
     s.chooseRole(Role.owner);
     expect(appRedirect(s, '/admin'), isNot('/admin'));
+  });
+
+  test('الدخول يعيدك للصفحة التي كنت فيها، ويرفض الوجهات الخارجية', () async {
+    final auth = FakeAuthService();
+    final links = MemoryLinkService();
+    final s = Session(auth, links);
+    await auth.signIn(SignInMethod.google);
+    await links.createHousehold('بيت', 'keto_general', 1);
+    expect(appRedirect(s, '/login', next: '/cook'), '/cook');
+    expect(appRedirect(s, '/login', next: '/profile'), '/profile');
+    expect(appRedirect(s, '/login', next: 'https://evil.example'), '/me');
+    expect(appRedirect(s, '/login', next: '//evil.example'), '/me');
+    expect(appRedirect(s, '/login', next: '/login?next=/x'), '/me');
   });
 }

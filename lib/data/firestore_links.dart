@@ -131,7 +131,8 @@ class FirestoreLinkService extends LinkService {
       if (role == null) continue;
       out.add(Membership(e.key, e.value['label'] as String? ?? '', e.value['programId'] as String? ?? '', role));
     }
-    out.sort((a, b) => a.role.index.compareTo(b.role.index));
+    const order = {Role.owner: 0, Role.doctor: 1, Role.cook: 2, Role.admin: 3};
+    out.sort((a, b) => order[a.role]!.compareTo(order[b.role]!));
     return out;
   }
 

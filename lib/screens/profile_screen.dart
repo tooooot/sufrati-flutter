@@ -23,7 +23,7 @@ class ProfileScreen extends StatelessWidget {
         builder: (context, _) => ListView(padding: EdgeInsets.zero, children: [
           GreenHeader(
             icon: '👤', title: name, subtitle: u?.email,
-            leading: IconButton(icon: const Icon(Icons.arrow_forward, color: Colors.white),
+            leading: IconButton(icon: const Icon(Icons.arrow_back, color: Colors.white),
                 onPressed: () => context.canPop() ? context.pop() : context.go('/')),
           ),
           Center(

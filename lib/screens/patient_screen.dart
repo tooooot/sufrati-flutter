@@ -8,7 +8,9 @@ import '../logic/planner.dart';
 import '../logic/prayer.dart';
 import '../logic/shopping.dart';
 import '../theme.dart';
+import '../logic/dates.dart';
 import '../widgets/common.dart';
+import '../widgets/profile_button.dart';
 import '../widgets/tabs_scaffold.dart';
 
 /// لوحة المريض/صاحب البيت — نقل لـ user.html: الوجبات (اليوم/غداً) · المشتريات · الأسبوع القادم.
@@ -24,7 +26,7 @@ class PatientScreen extends StatelessWidget {
       listenable: store,
       builder: (context, _) => TabsScaffold(
         programId: store.household.programId,
-        header: GreenHeader(icon: meta.icon, title: 'سفرتي', subtitle: '${store.household.label} — ${meta.label}'),
+        header: GreenHeader(icon: meta.icon, title: 'سفرتي', subtitle: '${store.household.label} — ${meta.label}', leading: const ProfileButton()),
         tabs: [
           TabItem('🍽️', 'الوجبات', (_) => _MealsTab(store: store, library: library)),
           TabItem('🛒', 'المشتريات', (_) => _ShoppingTab(store: store)),
@@ -61,36 +63,50 @@ class _MealsTabState extends State<_MealsTab> {
         final tip = program.userTips.isEmpty ? null : program.userTips[_ordinal(now) % program.userTips.length];
         return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
           if (tip != null)
-            CardBox(
-              border: Border.all(color: Brand.green.withValues(alpha: .15), width: 2),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: Brand.green.withValues(alpha: .15))),
               child: Row(children: [
-                Text(tip['icon'] ?? '💡', style: const TextStyle(fontSize: 34)),
-                const SizedBox(width: 12),
-                Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  const Text('💡 هل تعلم؟', style: TextStyle(fontSize: 12, fontWeight: black, color: Brand.honey)),
-                  Text(tip['text'] ?? '', style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
-                ])),
+                Text(tip['icon'] ?? '💡', style: const TextStyle(fontSize: 22)),
+                const SizedBox(width: 8),
+                Expanded(child: Text(tip['text'] ?? '', maxLines: 2, overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: Color(0xFF374151)))),
               ]),
             ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 12),
           Row(children: [
             for (final (t, label) in [(false, '🗓️ اليوم'), (true, '⏭️ غدًا')]) ...[
               Expanded(child: _BigToggle(label: label, selected: tomorrow == t, onTap: () => setState(() => tomorrow = t))),
               if (!t) const SizedBox(width: 12),
             ],
           ]),
-          const SizedBox(height: 20),
-          Text(widget.library.dayNames[day.dayIndex], textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 30, fontWeight: black, color: Brand.green)),
-          const SizedBox(height: 16),
+          const SizedBox(height: 14),
+          Text('${widget.library.dayNames[day.dayIndex]} · ${arDate(date)}', textAlign: TextAlign.center,
+              style: const TextStyle(fontSize: 24, fontWeight: black, color: Brand.green)),
+          const SizedBox(height: 4),
+          Text('حُضّرت ${day.slots.where((x) => x.prepared).length} من ${day.slots.length} وجبات',
+              textAlign: TextAlign.center, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: Brand.honey)),
+          const SizedBox(height: 14),
           for (final s in day.slots) ...[
-            _MealCard(s: s, program: program, library: widget.library, eaters: widget.store.household.eaters),
+            _MealCard(s: s, program: program, library: widget.library, eaters: widget.store.household.eaters,
+                next: !tomorrow && identical(s, _nextSlot(day, now))),
             const SizedBox(height: 16),
           ],
         ]);
       },
     );
   }
+}
+
+/// الوجبة القادمة اليوم: أول وجبة وقتها لم يحن بعد وليست محضَّرة.
+SlotView? _nextSlot(DayView day, DateTime now) {
+  for (final s in day.slots) {
+    if (s.prepared) continue;
+    final hm = s.time.split(':').map(int.parse).toList();
+    if (hm[0] * 60 + hm[1] >= now.hour * 60 + now.minute) return s;
+  }
+  return null;
 }
 
 int _ordinal(DateTime d) => DateTime.utc(d.year, d.month, d.day).difference(DateTime.utc(1, 1, 1)).inDays + 1;
@@ -105,7 +121,7 @@ class _BigToggle extends StatelessWidget {
   Widget build(BuildContext context) => GestureDetector(
         onTap: onTap,
         child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 18),
+          padding: const EdgeInsets.symmetric(vertical: 12),
           decoration: BoxDecoration(
             color: selected ? Brand.green : Colors.white,
             borderRadius: BorderRadius.circular(16),
@@ -113,7 +129,7 @@ class _BigToggle extends StatelessWidget {
             boxShadow: const [BoxShadow(color: Color(0x14000000), blurRadius: 6)],
           ),
           child: Text(label, textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 22, fontWeight: black, color: selected ? Colors.white : Brand.green)),
+              style: TextStyle(fontSize: 18, fontWeight: black, color: selected ? Colors.white : Brand.green)),
         ),
       );
 }
@@ -123,15 +139,25 @@ class _MealCard extends StatelessWidget {
   final Program program;
   final Library library;
   final int eaters;
-  const _MealCard({required this.s, required this.program, required this.library, required this.eaters});
+  final bool next;
+  const _MealCard({required this.s, required this.program, required this.library, required this.eaters, this.next = false});
 
   @override
   Widget build(BuildContext context) {
     final photo = s.option == null ? null : library.photoUrl(program.meta.id, s.option!.id);
     return CardBox(
       padding: const EdgeInsets.all(20),
-      border: Border.all(color: Brand.honey.withValues(alpha: .3), width: 2),
+      border: Border.all(color: next ? Brand.honey : Brand.honey.withValues(alpha: .3), width: next ? 3 : 2),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        if (next)
+          Container(
+            margin: const EdgeInsets.only(bottom: 8),
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+            decoration: BoxDecoration(color: Brand.honey, borderRadius: BorderRadius.circular(20)),
+            child: const Text('الوجبة القادمة', style: TextStyle(fontSize: 12, fontWeight: black, color: Colors.white)),
+          ),
+        if (s.prepared)
+          const Padding(padding: EdgeInsets.only(bottom: 6), child: Text('✅ حُضّرت', style: TextStyle(fontWeight: black, color: Brand.green))),
         Row(children: [
           Text(s.slot.icon, style: const TextStyle(fontSize: 34)),
           const SizedBox(width: 8),
@@ -224,7 +250,14 @@ class _ShoppingCard extends StatelessWidget {
                   style: TextStyle(fontWeight: FontWeight.bold, color: Brand.honey)),
             ),
           const SizedBox(height: 8),
-          for (final l in lines)
+          Builder(builder: (_) {
+            final total = lines.fold<double>(0, (a, l) => a + l.packs * l.unitPrice);
+            final done = lines.where((l) => l.bought).length;
+            return Text('اشتريت $done من ${lines.length} · التكلفة التقديرية ${total.toStringAsFixed(0)} ر.س',
+                style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: Brand.grey));
+          }),
+          const SizedBox(height: 4),
+          for (final l in ([...lines]..sort((a, b) => a.bought == b.bought ? 0 : (a.bought ? 1 : -1))))
             Container(
               padding: const EdgeInsets.symmetric(vertical: 8),
               decoration: const BoxDecoration(border: Border(bottom: BorderSide(color: Brand.cream))),
@@ -232,12 +265,17 @@ class _ShoppingCard extends StatelessWidget {
                 Text(program.ingredients[l.key]!.icon, style: const TextStyle(fontSize: 28)),
                 const SizedBox(width: 8),
                 Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  Text(program.ingredients[l.key]!.label, style: const TextStyle(fontWeight: FontWeight.bold)),
+                  Text(program.ingredients[l.key]!.label, style: TextStyle(fontWeight: FontWeight.bold, decoration: l.bought ? TextDecoration.lineThrough : null, color: l.bought ? Brand.grey : null)),
                   Text(program.ingredients[l.key]!.buyUnit, style: const TextStyle(fontSize: 13, color: Brand.grey)),
                 ])),
-                if (locked)
-                  Text('× ${l.packs}', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold))
-                else ...[
+                if (locked) ...[
+                  Text('× ${l.packs}', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                  Column(children: [
+                    Checkbox(value: l.bought, activeColor: Brand.green,
+                        onChanged: (v) => store.updateShopping(week, l.key, bought: v ?? false)),
+                    const Text('تم', style: TextStyle(fontSize: 11)),
+                  ]),
+                ] else ...[
                   _Step('−', l.packs > 0 ? () => store.updateShopping(week, l.key, packs: l.packs - 1) : null),
                   SizedBox(width: 32, child: Text('${l.packs}', textAlign: TextAlign.center,
                       style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold))),
@@ -275,8 +313,8 @@ class _NextWeekTab extends StatelessWidget {
           child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
             const Text('📝 تعديل خطة الأسبوع القادم',
                 style: TextStyle(fontSize: 22, fontWeight: black, color: Brand.green)),
-            const Text('اضغط على اليوم لتغيير أي وجبة قبل أن تبدأ مشتريات ذلك الأسبوع',
-                style: TextStyle(fontSize: 13, color: Brand.grey)),
+            Text('اضغط على اليوم لتغيير أي وجبة. تُقفل المشتريات مساء ${const ['السبت', 'الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة'][store.household.cutoffDay]} الساعة ${ar12(store.household.cutoffTime)}.',
+                style: const TextStyle(fontSize: 13, color: Brand.grey, height: 1.6)),
             const SizedBox(height: 12),
             for (var d = 0; d < 7; d++)
               Container(
@@ -285,8 +323,14 @@ class _NextWeekTab extends StatelessWidget {
                 child: Theme(
                   data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
                   child: ExpansionTile(
-                    title: Text(library.dayNames[d],
-                        style: const TextStyle(fontSize: 18, fontWeight: black, color: Brand.green)),
+                    title: Text('${library.dayNames[d]} · ${arDate(nextWeek.add(Duration(days: d)))}',
+                        style: const TextStyle(fontSize: 17, fontWeight: black, color: Brand.green)),
+                    subtitle: Text([
+                      for (final slot in program.slots)
+                        slot.options.where((o) => o.id == plan.days[d][slot.id]).firstOrNull?.label ?? '',
+                    ].where((t) => t.isNotEmpty).join(' · '),
+                        maxLines: 2, overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(fontSize: 12, color: Brand.grey)),
                     childrenPadding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
                     children: [
                       for (final slot in program.slots)
