@@ -20,12 +20,18 @@ class NotificationService {
   static bool get supported =>
       !kIsWeb && (defaultTargetPlatform == TargetPlatform.android || defaultTargetPlatform == TargetPlatform.iOS);
 
-  static const _channel = AndroidNotificationChannel(
-    'meals', 'تنبيهات الوجبات',
+  // مثل منبه الساعة: صوت على قناة المنبهات + اهتزاز + نافذة علوية، وملء الشاشة حيث يُسمح به.
+  // إعدادات قناة أندرويد لا تتغير بعد إنشائها على الجهاز، فكل تغيير يلزمه معرّف جديد ('meals_v3') ونحذف القديمين.
+  static const _channelId = 'meals_v3';
+  static final _vibration = Int64List.fromList([0, 600, 300, 600, 300, 900]);
+  static final _channel = AndroidNotificationChannel(
+    _channelId, 'تنبيهات الوجبات',
     description: 'وقت تحضير وتقديم الوجبات',
     importance: Importance.max,
     playSound: true,
     enableVibration: true,
+    vibrationPattern: _vibration,
+    audioAttributesUsage: AudioAttributesUsage.alarm,
   );
 
   Future<void> _ensureInit() async {
@@ -35,7 +41,11 @@ class NotificationService {
       android: AndroidInitializationSettings('ic_stat_sufrati'),
       iOS: DarwinInitializationSettings(requestAlertPermission: false, requestBadgePermission: false, requestSoundPermission: false),
     ));
-    await _plugin.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()?.createNotificationChannel(_channel);
+    final android = _plugin.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>();
+    for (final old in const ['meals', 'meals_v2']) {
+      await android?.deleteNotificationChannel(channelId: old);
+    }
+    await android?.createNotificationChannel(_channel);
     _init = true;
   }
 
@@ -58,18 +68,24 @@ class NotificationService {
     if (a != null) {
       final ok = await a.requestNotificationsPermission() ?? false;
       if (ok && !(await a.canScheduleExactNotifications() ?? true)) await a.requestExactAlarmsPermission();
+      if (ok) await a.requestFullScreenIntentPermission(); // أندرويد 14+: صفحة إعدادات «إشعارات ملء الشاشة»
       return ok;
     }
     final i = _plugin.resolvePlatformSpecificImplementation<IOSFlutterLocalNotificationsPlugin>();
     return await i?.requestPermissions(alert: true, sound: true, badge: false) ?? false;
   }
 
-  NotificationDetails get _details => const NotificationDetails(
-        android: AndroidNotificationDetails('meals', 'تنبيهات الوجبات',
+  NotificationDetails get _details => NotificationDetails(
+        android: AndroidNotificationDetails(_channelId, 'تنبيهات الوجبات',
             channelDescription: 'وقت تحضير وتقديم الوجبات',
             importance: Importance.max, priority: Priority.high,
-            icon: 'ic_stat_sufrati', color: Color(0xFF1F5A44), category: AndroidNotificationCategory.reminder),
-        iOS: DarwinNotificationDetails(presentAlert: true, presentSound: true, presentBanner: true),
+            playSound: true, enableVibration: true, vibrationPattern: _vibration,
+            audioAttributesUsage: AudioAttributesUsage.alarm,
+            category: AndroidNotificationCategory.alarm,
+            fullScreenIntent: true, // شاشة كاملة فوق القفل إن مُنح الإذن، وإلا نافذة علوية عادية
+            visibility: NotificationVisibility.public,
+            icon: 'ic_stat_sufrati', color: const Color(0xFF1F5A44)),
+        iOS: const DarwinNotificationDetails(presentAlert: true, presentSound: true, presentBanner: true),
       );
 
   /// يستبدل كل التنبيهات المجدولة بالقائمة الجديدة.

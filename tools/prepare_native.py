@@ -56,7 +56,7 @@ android {
         if 'android.permission.INTERNET' not in s:
             s = s.replace('<application', '<uses-permission android:name="android.permission.INTERNET"/>\n    <application', 1)
         s = re.sub(r'android:label="[^"]*"', 'android:label="سفرتي"', s, 1)
-        perms = ['POST_NOTIFICATIONS', 'SCHEDULE_EXACT_ALARM', 'RECEIVE_BOOT_COMPLETED', 'VIBRATE']
+        perms = ['POST_NOTIFICATIONS', 'SCHEDULE_EXACT_ALARM', 'RECEIVE_BOOT_COMPLETED', 'VIBRATE', 'USE_FULL_SCREEN_INTENT', 'WAKE_LOCK']
         for p_ in perms:
             if f'android.permission.{p_}' not in s:
                 s = s.replace('<application', f'<uses-permission android:name="android.permission.{p_}"/>\n    <application', 1)
@@ -71,6 +71,8 @@ android {
             </intent-filter>
         </receiver>
     </application>''', 1)
+        if 'showWhenLocked' not in s:
+            s = s.replace('<activity', '<activity\n            android:showWhenLocked="true"\n            android:turnScreenOn="true"', 1)
         if 'roundIcon' not in s:
             s = s.replace('android:icon="@mipmap/ic_launcher"', 'android:icon="@mipmap/ic_launcher"\n        android:roundIcon="@mipmap/ic_launcher_round"', 1)
         return s
