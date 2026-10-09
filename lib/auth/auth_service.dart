@@ -23,6 +23,11 @@ abstract class AuthService extends ChangeNotifier {
   bool isAvailable(SignInMethod method);
   Future<void> signIn(SignInMethod method);
   Future<void> signOut();
+
+  /// دخول المراجعين (Apple/Google Play): حساب بريد وكلمة سر حقيقي في Firebase، لا يُعرض إلا في قسم مطوي بشاشة الدخول.
+  bool get supportsPassword => false;
+  Future<void> signInWithPassword(String email, String password) async =>
+      throw UnsupportedError('غير متاح');
   /// حذف الحساب وكل بياناته — شرط Apple/Google.
   Future<void> deleteAccount();
 }

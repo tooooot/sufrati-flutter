@@ -59,7 +59,19 @@ class FirebaseAuthService extends AuthService {
       SignInMethod.google => await _google(),
       SignInMethod.apple => await _apple(),
     };
-    final u = cred.user!;
+    await _afterSignIn(cred.user!);
+  }
+
+  @override
+  bool get supportsPassword => true;
+
+  @override
+  Future<void> signInWithPassword(String email, String password) async {
+    final cred = await _auth.signInWithEmailAndPassword(email: email.trim(), password: password);
+    await _afterSignIn(cred.user!);
+  }
+
+  Future<void> _afterSignIn(fb.User u) async {
     // أول دخول: سجلّ المستخدم. isDoctor يبقى false (القواعد تمنع المستخدم من منح نفسه)
     final ref = _db.collection('users').doc(u.uid);
     if (!(await ref.get()).exists) {

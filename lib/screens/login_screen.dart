@@ -21,6 +21,8 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   SignInMethod? _busy;
   String? _error;
+  bool _reviewOpen = false, _reviewBusy = false;
+  final _email = TextEditingController(), _pass = TextEditingController();
 
   Future<void> _go(SignInMethod m) async {
     setState(() { _busy = m; _error = null; });
@@ -33,6 +35,18 @@ class _LoginScreenState extends State<LoginScreen> {
       if (mounted) setState(() => _error = 'تعذّر تسجيل الدخول. تأكد من الاتصال وحاول مرة أخرى.');
     } finally {
       if (mounted) setState(() => _busy = null);
+    }
+  }
+
+  Future<void> _reviewSignIn() async {
+    setState(() { _reviewBusy = true; _error = null; });
+    try {
+      await widget.auth.signInWithPassword(_email.text, _pass.text);
+      if (mounted) context.go(widget.next);
+    } catch (_) {
+      if (mounted) setState(() => _error = 'البريد أو كلمة السر غير صحيحة.');
+    } finally {
+      if (mounted) setState(() => _reviewBusy = false);
     }
   }
 
@@ -81,6 +95,28 @@ class _LoginScreenState extends State<LoginScreen> {
                   child: const Text('سياسة الخصوصية'),
                 ),
                 const MedicalNote(),
+                if (a.supportsPassword) ...[
+                  const SizedBox(height: 8),
+                  TextButton(
+                    onPressed: () => setState(() => _reviewOpen = !_reviewOpen),
+                    child: const Text('دخول المراجعين', style: TextStyle(fontSize: 12, color: Brand.grey)),
+                  ),
+                  if (_reviewOpen) ...[
+                    TextField(controller: _email, keyboardType: TextInputType.emailAddress, textDirection: TextDirection.ltr,
+                        decoration: const InputDecoration(labelText: 'البريد', border: OutlineInputBorder(), filled: true, fillColor: Colors.white)),
+                    const SizedBox(height: 8),
+                    TextField(controller: _pass, obscureText: true, textDirection: TextDirection.ltr,
+                        decoration: const InputDecoration(labelText: 'كلمة السر', border: OutlineInputBorder(), filled: true, fillColor: Colors.white),
+                        onSubmitted: (_) => _reviewSignIn()),
+                    const SizedBox(height: 8),
+                    FilledButton(
+                      onPressed: _reviewBusy ? null : _reviewSignIn,
+                      child: _reviewBusy
+                          ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2.5, color: Colors.white))
+                          : const Text('دخول'),
+                    ),
+                  ],
+                ],
                 const Divider(height: 40),
                 TextButton(onPressed: () => context.go('/browse'), child: const Text('تصفّح الأنظمة بلا تسجيل')),
               ]),
