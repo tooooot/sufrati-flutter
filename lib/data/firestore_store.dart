@@ -49,7 +49,7 @@ class FirestoreStore extends HouseholdStore {
       cookName: d['cookName'] as String? ?? '',
       city: d['city'] as String? ?? 'Jeddah',
       eaters: (d['eaters'] as num?)?.toInt() ?? 1,
-      cutoffDay: (d['cutoffDay'] as num?)?.toInt() ?? 3,
+      cutoffDay: (d['cutoffDay'] as num?)?.toInt() ?? 5,
       cutoffTime: d['cutoffTime'] as String? ?? '20:00',
       mealLinks: (d['mealLinks'] as Map?)?.map((k, v) =>
           MapEntry(k as String, PrayerLink((v as Map)['prayer'] as String, ((v)['offset'] as num).toInt()))),

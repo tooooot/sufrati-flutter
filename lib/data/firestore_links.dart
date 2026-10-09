@@ -152,7 +152,7 @@ class FirestoreLinkService extends LinkService {
     final b = db.batch();
     b.set(ref, {
       'label': label.trim(), 'programId': programId, 'eaters': eaters, 'city': 'Jeddah', 'cookName': '',
-      'cutoffDay': 3, 'cutoffTime': '20:00', 'members': {_me: Role.owner.name}, 'inviteCodes': <String>[],
+      'cutoffDay': 5, 'cutoffTime': '20:00', 'members': {_me: Role.owner.name}, 'inviteCodes': <String>[],
       'createdAt': FieldValue.serverTimestamp(),
     });
     b.set(db.doc('users/$_me'), {'hids': FieldValue.arrayUnion([ref.id])}, SetOptions(merge: true));

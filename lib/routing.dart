@@ -24,7 +24,8 @@ String? appRedirect(Session s, String p, {String? full, String? next}) {
     if (isPublicPath(p)) return null;
     return '/login?next=${Uri.encodeComponent(full ?? p)}';
   }
-  if (!s.ready) return p == '/loading' ? null : '/loading';
+  // نحفظ الوجهة أثناء التحميل أيضاً (وإلا ضاع الرابط العميق وتحديث الصفحة)
+  if (!s.ready) return p == '/loading' ? null : '/loading?next=${Uri.encodeComponent(full ?? p)}';
   if (p == '/loading' || p == '/login' || p == '/') {
     if (!s.needsRole && _validNext(next)) return next;
     return landing(s);

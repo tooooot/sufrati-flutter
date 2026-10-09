@@ -9,7 +9,7 @@ class Household {
   Household({
     required this.id, required this.label, required this.programId,
     this.cookName = '', this.city = 'Jeddah', this.eaters = 1,
-    this.cutoffDay = 3, this.cutoffTime = '20:00', Map<String, PrayerLink>? mealLinks,
+    this.cutoffDay = 5, this.cutoffTime = '20:00', Map<String, PrayerLink>? mealLinks,
   }) : mealLinks = mealLinks ?? Map.of(defaultMealLinks);
 }
 
