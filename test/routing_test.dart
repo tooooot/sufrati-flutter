@@ -38,7 +38,7 @@ void main() {
     s.chooseRole(Role.owner);
     expect(appRedirect(s, '/household'), isNull);
     expect(appRedirect(s, '/profile'), isNull);
-    expect(appRedirect(s, '/login'), '/household', reason: 'صاحب بيت بلا بيت ← صفحة بيتي');
+    expect(appRedirect(s, '/login'), '/new-house', reason: 'صاحب خطة بلا بيت ← إنشاء البيت');
   });
 
   test('الهبوط بحسب الدور بعد وجود الارتباطات', () async {

@@ -57,6 +57,17 @@ abstract class LinkService extends ChangeNotifier {
   /// يدخل الطاهي/الطبيب رمزاً. يرجع نص الخطأ أو null عند النجاح.
   Future<String?> redeem(String raw, Role asRole, {String who = 'مستخدم'});
 
+  /// الدور الذي تمنحه الدعوة (null: الرمز غير موجود).
+  Future<Role?> inviteRoleOf(String raw);
+
+  /// قبول دعوة من رابط: يُستنتج الدور من الدعوة نفسها فلا يُسأل المستخدم عنه ولا يكتب الرمز.
+  Future<({Role? role, String? error})> redeemAny(String raw, {String who = 'مستخدم'}) async {
+    final r = await inviteRoleOf(raw);
+    if (r == null) return (role: null, error: 'الرمز غير صحيح. تأكد منه مع صاحب الخطة.');
+    final err = await redeem(raw, r, who: who);
+    return (role: err == null ? r : null, error: err);
+  }
+
   /// حذف كل بيانات المستخدم (بيوته وخططه ودعواته وخروجه من بيوت الآخرين) — شرط المتاجر.
   Future<void> deleteMyData();
 }
@@ -122,6 +133,9 @@ class MemoryLinkService extends LinkService {
     notifyListeners();
     return null;
   }
+
+  @override
+  Future<Role?> inviteRoleOf(String raw) async => _invites[normalizeCode(raw)]?.role;
 
   @override
   Future<void> deleteMyData() async {

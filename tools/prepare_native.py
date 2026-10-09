@@ -61,7 +61,7 @@ android {
         if 'android.permission.INTERNET' not in s:
             s = s.replace('<application', '<uses-permission android:name="android.permission.INTERNET"/>\n    <application', 1)
         s = re.sub(r'android:label="[^"]*"', 'android:label="سفرتي"', s, 1)
-        perms = ['POST_NOTIFICATIONS', 'SCHEDULE_EXACT_ALARM', 'RECEIVE_BOOT_COMPLETED', 'VIBRATE', 'USE_FULL_SCREEN_INTENT', 'WAKE_LOCK']
+        perms = ['POST_NOTIFICATIONS', 'RECEIVE_BOOT_COMPLETED', 'VIBRATE', 'WAKE_LOCK']
         for p_ in perms:
             if f'android.permission.{p_}' not in s:
                 s = s.replace('<application', f'<uses-permission android:name="android.permission.{p_}"/>\n    <application', 1)
@@ -76,8 +76,19 @@ android {
             </intent-filter>
         </receiver>
     </application>''', 1)
-        if 'showWhenLocked' not in s:
-            s = s.replace('<activity', '<activity\n            android:showWhenLocked="true"\n            android:turnScreenOn="true"', 1)
+        if 'pathPrefix="/i/"' not in s:
+            s = s.replace('</activity>', '''<intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <data android:scheme="https" android:host="maeda.wardyat.net" android:pathPrefix="/i/"/>
+            </intent-filter>
+        </activity>''', 1)
+        if 'xmlns:tools' not in s:
+            s = s.replace('<manifest ', '<manifest xmlns:tools="http://schemas.android.com/tools" ', 1)
+        for rm in ('SCHEDULE_EXACT_ALARM', 'USE_EXACT_ALARM', 'USE_FULL_SCREEN_INTENT'):
+            if f'{rm}" tools:node="remove"' not in s:
+                s = s.replace('<application', f'<uses-permission android:name="android.permission.{rm}" tools:node="remove"/>\n    <application', 1)
         if 'roundIcon' not in s:
             s = s.replace('android:icon="@mipmap/ic_launcher"', 'android:icon="@mipmap/ic_launcher"\n        android:roundIcon="@mipmap/ic_launcher_round"', 1)
         return s
@@ -94,11 +105,12 @@ def ios():
     with open(NATIVE / 'GoogleService-Info.plist', 'rb') as f: reversed_id = plistlib.load(f)['REVERSED_CLIENT_ID']
     with open(r / 'Info.plist', 'rb') as f: info = plistlib.load(f)
     info['CFBundleDisplayName'] = 'سفرتي'
+    info['ITSAppUsesNonExemptEncryption'] = False  # تشفير HTTPS القياسي فقط: يتخطى سؤال التصدير في TestFlight
     schemes = info.setdefault('CFBundleURLTypes', [])
     if not any(reversed_id in t.get('CFBundleURLSchemes', []) for t in schemes):
         schemes.append({'CFBundleURLSchemes': [reversed_id]})
     with open(r / 'Info.plist', 'wb') as f: plistlib.dump(info, f)
-    with open(r / 'Runner.entitlements', 'wb') as f: plistlib.dump({'com.apple.developer.applesignin': ['Default']}, f)
+    with open(r / 'Runner.entitlements', 'wb') as f: plistlib.dump({'com.apple.developer.applesignin': ['Default'], 'com.apple.developer.associated-domains': ['applinks:maeda.wardyat.net']}, f)
     proj = ROOT / 'ios' / 'Runner.xcodeproj' / 'project.pbxproj'
     patch(proj, lambda t: re.sub(r'IPHONEOS_DEPLOYMENT_TARGET = [\d.]+;', 'IPHONEOS_DEPLOYMENT_TARGET = 15.0;', t))
     pod = ROOT / 'ios' / 'Podfile'

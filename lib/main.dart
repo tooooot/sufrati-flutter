@@ -19,7 +19,9 @@ import 'screens/admin_screen.dart';
 import 'screens/doctor_pending_screen.dart';
 import 'screens/house_create_screen.dart';
 import 'screens/household_screen.dart';
+import 'screens/invite_join_screen.dart';
 import 'screens/join_screen.dart';
+import 'screens/new_house_screen.dart';
 import 'screens/profile_screen.dart';
 
 import 'firebase_options.dart';
@@ -88,8 +90,11 @@ class SufratiApp extends StatelessWidget {
       GoRoute(path: '/doctor-pending', builder: (_, _) => DoctorPendingScreen(session: _session)),
       GoRoute(path: '/admin', builder: (_, _) => AdminScreen(db: db)),
       GoRoute(path: '/browse', builder: (_, _) => StartScreen(library: library)),
+      GoRoute(path: '/new-house', builder: (_, _) => NewHouseScreen(library: library, links: links, session: _session)),
       GoRoute(path: '/household', builder: (_, _) => HouseholdScreen(links: links, library: library)),
       GoRoute(path: '/profile', builder: (_, _) => ProfileScreen(session: _session, links: links)),
+      GoRoute(path: '/i/:code',
+          builder: (_, st) => InviteJoinScreen(session: _session, links: links, code: st.pathParameters['code']!)),
       GoRoute(path: '/join/:role',
           builder: (_, st) => JoinScreen(links: links, session: _session,
               role: st.pathParameters['role'] == 'doctor' ? Role.doctor : Role.cook)),

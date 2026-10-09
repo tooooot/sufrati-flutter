@@ -67,8 +67,6 @@ class NotificationService {
     final a = _plugin.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>();
     if (a != null) {
       final ok = await a.requestNotificationsPermission() ?? false;
-      if (ok && !(await a.canScheduleExactNotifications() ?? true)) await a.requestExactAlarmsPermission();
-      if (ok) await a.requestFullScreenIntentPermission(); // أندرويد 14+: صفحة إعدادات «إشعارات ملء الشاشة»
       return ok;
     }
     final i = _plugin.resolvePlatformSpecificImplementation<IOSFlutterLocalNotificationsPlugin>();
@@ -82,7 +80,7 @@ class NotificationService {
             playSound: true, enableVibration: true, vibrationPattern: _vibration,
             audioAttributesUsage: AudioAttributesUsage.alarm,
             category: AndroidNotificationCategory.alarm,
-            fullScreenIntent: true, // شاشة كاملة فوق القفل إن مُنح الإذن، وإلا نافذة علوية عادية
+            // بلا ملء الشاشة وبلا منبّهات دقيقة: كلاهما يتطلب تصريحاً خاصاً في Google Play وقد يُرفض التطبيق بسببهما
             visibility: NotificationVisibility.public,
             icon: 'ic_stat_sufrati', color: const Color(0xFF1F5A44)),
         iOS: const DarwinNotificationDetails(presentAlert: true, presentSound: true, presentBanner: true),
@@ -93,14 +91,12 @@ class NotificationService {
     await _ensureInit();
     await _plugin.cancelAll();
     final riyadh = tz.getLocation('Asia/Riyadh');
-    final a = _plugin.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>();
-    final exact = a == null ? true : (await a.canScheduleExactNotifications() ?? false);
     var n = 0;
     for (final al in alerts) {
       final when = tz.TZDateTime(riyadh, al.at.year, al.at.month, al.at.day, al.at.hour, al.at.minute);
       await _plugin.zonedSchedule(
         id: al.id, title: al.title, body: al.body, scheduledDate: when, notificationDetails: _details,
-        androidScheduleMode: exact ? AndroidScheduleMode.exactAllowWhileIdle : AndroidScheduleMode.inexactAllowWhileIdle,
+        androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle, // قد يتأخر دقائق في وضع السكون
       );
       n++;
     }

@@ -53,7 +53,7 @@ class HouseholdBody extends StatelessWidget {
         builder: (context, _) => Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
           if (!links.hasHousehold)
             CardBox(
-              onTap: () => context.go('/browse'),
+              onTap: () => context.go('/new-house'),
               color: Brand.amber50,
               border: Border.all(color: Brand.honey, width: 2),
               child: const Row(children: [
@@ -135,8 +135,9 @@ Future<void> inviteFlow(BuildContext context, LinkService links, Role role) asyn
   final inv = links.inviteFor(role) ?? await links.createInvite(role);
   if (!context.mounted) return;
   final who = role == Role.cook ? 'الطاهي' : 'الطبيب';
-  final msg = 'دعوة للانضمام إلى بيتي في تطبيق سفرتي بدور $who.\nرمز الدعوة: ${inv.code}\n'
-      'سجّل دخولك في التطبيق، اختر «$who»، واكتب الرمز.';
+  final link = 'https://maeda.wardyat.net/i/${inv.code}';
+  final msg = 'دعوة للانضمام إلى بيتي في تطبيق سفرتي بدور $who.\nافتح الرابط وسجّل دخولك فتنضم مباشرة:\n$link\n'
+      'أو اكتب الرمز يدوياً: ${inv.code}';
   showModalBottomSheet(
     context: context,
     showDragHandle: true,

@@ -7,7 +7,7 @@ bool isPublicPath(String p) =>
 
 /// الشاشة الرئيسية لكل دور بعد الدخول.
 String landing(Session s) => switch (s.role) {
-      Role.owner => s.links.hasHousehold ? '/me' : '/household',
+      Role.owner => s.links.hasHousehold ? '/me' : '/new-house',
       Role.cook => s.links.membershipOf(Role.cook) != null ? '/cook' : '/join/cook',
       Role.doctor => s.links.membershipOf(Role.doctor) != null ? '/me' : '/join/doctor',
       Role.admin => '/admin',
@@ -32,6 +32,6 @@ String? appRedirect(Session s, String p, {String? full, String? next}) {
   }
   if (p == '/admin' && !s.isAdmin) return landing(s);
   // الملف الشخصي متاح دائماً بعد الدخول (منه يُغيَّر الدور أو يُخرَج)، وما عداه يتطلب دوراً
-  if (s.needsRole && !isPublicPath(p) && p != '/role' && p != '/profile' && p != '/doctor-pending') return '/role';
+  if (s.needsRole && !isPublicPath(p) && p != '/role' && p != '/profile' && p != '/doctor-pending' && !p.startsWith('/i/')) return '/role';
   return null;
 }

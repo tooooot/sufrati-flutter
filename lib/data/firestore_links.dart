@@ -203,6 +203,14 @@ class FirestoreLinkService extends LinkService {
   }
 
   @override
+  Future<Role?> inviteRoleOf(String raw) async {
+    final code = normalizeCode(raw);
+    if (code.isEmpty) return null;
+    final d = (await db.doc('invites/$code').get()).data();
+    return d == null ? null : Role.parse(d['role'] as String?);
+  }
+
+  @override
   Future<void> requestDoctor() => db.doc('users/$_me').set({'doctorRequested': true}, SetOptions(merge: true));
 
   @override
