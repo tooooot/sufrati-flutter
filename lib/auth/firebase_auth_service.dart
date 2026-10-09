@@ -34,7 +34,7 @@ class FirebaseAuthService extends AuthService {
   @override
   bool isAvailable(SignInMethod m) => switch (m) {
         SignInMethod.google => true,
-        SignInMethod.apple => defaultTargetPlatform == TargetPlatform.iOS,
+        SignInMethod.apple => !kIsWeb && defaultTargetPlatform == TargetPlatform.iOS,
       };
 
   /// المدير = claim باسم admin يضعه السيرفر لإيميل المدير فقط؛ الطبيب = users/{uid}.isDoctor يمنحه المدير.
@@ -87,6 +87,15 @@ class FirebaseAuthService extends AuthService {
   }
 
   Future<fb.UserCredential> _google() async {
+    if (kIsWeb) {
+      // الويب: نافذة Google المنبثقة عبر معالج Firebase (النطاق مضاف في Authorized domains)
+      try {
+        return await _auth.signInWithPopup(fb.GoogleAuthProvider());
+      } on fb.FirebaseAuthException catch (e) {
+        if (e.code == 'popup-closed-by-user' || e.code == 'cancelled-popup-request') throw const SignInCancelled();
+        rethrow;
+      }
+    }
     try {
       if (!_googleReady) {
         await GoogleSignIn.instance.initialize(serverClientId: SufratiFirebase.googleServerClientId);

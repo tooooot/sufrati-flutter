@@ -41,12 +41,9 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final library = await Library.load();
   final i18n = await CookI18n.load();
-  // الجوال: Firebase حقيقي. الويب: تصفح الأنظمة فقط بلا دخول.
-  AuthService auth = WebAuthService();
-  LinkService links = MemoryLinkService();
-  FirebaseFirestore? db;
+  // Firebase حقيقي على الجوال والويب. على الويب: لا Crashlytics ولا App Check ولا إشعارات محلية ولا دخول Apple.
+  await Firebase.initializeApp(options: SufratiFirebase.current);
   if (!kIsWeb) {
-    await Firebase.initializeApp(options: SufratiFirebase.current);
     // App Check: يثبت أن الطلبات من تطبيقنا الحقيقي (Play Integrity / App Attest) لا من سكربت بمفتاحنا.
     // الإنفاذ على Firestore معطّل عمداً حتى نتأكد من الأجهزة؛ وفشل التفعيل لا يوقف التطبيق.
     try {
@@ -61,10 +58,10 @@ Future<void> main() async {
       FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
       return true;
     };
-    auth = FirebaseAuthService();
-    db = FirebaseFirestore.instance;
-    links = FirestoreLinkService(db, auth);
   }
+  final AuthService auth = FirebaseAuthService();
+  final FirebaseFirestore db = FirebaseFirestore.instance;
+  final LinkService links = FirestoreLinkService(db, auth);
   runApp(SufratiApp(library: library, i18n: i18n, auth: auth, links: links, db: db));
 }
 

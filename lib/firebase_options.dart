@@ -8,6 +8,7 @@ class SufratiFirebase {
   static const googleServerClientId = '316270990440-1ib2j1c8ntuakk3jt9c3kf571sipej89.apps.googleusercontent.com';
 
   static FirebaseOptions get current {
+    if (kIsWeb) return web;
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
         return android;
@@ -17,6 +18,15 @@ class SufratiFirebase {
         throw UnsupportedError('Firebase غير مفعّل لهذه المنصة');
     }
   }
+
+  static const web = FirebaseOptions(
+    apiKey: 'AIzaSyBzq4R_fFB_oEKAQmJAAInaC30h2S9e8K8',
+    appId: '1:316270990440:web:34e58933f8ba09190417dd',
+    messagingSenderId: '316270990440',
+    projectId: 'sufrati-8555a',
+    authDomain: 'sufrati-8555a.firebaseapp.com',
+    storageBucket: 'sufrati-8555a.firebasestorage.app',
+  );
 
   static const android = FirebaseOptions(
     apiKey: 'AIzaSyBb-AGnqglLk8r9pNJ1v6cxcw3WY1ogiJM',
