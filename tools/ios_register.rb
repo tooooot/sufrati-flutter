@@ -16,7 +16,7 @@ end
 # Crashlytics: رفع رموز التصحيح (dSYM) ليقرأ الانهيار بأسماء الدوال
 unless target.shell_script_build_phases.any? { |ph| ph.name == 'Crashlytics dSYM' }
   ph = target.new_shell_script_build_phase('Crashlytics dSYM')
-  ph.shell_script = '"${SRCROOT}/Pods/FirebaseCrashlytics/run"'
+  ph.shell_script = 'RUN="${BUILD_DIR%/Build/*}/SourcePackages/checkouts/firebase-ios-sdk/Crashlytics/run"; [ -x "$RUN" ] && "$RUN" || echo "Crashlytics run script not found, skipping dSYM upload"; exit 0'
   ph.input_paths = ['${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Resources/DWARF/${TARGET_NAME}',
                     '$(SRCROOT)/$(BUILT_PRODUCTS_DIR)/$(INFOPLIST_PATH)']
 end
