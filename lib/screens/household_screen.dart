@@ -120,7 +120,10 @@ class _Slot extends StatelessWidget {
           ])),
           FilledButton(
             style: FilledButton.styleFrom(backgroundColor: Brand.green),
-            onPressed: () => _showInvite(context, pending ?? links.createInvite(role)),
+            onPressed: () async {
+              final inv = pending ?? await links.createInvite(role);
+              if (context.mounted) _showInvite(context, inv);
+            },
             child: Text(pending == null ? 'دعوة' : 'عرض الرمز'),
           ),
         ]),

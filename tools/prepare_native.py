@@ -22,6 +22,9 @@ def android():
     def app(s):
         if GS_PLUGIN not in s:
             s = s.replace('id("com.android.application")\n', 'id("com.android.application")\n    ' + GS_PLUGIN + '\n', 1)
+        if 'isCoreLibraryDesugaringEnabled' not in s:
+            s = s.replace('sourceCompatibility = JavaVersion.VERSION_17', 'isCoreLibraryDesugaringEnabled = true // flutter_local_notifications\n        sourceCompatibility = JavaVersion.VERSION_17', 1)
+            s += '\ndependencies {\n    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")\n}\n'
         s = s.replace('minSdk = flutter.minSdkVersion', 'minSdk = maxOf(23, flutter.minSdkVersion) // firebase_auth يتطلب 23+')
         if 'import java.util.Properties' not in s:
             s = 'import java.util.Properties\n\n' + s  # `java` داخل سكربت Gradle يشير لإضافة Java، فنستورد الصنف صراحةً
@@ -53,6 +56,21 @@ android {
         if 'android.permission.INTERNET' not in s:
             s = s.replace('<application', '<uses-permission android:name="android.permission.INTERNET"/>\n    <application', 1)
         s = re.sub(r'android:label="[^"]*"', 'android:label="سفرتي"', s, 1)
+        perms = ['POST_NOTIFICATIONS', 'SCHEDULE_EXACT_ALARM', 'RECEIVE_BOOT_COMPLETED', 'VIBRATE']
+        for p_ in perms:
+            if f'android.permission.{p_}' not in s:
+                s = s.replace('<application', f'<uses-permission android:name="android.permission.{p_}"/>\n    <application', 1)
+        if 'ScheduledNotificationReceiver' not in s:
+            s = s.replace('</application>', '''    <receiver android:exported="false" android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationReceiver" />
+        <receiver android:exported="false" android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationBootReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED"/>
+                <action android:name="android.intent.action.QUICKBOOT_POWERON"/>
+                <action android:name="com.htc.intent.action.QUICKBOOT_POWERON"/>
+            </intent-filter>
+        </receiver>
+    </application>''', 1)
         if 'roundIcon' not in s:
             s = s.replace('android:icon="@mipmap/ic_launcher"', 'android:icon="@mipmap/ic_launcher"\n        android:roundIcon="@mipmap/ic_launcher_round"', 1)
         return s

@@ -5,14 +5,15 @@ import 'package:sufrati/auth/auth_service.dart';
 class FakeAuthService extends AuthService {
   AppUser? _user;
   final bool apple;
-  FakeAuthService({this.apple = true});
+  final String uid;
+  FakeAuthService({this.apple = true, this.uid = 'u-owner'});
   @override
   AppUser? get user => _user;
   @override
   bool isAvailable(SignInMethod m) => m == SignInMethod.google || apple;
   @override
   Future<void> signIn(SignInMethod m) async {
-    _user = AppUser(uid: 'fake-${m.name}', name: 'مستخدم تجريبي', email: 'demo@example.com');
+    _user = AppUser(uid: uid, name: 'مستخدم تجريبي', email: 'demo@example.com');
     notifyListeners();
   }
   @override

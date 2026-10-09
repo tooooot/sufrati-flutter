@@ -52,6 +52,7 @@ class ProfileScreen extends StatelessWidget {
                   const SizedBox(height: 8),
                   _Tile(icon: Icons.swap_horiz, label: 'تغيير الدور', onTap: () => context.go('/role')),
                   _Tile(icon: Icons.home, label: 'بيتي وأعضاؤه', onTap: () => context.go('/household')),
+                  if (session.isAdmin) _Tile(icon: Icons.admin_panel_settings, label: 'لوحة المدير', onTap: () => context.go('/admin')),
                   _Tile(icon: Icons.privacy_tip_outlined, label: 'سياسة الخصوصية',
                       onTap: () => launchUrl(Uri.parse('https://maeda.wardyat.net/privacy'), mode: LaunchMode.externalApplication)),
                   const SizedBox(height: 8),
@@ -75,9 +76,14 @@ class ProfileScreen extends StatelessWidget {
             TextButton(onPressed: () => Navigator.pop(context), child: const Text('إلغاء')),
             TextButton(
               onPressed: () async {
+                final messenger = ScaffoldMessenger.of(context);
                 Navigator.pop(context);
-                links.leaveAll();
-                await session.auth.deleteAccount();
+                try {
+                  await links.deleteMyData(); // البيوت والخطط والدعوات أولاً، ثم الحساب
+                  await session.auth.deleteAccount();
+                } catch (e) {
+                  messenger.showSnackBar(SnackBar(content: Text('تعذّر الحذف الكامل: $e\nسجّل الدخول من جديد ثم أعد المحاولة.')));
+                }
               },
               child: const Text('حذف نهائياً', style: TextStyle(color: Colors.red)),
             ),

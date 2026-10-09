@@ -1,5 +1,5 @@
 // الربط بين صاحب البيت والطاهي والطبيب: كل ارتباط يتم برمز دعوة يصدره من يملك البيت ويدخله الطرف الآخر.
-// هذه نسخة في الذاكرة تُجرَّب في المعاينة؛ تُستبدل في المرحلة 2 بـFirestore (invites + households.members) بنفس الواجهة.
+// LinkService واجهة؛ FirestoreLinkService هو التنفيذ الحقيقي، وMemoryLinkService للاختبارات.
 import 'dart:math';
 
 import 'package:flutter/foundation.dart';
@@ -7,80 +7,148 @@ import 'package:flutter/foundation.dart';
 import '../auth/roles.dart';
 
 class Membership {
-  final String householdLabel, programId;
+  final String householdId, householdLabel, programId;
   final Role role;
-  const Membership(this.householdLabel, this.programId, this.role);
+  const Membership(this.householdId, this.householdLabel, this.programId, this.role);
 }
 
 class Invite {
   final String code;
   final Role role; // الدور الذي سيحصل عليه من يدخل الرمز
   final DateTime expires;
+  final String? hid;
   String? usedBy; // اسم من انضم
-  Invite(this.code, this.role, this.expires);
+  Invite(this.code, this.role, this.expires, {this.hid, this.usedBy});
   bool get used => usedBy != null;
 }
 
-class LinkService extends ChangeNotifier {
+abstract class LinkService extends ChangeNotifier {
+  /// false حتى تُحمَّل ارتباطات المستخدم أول مرة (لا نسأله عن دوره قبل أن نعرف إن كان له بيت).
+  bool get ready;
+  List<Membership> get memberships;
+
+  Membership? membershipOf(Role r) => memberships.where((m) => m.role == r).firstOrNull;
+
+  /// الدور المقترح لمن عنده ارتباطات: صاحب بيت، ثم طبيب، ثم طاهٍ.
+  Role? get suggestedRole {
+    for (final r in const [Role.owner, Role.doctor, Role.cook]) {
+      if (membershipOf(r) != null) return r;
+    }
+    return null;
+  }
+
+  // بيت صاحب البيت الحالي
+  bool get hasHousehold => membershipOf(Role.owner) != null;
+  String get label => membershipOf(Role.owner)?.householdLabel ?? '';
+  String get programId => membershipOf(Role.owner)?.programId ?? '';
+
+  Invite? inviteFor(Role r);
+  Invite? joinedBy(Role r);
+
+  Future<void> createHousehold(String label, String programId, int eaters);
+  /// [householdId] اختياري: افتراضياً بيت صاحب البيت الحالي (والطبيب يمرّر بيت مريضه).
+  Future<Invite> createInvite(Role role, {String? householdId});
+
+  /// الطبيب لا يُفعَّل بالاختيار الذاتي: يُرسَل طلب لمدير سفرتي.
+  bool get isDoctor;
+  bool get doctorRequested;
+  Future<void> requestDoctor();
+
+  /// يدخل الطاهي/الطبيب رمزاً. يرجع نص الخطأ أو null عند النجاح.
+  Future<String?> redeem(String raw, Role asRole, {String who = 'مستخدم'});
+
+  /// حذف كل بيانات المستخدم (بيوته وخططه ودعواته وخروجه من بيوت الآخرين) — شرط المتاجر.
+  Future<void> deleteMyData();
+}
+
+/// تنفيذ في الذاكرة: للاختبارات فقط.
+class MemoryLinkService extends LinkService {
   String? _label, _programId;
-  int eaters = 1;
   final _invites = <String, Invite>{};
-  final _joined = <Membership>[]; // ارتباطات هذا الحساب كطاهٍ/طبيب في بيوت الآخرين
+  final _joined = <Membership>[];
   final _rnd = Random.secure();
   final DateTime Function() _now;
-  LinkService({DateTime Function()? clock}) : _now = clock ?? DateTime.now;
+  MemoryLinkService({DateTime Function()? clock}) : _now = clock ?? DateTime.now;
 
-  bool get hasHousehold => _label != null;
-  String get label => _label ?? '';
-  String get programId => _programId ?? '';
-  List<Invite> get invites => _invites.values.toList().reversed.toList();
+  @override
+  bool get ready => true;
+
+  @override
   List<Membership> get memberships => [
-        if (_label != null) Membership(_label!, _programId!, Role.owner),
+        if (_label != null) Membership('mem-1', _label!, _programId!, Role.owner),
         ..._joined,
       ];
 
+  List<Invite> get invites => _invites.values.toList().reversed.toList();
+
+  @override
   Invite? inviteFor(Role r) => invites.where((i) => i.role == r && !i.used).firstOrNull;
+  @override
   Invite? joinedBy(Role r) => invites.where((i) => i.role == r && i.used).firstOrNull;
 
-  void createHousehold(String label, String programId, int eaters) {
+  @override
+  Future<void> createHousehold(String label, String programId, int eaters) async {
     _label = label.trim();
     _programId = programId;
-    this.eaters = eaters;
     notifyListeners();
   }
 
-  /// يصدر رمزاً (6 خانات بلا حروف ملتبسة) صالحاً 7 أيام للدور المطلوب.
-  Invite createInvite(Role role) {
-    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-    final code = List.generate(6, (_) => chars[_rnd.nextInt(chars.length)]).join();
-    final inv = Invite(code, role, _now().add(const Duration(days: 7)));
-    _invites[code] = inv;
+  bool _doctorRequested = false;
+  @override
+  bool get isDoctor => false;
+  @override
+  bool get doctorRequested => _doctorRequested;
+  @override
+  Future<void> requestDoctor() async {
+    _doctorRequested = true;
+    notifyListeners();
+  }
+
+  @override
+  Future<Invite> createInvite(Role role, {String? householdId}) async {
+    final inv = Invite(newInviteCode(_rnd), role, _now().add(const Duration(days: 7)));
+    _invites[inv.code] = inv;
     notifyListeners();
     return inv;
   }
 
-  /// يدخل الطاهي/الطبيب رمزاً. يرجع نص الخطأ أو null عند النجاح.
-  String? redeem(String raw, Role asRole, {String who = 'مستخدم'}) {
-    final code = raw.trim().toUpperCase().replaceAll(RegExp(r'[^A-Z0-9]'), '');
-    final inv = _invites[code];
-    if (inv == null) return 'الرمز غير صحيح. تأكد منه مع صاحب البيت.';
-    if (inv.used) return 'هذا الرمز استُخدم من قبل.';
-    if (inv.expires.isBefore(_now())) return 'انتهت صلاحية الرمز. اطلب رمزاً جديداً.';
-    if (inv.role != asRole) {
-      return 'هذا الرمز مخصّص لـ«${inv.role == Role.cook ? 'الطاهي' : inv.role == Role.doctor ? 'الطبيب' : 'صاحب البيت'}» وليس لدورك.';
-    }
-    inv.usedBy = who;
-    _joined.add(Membership(_label ?? 'بيت', _programId ?? '', asRole));
+  @override
+  Future<String?> redeem(String raw, Role asRole, {String who = 'مستخدم'}) async {
+    final inv = _invites[normalizeCode(raw)];
+    final err = checkInvite(inv, asRole, _now());
+    if (err != null) return err;
+    inv!.usedBy = who;
+    _joined.add(Membership('mem-j', _label ?? 'بيت', _programId ?? '', asRole));
     notifyListeners();
     return null;
   }
 
-  void leaveAll() {
+  @override
+  Future<void> deleteMyData() async {
     _label = _programId = null;
     _invites.clear();
     _joined.clear();
     notifyListeners();
   }
+}
+
+/// رمز من 6 خانات بلا حروف ملتبسة.
+String newInviteCode(Random rnd) {
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  return List.generate(6, (_) => chars[rnd.nextInt(chars.length)]).join();
+}
+
+String normalizeCode(String raw) => raw.trim().toUpperCase().replaceAll(RegExp(r'[^A-Z0-9]'), '');
+
+/// يتحقق من صلاحية دعوة لمن سيدخلها بدور معيّن. يرجع نص الخطأ أو null.
+String? checkInvite(Invite? inv, Role asRole, DateTime now) {
+  if (inv == null) return 'الرمز غير صحيح. تأكد منه مع صاحب البيت.';
+  if (inv.used) return 'هذا الرمز استُخدم من قبل.';
+  if (inv.expires.isBefore(now)) return 'انتهت صلاحية الرمز. اطلب رمزاً جديداً.';
+  if (inv.role != asRole) {
+    return 'هذا الرمز مخصّص لـ«${roleName(inv.role)}» وليس لدورك.';
+  }
+  return null;
 }
 
 String roleName(Role r) => switch (r) {

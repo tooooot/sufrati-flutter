@@ -3,6 +3,8 @@ import 'package:go_router/go_router.dart';
 
 import '../auth/roles.dart';
 import '../auth/session.dart';
+import '../routing.dart';
+import '../widgets/medical_note.dart';
 import '../theme.dart';
 import '../widgets/common.dart';
 
@@ -29,9 +31,15 @@ class RoleScreen extends StatelessWidget {
                   (Role.doctor, '🩺', 'الطبيب', 'أتابع مرضاي وأجهّز أنظمتهم', '/join/doctor'),
                 ]) ...[
                   CardBox(
-                    onTap: () {
+                    onTap: () async {
+                      if (role == Role.doctor && !session.links.isDoctor) {
+                        // الطبيب لا يُفعَّل بالاختيار: طلب لمدير سفرتي
+                        await session.links.requestDoctor();
+                        if (context.mounted) context.go('/doctor-pending');
+                        return;
+                      }
                       session.chooseRole(role);
-                      context.go(next);
+                      context.go(landing(session)); // من له ارتباط يذهب للوحته، وغيره لإدخال الرمز/إنشاء البيت
                     },
                     child: Row(children: [
                       Text(icon, style: const TextStyle(fontSize: 40)),
@@ -48,6 +56,7 @@ class RoleScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 12),
                 ],
+                const MedicalNote(),
                 const SizedBox(height: 8),
                 TextButton(
                   onPressed: () => session.auth.signOut(),

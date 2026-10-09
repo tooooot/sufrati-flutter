@@ -23,12 +23,23 @@ class _JoinScreenState extends State<JoinScreen> {
   final _ctl = TextEditingController();
   String? _error;
 
-  void _submit() {
-    final err = widget.links.redeem(_ctl.text, widget.role, who: widget.session.user?.name ?? 'مستخدم');
+  bool _busy = false;
+
+  Future<void> _submit() async {
+    setState(() { _busy = true; _error = null; });
+    String? err;
+    try {
+      err = await widget.links.redeem(_ctl.text, widget.role, who: widget.session.user?.name ?? 'مستخدم');
+    } catch (_) {
+      err = 'تعذّر الاتصال. تأكد من الإنترنت وحاول مرة أخرى.';
+    }
+    if (!mounted) return;
+    setState(() => _busy = false);
     if (err != null) {
       setState(() => _error = err);
       return;
     }
+    widget.session.chooseRole(widget.role);
     context.go(widget.role == Role.cook ? '/cook' : '/me');
   }
 
@@ -66,8 +77,8 @@ class _JoinScreenState extends State<JoinScreen> {
                 const SizedBox(height: 14),
                 FilledButton(
                   style: FilledButton.styleFrom(backgroundColor: Brand.honey, minimumSize: const Size.fromHeight(52)),
-                  onPressed: _submit,
-                  child: const Text('ربط', style: TextStyle(fontSize: 18, fontWeight: black)),
+                  onPressed: _busy ? null : _submit,
+                  child: _busy ? const SizedBox(width: 22, height: 22, child: CircularProgressIndicator(strokeWidth: 2.5, color: Colors.white)) : const Text('ربط', style: TextStyle(fontSize: 18, fontWeight: black)),
                 ),
                 const SizedBox(height: 22),
                 const LinkExplainer(),

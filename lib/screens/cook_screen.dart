@@ -6,6 +6,8 @@ import '../data/i18n.dart';
 import '../data/models.dart';
 import '../data/repository.dart';
 import '../data/store.dart';
+import '../notify/cook_alerts.dart';
+import '../notify/notification_service.dart';
 import '../logic/day_view.dart';
 import '../logic/planner.dart';
 import '../logic/prayer.dart';
@@ -28,12 +30,62 @@ class CookScreen extends StatefulWidget {
 class _CookScreenState extends State<CookScreen> {
   String lang = 'ar';
   Timer? _tick;
+  bool _alertsOn = false, _alertsDenied = false, _testSent = false;
 
   @override
   void initState() {
     super.initState();
     // الوجبة القادمة تتحدّث كل 30 ثانية، واليوم يتغيّر تلقائياً بعد منتصف الليل
     _tick = Timer.periodic(const Duration(seconds: 30), (_) => setState(() {}));
+    _syncAlerts(ask: false);
+  }
+
+  /// يجدول تنبيهات 7 أيام (تعمل والتطبيق مغلق). عند كل فتح يُعاد الجدول فتتجدد الأيام.
+  Future<void> _syncAlerts({required bool ask}) async {
+    if (!NotificationService.supported) return;
+    final svc = NotificationService.instance;
+    var ok = await svc.enabled();
+    if (!ok && ask) ok = await svc.requestPermission();
+    if (!mounted) return;
+    if (!ok) {
+      setState(() { _alertsOn = false; _alertsDenied = ask; });
+      return;
+    }
+    final alerts = await buildCookAlerts(widget.store, widget.i18n, nowSaudi: saudiNow(), lang: lang);
+    await svc.schedule(alerts);
+    if (mounted) setState(() { _alertsOn = true; _alertsDenied = false; });
+  }
+
+  Widget _alertsCard() {
+    if (!NotificationService.supported) return const SizedBox.shrink();
+    if (_alertsOn) {
+      return Padding(
+        padding: const EdgeInsets.only(bottom: 12),
+        child: CardBox(
+          color: const Color(0xFFECFDF5),
+          child: Row(children: [
+            Expanded(child: Text(ui('alerts_on'), style: const TextStyle(fontWeight: black, color: Brand.green))),
+            TextButton(
+              onPressed: _testSent ? null : () async {
+                await NotificationService.instance.test('🍽️ ${ui('test_alert')}', ui('test_alert_body'));
+                setState(() => _testSent = true);
+              },
+              child: Text(ui('test_alert')),
+            ),
+          ]),
+        ),
+      );
+    }
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: CardBox(
+        color: Brand.amber50,
+        border: Border.all(color: Brand.honey),
+        onTap: () => _syncAlerts(ask: true),
+        child: Text(_alertsDenied ? ui('alerts_denied') : ui('enable_alerts'),
+            textAlign: TextAlign.center, style: const TextStyle(fontWeight: black, color: Brand.green, height: 1.5)),
+      ),
+    );
   }
 
   @override
@@ -95,7 +147,10 @@ class _CookScreenState extends State<CookScreen> {
               Padding(
                 padding: const EdgeInsets.only(left: 4),
                 child: GestureDetector(
-                  onTap: () => setState(() => lang = code),
+                  onTap: () {
+                    setState(() => lang = code);
+                    if (_alertsOn) _syncAlerts(ask: false); // عناوين التنبيهات تتبع اللغة
+                  },
                   child: CircleAvatar(
                     radius: 18,
                     backgroundColor: lang == code ? Colors.white : Colors.white24,
@@ -124,6 +179,7 @@ class _CookScreenState extends State<CookScreen> {
     final active = _active(day, now);
     final pid = program.meta.id;
     return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+      _alertsCard(),
       if (active != null) ...[
         Container(
           padding: const EdgeInsets.all(24),

@@ -63,9 +63,9 @@ class _HouseCreateScreenState extends State<HouseCreateScreen> {
                 FilledButton(
                   style: FilledButton.styleFrom(backgroundColor: Brand.honey, minimumSize: const Size.fromHeight(52)),
                   onPressed: ok
-                      ? () {
-                          widget.links.createHousehold(_name.text, widget.programId, _eaters);
-                          context.go('/household');
+                      ? () async {
+                          await widget.links.createHousehold(_name.text, widget.programId, _eaters);
+                          if (context.mounted) context.go('/household');
                         }
                       : null,
                   child: const Text('إنشاء البيت', style: TextStyle(fontSize: 18, fontWeight: black)),

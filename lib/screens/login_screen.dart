@@ -5,6 +5,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../auth/auth_service.dart';
 import '../theme.dart';
 import '../widgets/common.dart';
+import '../widgets/medical_note.dart';
 
 /// الدخول الرسمي: Google وApple فقط (Apple إلزامية متى وُجد Google في iOS). لا كلمات سر ولا روابط سرية.
 class LoginScreen extends StatefulWidget {
@@ -79,6 +80,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   onPressed: () => launchUrl(Uri.parse('https://maeda.wardyat.net/privacy'), mode: LaunchMode.externalApplication),
                   child: const Text('سياسة الخصوصية'),
                 ),
+                const MedicalNote(),
                 const Divider(height: 40),
                 TextButton(onPressed: () => context.go('/browse'), child: const Text('تصفّح الأنظمة بلا تسجيل')),
               ]),

@@ -3,11 +3,12 @@ import 'package:sufrati/auth/auth_service.dart';
 import 'fake_auth.dart';
 import 'package:sufrati/auth/roles.dart';
 import 'package:sufrati/auth/session.dart';
+import 'package:sufrati/data/links.dart';
 
 void main() {
   test('الدخول أولاً ثم الدور، والخروج ينسى الدور', () async {
     final auth = FakeAuthService();
-    final s = Session(auth);
+    final s = Session(auth, MemoryLinkService());
     expect(s.signedIn, isFalse);
     expect(s.needsRole, isFalse, reason: 'بلا دخول لا يُسأل عن الدور');
 

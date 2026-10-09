@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../theme.dart';
+import 'medical_note.dart';
 
 class TabItem {
   final String icon, label;
@@ -30,7 +31,7 @@ class _TabsScaffoldState extends State<TabsScaffold> {
               constraints: const BoxConstraints(maxWidth: 512),
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(12, 16, 12, 32),
-                child: Builder(builder: widget.tabs[_i].builder),
+                child: Column(children: [Builder(builder: widget.tabs[_i].builder), const MedicalNote()]),
               ),
             ),
           ),
