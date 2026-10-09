@@ -123,3 +123,17 @@ test('عزل البيوت: عضو بيت لا يقرأ بيتاً آخر ولا 
   await assertFails(getDoc(doc(as('own'), 'households/h2')));
   await assertFails(getDoc(doc(as('cok'), 'households/h2/weeks/w1')));
 });
+
+test('مغادرة: الطاهي يحذف نفسه فقط', async () => {
+  await assertSucceeds(updateDoc(doc(as('cok'), 'households/h1'), { members: { own: 'owner', doc: 'doctor' } }));
+});
+test('مغادرة: لا يحذف غيره ولا يغيّر شيئاً آخر', async () => {
+  await assertFails(updateDoc(doc(as('cok'), 'households/h1'), { members: { cok: 'cook', doc: 'doctor' } }));
+  await assertFails(updateDoc(doc(as('cok'), 'households/h1'), { members: { own: 'owner', doc: 'doctor' }, label: 'hack' }));
+});
+test('الدعوة: يحفظ اسم من انضم', async () => {
+  const db = as('new'), b = writeBatch(db);
+  b.update(doc(db, 'invites/CODE1'), { usedBy: 'new', usedAt: Timestamp.now(), usedByName: 'ماريا' });
+  b.update(doc(db, 'households/h1'), { 'members.new': 'cook', lastInvite: 'CODE1' });
+  await assertSucceeds(b.commit());
+});

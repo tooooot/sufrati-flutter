@@ -42,11 +42,21 @@ service cloud.firestore {
             && !request.resource.data.diff(resource.data).affectedKeys().hasAny(['members', 'lastInvite']))
         // الصاحب يدير الأعضاء بشرط أن يبقى صاحباً
         || (hasRole(hid, ['owner']) && request.resource.data.members.get(request.auth.uid, '') == 'owner')
-        || redeemsInvite(hid);
+        || redeemsInvite(hid)
+        || leavesHousehold();
 
       // حذف البيت: المدير، أو الصاحب، أو الطبيب إن لم يكن للبيت صاحب بعد
       allow delete: if isAdmin() || hasRole(hid, ['owner'])
         || (hasRole(hid, ['doctor']) && !('owner' in resource.data.members.values()));
+
+      // مغادرة: العضو يحذف نفسه وحده من members (يلزم عند حذف الحساب)
+      function leavesHousehold() {
+        let diffM = request.resource.data.members.diff(resource.data.members);
+        return signedIn() && request.auth.uid in resource.data.members
+          && diffM.affectedKeys().hasOnly([request.auth.uid])
+          && diffM.removedKeys().hasOnly([request.auth.uid])
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['members']);
+      }
 
       // قبول دعوة: يضيف المستخدم نفسه فقط، بالدور المحدد في الدعوة، وفي الدفعة نفسها تُعلَّم الدعوة مستخدَمة
       function redeemsInvite(hid) {
@@ -99,7 +109,7 @@ service cloud.firestore {
             || (hasRole(request.resource.data.hid, ['owner']) && request.resource.data.role in ['cook', 'doctor'])
             || (hasRole(request.resource.data.hid, ['doctor']) && request.resource.data.role == 'owner'));
       allow update: if signedIn() && resource.data.get('usedBy', null) == null
-        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['usedBy', 'usedAt'])
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['usedBy', 'usedAt', 'usedByName'])
         && request.resource.data.usedBy == request.auth.uid;
       allow delete: if isAdmin() || (signedIn() && resource.data.createdBy == request.auth.uid);
     }
