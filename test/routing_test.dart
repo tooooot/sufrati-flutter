@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sufrati/auth/auth_service.dart';
+import 'fake_auth.dart';
 import 'package:sufrati/auth/roles.dart';
 import 'package:sufrati/auth/session.dart';
 import 'package:sufrati/routing.dart';

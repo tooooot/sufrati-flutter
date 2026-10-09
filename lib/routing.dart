@@ -2,7 +2,7 @@
 import 'auth/session.dart';
 
 bool isPublicPath(String p) =>
-    p == '/login' || p == '/browse' || p.startsWith('/programs/') || p.startsWith('/demo');
+    p == '/login' || p == '/browse' || p.startsWith('/programs/');
 
 /// يرجع المسار البديل أو null للبقاء.
 String? appRedirect(Session s, String p) {

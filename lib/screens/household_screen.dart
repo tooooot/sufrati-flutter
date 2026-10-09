@@ -47,7 +47,7 @@ class HouseholdScreen extends StatelessWidget {
                       ),
                     ] else ...[
                       CardBox(
-                        onTap: () => context.go('/demo/me'),
+                        onTap: () => context.go('/me'),
                         child: const Row(children: [
                           Text('🍽️', style: TextStyle(fontSize: 34)),
                           SizedBox(width: 12),

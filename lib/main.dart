@@ -23,7 +23,6 @@ import 'data/store.dart';
 import 'routing.dart';
 import 'screens/coming_next_screen.dart';
 import 'screens/cook_screen.dart';
-import 'screens/demo_screen.dart';
 import 'screens/login_screen.dart';
 import 'screens/patient_screen.dart';
 import 'screens/program_preview_screen.dart';
@@ -36,8 +35,8 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final library = await Library.load();
   final i18n = await CookI18n.load();
-  // الجوال: Firebase حقيقي. الويب (معاينة التصفح) بلا Firebase — دخول وهمي.
-  AuthService auth = FakeAuthService();
+  // الجوال: Firebase حقيقي. الويب: تصفح الأنظمة فقط بلا دخول.
+  AuthService auth = WebAuthService();
   if (!kIsWeb) {
     await Firebase.initializeApp(options: SufratiFirebase.current);
     auth = FirebaseAuthService();
@@ -71,9 +70,8 @@ class SufratiApp extends StatelessWidget {
     GoRoute(path: '/', builder: (_, _) => StartScreen(library: library)),
     GoRoute(path: '/programs/:id',
         builder: (_, s) => ProgramPreviewScreen(library: library, programId: s.pathParameters['id']!)),
-    GoRoute(path: '/demo', builder: (_, _) => const DemoScreen()),
-    GoRoute(path: '/demo/me', builder: (_, _) => PatientScreen(store: _demo, library: library)),
-    GoRoute(path: '/demo/cook', builder: (_, _) => CookScreen(store: _demo, library: library, i18n: i18n)),
+    GoRoute(path: '/me', builder: (_, _) => PatientScreen(store: _demo, library: library)),
+    GoRoute(path: '/cook', builder: (_, _) => CookScreen(store: _demo, library: library, i18n: i18n)),
     GoRoute(path: '/signup/custom', builder: (_, _) => const ComingNextScreen(title: 'نظامك الخاص')),
     GoRoute(path: '/signup/:id',
         builder: (_, s) => HouseCreateScreen(library: library, links: _links, programId: s.pathParameters['id']!)),

@@ -29,7 +29,7 @@ class _JoinScreenState extends State<JoinScreen> {
       setState(() => _error = err);
       return;
     }
-    context.go(widget.role == Role.cook ? '/demo/cook' : '/demo/me');
+    context.go(widget.role == Role.cook ? '/cook' : '/me');
   }
 
   @override

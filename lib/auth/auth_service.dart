@@ -1,5 +1,5 @@
 // واجهة الدخول — الشاشات تتعامل معها فقط. التنفيذ الحقيقي (FirebaseAuthService: Google + Apple)
-// يُضاف بعد تثبيت حزم Firebase؛ والمعاينة تستعمل FakeAuthService.
+// يُضاف بعد تثبيت حزم Firebase؛ والويب يستعمل WebAuthService (بلا دخول).
 import 'package:flutter/foundation.dart';
 
 enum SignInMethod { google, apple }
@@ -27,25 +27,16 @@ abstract class AuthService extends ChangeNotifier {
   Future<void> deleteAccount();
 }
 
-/// للمعاينة والاختبار: يسجّل دخولاً وهمياً بلا شبكة.
-class FakeAuthService extends AuthService {
-  AppUser? _user;
-  final bool apple;
-  FakeAuthService({this.apple = true});
+/// الويب: لا دخول (Firebase غير مسجَّل للويب). صفحات التصفح العامة فقط، والدخول في تطبيق الجوال.
+class WebAuthService extends AuthService {
   @override
-  AppUser? get user => _user;
+  AppUser? get user => null;
   @override
-  bool isAvailable(SignInMethod m) => m == SignInMethod.google || apple;
+  bool isAvailable(SignInMethod m) => false;
   @override
-  Future<void> signIn(SignInMethod m) async {
-    _user = AppUser(uid: 'fake-${m.name}', name: 'مستخدم تجريبي', email: 'demo@example.com');
-    notifyListeners();
-  }
+  Future<void> signIn(SignInMethod m) async => throw UnsupportedError('الدخول متاح في تطبيق الجوال');
   @override
-  Future<void> signOut() async {
-    _user = null;
-    notifyListeners();
-  }
+  Future<void> signOut() async {}
   @override
-  Future<void> deleteAccount() => signOut();
+  Future<void> deleteAccount() async {}
 }

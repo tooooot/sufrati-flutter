@@ -1,5 +1,5 @@
 // إعدادات Firebase لمشروع sufrati-8555a — مأخوذة من google-services.json وGoogleService-Info.plist (ليست أسراراً).
-// الويب غير مسجَّل في Firebase: معاينة الويب تستعمل FakeAuthService ولا تحمّل Firebase.
+// الويب غير مسجَّل في Firebase: الويب بلا دخول (WebAuthService) ولا يحمّل Firebase.
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 
