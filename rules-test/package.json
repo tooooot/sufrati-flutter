@@ -1,0 +1,2 @@
+{"name":"sufrati-rules-test","private":true,"type":"module","scripts":{"test":"firebase emulators:exec --only firestore --project demo-sufrati 'node --test rules.test.mjs'"},
+ "devDependencies":{"firebase-tools":"^14.0.0","@firebase/rules-unit-testing":"^4.0.0","firebase":"^11.0.0"}}
