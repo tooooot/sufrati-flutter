@@ -8,6 +8,13 @@ import 'package:go_router/go_router.dart';
 import 'auth/auth_service.dart';
 import 'auth/firebase_auth_service.dart';
 import 'auth/session.dart';
+import 'auth/roles.dart';
+import 'data/links.dart';
+import 'screens/house_create_screen.dart';
+import 'screens/household_screen.dart';
+import 'screens/join_screen.dart';
+import 'screens/profile_screen.dart';
+
 import 'firebase_options.dart';
 import 'data/household.dart';
 import 'data/i18n.dart';
@@ -49,6 +56,7 @@ class SufratiApp extends StatelessWidget {
 
   // الجلسة: الدخول أولاً (Google/Apple) ثم اختيار الدور. التصفح والمعاينة يبقيان متاحين بلا حساب.
   late final _session = Session(auth);
+  final _links = LinkService();
 
   static bool _isPublic(String p) =>
       p == '/login' || p == '/browse' || p.startsWith('/programs/') || p.startsWith('/demo');
@@ -62,8 +70,11 @@ class SufratiApp extends StatelessWidget {
   }, routes: [
     GoRoute(path: '/role', builder: (_, _) => RoleScreen(session: _session)),
     GoRoute(path: '/browse', builder: (_, _) => StartScreen(library: library)),
-    GoRoute(path: '/join', builder: (_, _) => const ComingNextScreen(title: 'الطاهي', message: 'أدخل رمز الدعوة الذي وصلك من صاحب البيت — يُفعَّل مع الدعوات قريباً')),
-    GoRoute(path: '/doctor-request', builder: (_, _) => const ComingNextScreen(title: 'الطبيب', message: 'يُرسَل طلبك لمدير سفرتي للموافقة — يُفعَّل قريباً')),
+    GoRoute(path: '/household', builder: (_, _) => HouseholdScreen(links: _links, library: library)),
+    GoRoute(path: '/profile', builder: (_, _) => ProfileScreen(session: _session, links: _links)),
+    GoRoute(path: '/join/:role',
+        builder: (_, st) => JoinScreen(links: _links, session: _session,
+            role: st.pathParameters['role'] == 'doctor' ? Role.doctor : Role.cook)),
     GoRoute(path: '/login', builder: (_, s) => LoginScreen(auth: auth, next: s.uri.queryParameters['next'] ?? '/')),
     GoRoute(path: '/', builder: (_, _) => StartScreen(library: library)),
     GoRoute(path: '/programs/:id',
@@ -73,7 +84,7 @@ class SufratiApp extends StatelessWidget {
     GoRoute(path: '/demo/cook', builder: (_, _) => CookScreen(store: _demo, library: library, i18n: i18n)),
     GoRoute(path: '/signup/custom', builder: (_, _) => const ComingNextScreen(title: 'نظامك الخاص')),
     GoRoute(path: '/signup/:id',
-        builder: (_, s) => ComingNextScreen(title: library.meta(s.pathParameters['id']!)?.label ?? 'التسجيل')),
+        builder: (_, s) => HouseCreateScreen(library: library, links: _links, programId: s.pathParameters['id']!)),
   ]);
 
   @override
@@ -85,5 +96,28 @@ class SufratiApp extends StatelessWidget {
         supportedLocales: const [Locale('ar'), Locale('en')],
         localizationsDelegates: GlobalMaterialLocalizations.delegates,
         routerConfig: _router,
+        builder: (context, child) => ListenableBuilder(
+          listenable: Listenable.merge([_session, _router.routeInformationProvider]),
+          builder: (context, _) {
+            final path = _router.routeInformationProvider.value.uri.path;
+            final show = _session.signedIn && path != '/login' && path != '/profile';
+            return Stack(children: [
+              child ?? const SizedBox.shrink(),
+              if (show)
+                PositionedDirectional(
+                  end: 10,
+                  top: MediaQuery.paddingOf(context).top + 6,
+                  child: Material(
+                    color: Colors.white24, shape: const CircleBorder(),
+                    child: IconButton(
+                      tooltip: 'ملفي الشخصي',
+                      icon: const Icon(Icons.account_circle, color: Colors.white, size: 30),
+                      onPressed: () => _router.go('/profile'),
+                    ),
+                  ),
+                ),
+            ]);
+          },
+        ),
       );
 }
