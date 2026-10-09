@@ -65,7 +65,10 @@ jobs:
             -authenticationKeyID "$ASC_KEY_ID" -authenticationKeyIssuerID "$ASC_ISSUER_ID"
       - name: Build only (no signing) — verification
         if: ${{ !inputs.upload }}
-        run: flutter build ios --release --no-codesign
+        run: |
+          # تجميع Release بلا توقيع (flutter build --no-codesign يشترط فريقاً حين توجد entitlements)
+          xcodebuild -workspace ios/Runner.xcworkspace -scheme Runner -configuration Release -sdk iphoneos \
+            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO build
       - name: Remove key
         if: always()
         run: rm -rf ~/private_keys
