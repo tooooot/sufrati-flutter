@@ -14,6 +14,8 @@ def patch(path, fn):
 
 def android():
     a = ROOT / 'android'
+    # أيقونة سفرتي الأصلية (تكيّفية + دائرية + أيقونة الإشعار) بدل أيقونة Flutter الافتراضية
+    shutil.copytree(NATIVE / 'android-res', a / 'app' / 'src' / 'main' / 'res', dirs_exist_ok=True)
     shutil.copy(NATIVE / 'google-services.json', a / 'app' / 'google-services.json')
     patch(a / 'settings.gradle.kts', lambda s: s if GS_PLUGIN in s else s.replace(
         'id("com.android.application") version', GS_PLUGIN + ' version "4.4.4" apply false\n    id("com.android.application") version', 1))
@@ -50,13 +52,19 @@ android {
     def manifest(s):
         if 'android.permission.INTERNET' not in s:
             s = s.replace('<application', '<uses-permission android:name="android.permission.INTERNET"/>\n    <application', 1)
-        return re.sub(r'android:label="[^"]*"', 'android:label="سفرتي"', s, 1)
+        s = re.sub(r'android:label="[^"]*"', 'android:label="سفرتي"', s, 1)
+        if 'roundIcon' not in s:
+            s = s.replace('android:icon="@mipmap/ic_launcher"', 'android:icon="@mipmap/ic_launcher"\n        android:roundIcon="@mipmap/ic_launcher_round"', 1)
+        return s
     patch(a / 'app' / 'src' / 'main' / 'AndroidManifest.xml', manifest)
     # قالب Flutter يضبط -Xmx8G؛ السيرفر 4GB فقط (قُتل البناء الأول) — نستعمل 1.5GB كبقية بناءات أندرويد عندنا
     patch(a / 'gradle.properties', lambda s: re.sub(r'org\.gradle\.jvmargs=.*', 'org.gradle.jvmargs=-Xmx1536m -XX:MaxMetaspaceSize=512m', s, 1))
 
 def ios():
     r = ROOT / 'ios' / 'Runner'
+    icons = r / 'Assets.xcassets' / 'AppIcon.appiconset'
+    shutil.rmtree(icons, ignore_errors=True)
+    shutil.copytree(NATIVE / 'ios-appicon', icons)  # أيقونة سفرتي الأصلية
     shutil.copy(NATIVE / 'GoogleService-Info.plist', r / 'GoogleService-Info.plist')
     with open(NATIVE / 'GoogleService-Info.plist', 'rb') as f: reversed_id = plistlib.load(f)['REVERSED_CLIENT_ID']
     with open(r / 'Info.plist', 'rb') as f: info = plistlib.load(f)
