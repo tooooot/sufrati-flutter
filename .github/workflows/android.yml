@@ -30,6 +30,7 @@ jobs:
       - name: Generate native project
         run: |
           flutter create --platforms=android --org net.wardyat --project-name sufrati .
+          rm -f test/widget_test.dart   # قالب flutter create يشير لـMyApp غير الموجود
           python3 tools/prepare_native.py android
           flutter pub get
       - name: Run tests

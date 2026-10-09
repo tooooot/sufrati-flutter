@@ -31,6 +31,7 @@ jobs:
       - name: Generate native project
         run: |
           flutter create --platforms=ios --org net.wardyat --project-name sufrati .
+          rm -f test/widget_test.dart   # قالب flutter create يشير لـMyApp غير الموجود
           python3 tools/prepare_native.py ios
           flutter pub get
           flutter build ios --config-only --no-codesign   # يولّد Podfile وإعدادات Flutter
