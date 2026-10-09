@@ -124,9 +124,9 @@ class _CookScreenState extends State<CookScreen> {
               programId: pid,
               header: _header(h.cookName, dayName, h.eaters),
               tabs: [
-                TabItem('🍽️', ui('nav_today'), (_) => _today(program, day, now)),
-                TabItem('⚠️', ui('nav_info'), (_) => _info(program, now)),
-                TabItem('🛒', ui('nav_next'), (_) => _next(program, shoppingNext, pid)),
+                TabItem(Icons.restaurant_menu, ui('nav_today'), (_) => _today(program, day, now)),
+                TabItem(Icons.warning_amber_rounded, ui('nav_info'), (_) => _info(program, now)),
+                TabItem(Icons.shopping_cart_outlined, ui('nav_next'), (_) => _next(program, shoppingNext, pid)),
               ],
             );
           },

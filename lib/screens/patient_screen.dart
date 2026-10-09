@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../data/household.dart';
 import '../data/models.dart';
 import '../data/repository.dart';
 import '../data/store.dart';
@@ -12,89 +13,331 @@ import '../logic/dates.dart';
 import '../widgets/common.dart';
 import '../widgets/profile_button.dart';
 import '../widgets/tabs_scaffold.dart';
+import '../auth/roles.dart';
+import '../data/links.dart';
+import 'household_screen.dart';
+import 'package:url_launcher/url_launcher.dart';
 
-/// لوحة المريض/صاحب البيت — نقل لـ user.html: الوجبات (اليوم/غداً) · المشتريات · الأسبوع القادم.
-class PatientScreen extends StatelessWidget {
+/// لوحة المريض/صاحب الخطة — نقل لـ user.html: الوجبات (اليوم/غداً) · المشتريات · الأسبوع القادم.
+class PatientScreen extends StatefulWidget {
   final HouseholdStore store;
   final Library library;
-  const PatientScreen({super.key, required this.store, required this.library});
+  final LinkService links;
+  final String userName;
+  /// صاحب الخطة فقط يرى تبويب «بيتي» ويدعو؛ الطبيب يرى الخطة والمشتريات والأسبوع.
+  final bool showHome;
+  const PatientScreen({super.key, required this.store, required this.library, required this.links,
+      this.userName = '', this.showHome = true});
+
+  @override
+  State<PatientScreen> createState() => _PatientScreenState();
+}
+
+class _PatientScreenState extends State<PatientScreen> {
+  final _tabs = TabsController();
+
+  @override
+  void dispose() {
+    _tabs.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    final meta = library.meta(store.household.programId)!;
+    final store = widget.store;
+    final meta = widget.library.meta(store.household.programId)!;
+    final now = saudiNow();
+    final today = DateTime(now.year, now.month, now.day);
+    final dayName = widget.library.dayNames[today.difference(weekStartFor(today)).inDays];
+    final first = widget.userName.trim().split(' ').first;
+    final greeting = now.hour < 12 ? 'صباح الخير' : 'مساء الخير';
     return ListenableBuilder(
       listenable: store,
       builder: (context, _) => TabsScaffold(
+        controller: _tabs,
         programId: store.household.programId,
-        header: GreenHeader(icon: meta.icon, title: 'سفرتي', subtitle: '${store.household.label} — ${meta.label}', leading: const ProfileButton()),
+        header: GreenHeader(
+          icon: meta.icon,
+          title: first.isEmpty ? greeting : '$greeting، $first',
+          subtitle: '$dayName · ${arDate(today)}',
+          leading: Row(children: [
+            const ProfileButton(),
+            const Spacer(),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              decoration: BoxDecoration(color: Colors.white24, borderRadius: BorderRadius.circular(14)),
+              child: Text(meta.label, style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: black)),
+            ),
+          ]),
+        ),
         tabs: [
-          TabItem('🍽️', 'الوجبات', (_) => _MealsTab(store: store, library: library)),
-          TabItem('🛒', 'المشتريات', (_) => _ShoppingTab(store: store)),
-          TabItem('📝', 'الأسبوع القادم', (_) => _NextWeekTab(store: store, library: library)),
+          TabItem(Icons.restaurant_menu, 'اليوم',
+              (_) => _TodayTab(store: store, library: widget.library, links: widget.links, tabs: _tabs, canInvite: widget.showHome)),
+          TabItem(Icons.shopping_cart_outlined, 'المشتريات', (_) => _ShoppingTab(store: store)),
+          TabItem(Icons.calendar_month_outlined, 'الأسبوع', (_) => _NextWeekTab(store: store, library: widget.library)),
+          if (widget.showHome) TabItem(Icons.home_outlined, 'بيتي', (_) => HouseholdBody(links: widget.links)),
         ],
       ),
     );
   }
 }
 
-class _MealsTab extends StatefulWidget {
+class _TodayTab extends StatefulWidget {
   final HouseholdStore store;
   final Library library;
-  const _MealsTab({required this.store, required this.library});
+  final LinkService links;
+  final TabsController tabs;
+  final bool canInvite;
+  const _TodayTab({required this.store, required this.library, required this.links, required this.tabs, required this.canInvite});
   @override
-  State<_MealsTab> createState() => _MealsTabState();
+  State<_TodayTab> createState() => _TodayTabState();
 }
 
-class _MealsTabState extends State<_MealsTab> {
+class _TodayTabState extends State<_TodayTab> {
   bool tomorrow = false;
 
   @override
   Widget build(BuildContext context) {
     final now = saudiNow();
     final date = DateTime(now.year, now.month, now.day).add(Duration(days: tomorrow ? 1 : 0));
+    final thisWeek = weekStartFor(DateTime(now.year, now.month, now.day));
     return FutureBuilder(
       future: () async {
         final p = await widget.store.program();
-        return (p, await dayView(widget.store, p, date));
+        return (p, await dayView(widget.store, p, date), await widget.store.shopping(thisWeek));
       }(),
       builder: (context, snap) {
-        if (!snap.hasData) return const Center(child: CircularProgressIndicator(color: Brand.green));
-        final (Program program, DayView day) = snap.data!;
+        if (snap.hasError) return Text('${snap.error}', textAlign: TextAlign.center);
+        if (!snap.hasData) return const Padding(padding: EdgeInsets.all(40), child: Center(child: CircularProgressIndicator(color: Brand.green)));
+        final (Program program, DayView day, List<ShoppingLine> lines) = snap.data!;
+        final next = tomorrow ? null : _nextSlot(day, now);
+        final doneCount = day.slots.where((x) => x.prepared).length;
+        final eaters = widget.store.household.eaters;
         final tip = program.userTips.isEmpty ? null : program.userTips[_ordinal(now) % program.userTips.length];
         return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-          if (tip != null)
+          if (!tomorrow)
+            next != null
+                ? _NextMealHero(s: next, program: program, library: widget.library, eaters: eaters, now: now)
+                : _DayDoneHero(done: doneCount, total: day.slots.length),
+          const SizedBox(height: 14),
+          Row(children: [
+            _Quick(Icons.person_add_alt_1, 'دعوة الطاهي', widget.canInvite ? () => inviteFlow(context, widget.links, Role.cook) : null),
+            const SizedBox(width: 10),
+            _Quick(Icons.ios_share, 'شارك المشتريات', () => _shareShopping(program, lines)),
+            const SizedBox(width: 10),
+            _Quick(Icons.autorenew, 'تعديل الأسبوع', () => widget.tabs.select(2)),
+          ]),
+          const SizedBox(height: 20),
+          Row(children: [
+            Expanded(child: Text(tomorrow ? 'وجبات الغد' : 'وجبات اليوم',
+                style: const TextStyle(fontSize: 19, fontWeight: black, color: Brand.green))),
+            if (!tomorrow)
+              Text('حُضّرت $doneCount من ${day.slots.length}',
+                  style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w800, color: Brand.honey)),
+          ]),
+          const SizedBox(height: 8),
+          Row(children: [
+            for (final (t, label) in [(false, 'اليوم'), (true, 'غدًا')]) ...[
+              Expanded(child: _BigToggle(label: label, selected: tomorrow == t, onTap: () => setState(() => tomorrow = t))),
+              if (!t) const SizedBox(width: 10),
+            ],
+          ]),
+          const SizedBox(height: 12),
+          for (final s in day.slots) ...[
+            _MealRow(s: s, isNext: identical(s, next), onTap: () => _showMeal(context, s, program, eaters)),
+            const SizedBox(height: 8),
+          ],
+          const SizedBox(height: 10),
+          _ShoppingSummary(lines: lines, onTap: () => widget.tabs.select(1)),
+          if (tip != null) ...[
+            const SizedBox(height: 14),
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
               decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(12),
                   border: Border.all(color: Brand.green.withValues(alpha: .15))),
               child: Row(children: [
                 Text(tip['icon'] ?? '💡', style: const TextStyle(fontSize: 22)),
                 const SizedBox(width: 8),
-                Expanded(child: Text(tip['text'] ?? '', maxLines: 2, overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: Color(0xFF374151)))),
+                Expanded(child: Text(tip['text'] ?? '', style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: Color(0xFF374151), height: 1.5))),
               ]),
             ),
-          const SizedBox(height: 12),
-          Row(children: [
-            for (final (t, label) in [(false, '🗓️ اليوم'), (true, '⏭️ غدًا')]) ...[
-              Expanded(child: _BigToggle(label: label, selected: tomorrow == t, onTap: () => setState(() => tomorrow = t))),
-              if (!t) const SizedBox(width: 12),
-            ],
-          ]),
-          const SizedBox(height: 14),
-          Text('${widget.library.dayNames[day.dayIndex]} · ${arDate(date)}', textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 24, fontWeight: black, color: Brand.green)),
-          const SizedBox(height: 4),
-          Text('حُضّرت ${day.slots.where((x) => x.prepared).length} من ${day.slots.length} وجبات',
-              textAlign: TextAlign.center, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: Brand.honey)),
-          const SizedBox(height: 14),
-          for (final s in day.slots) ...[
-            _MealCard(s: s, program: program, library: widget.library, eaters: widget.store.household.eaters,
-                next: !tomorrow && identical(s, _nextSlot(day, now))),
-            const SizedBox(height: 16),
           ],
         ]);
       },
+    );
+  }
+
+  void _showMeal(BuildContext context, SlotView s, Program program, int eaters) => showModalBottomSheet<void>(
+        context: context,
+        isScrollControlled: true,
+        showDragHandle: true,
+        backgroundColor: Brand.cream,
+        builder: (_) => SingleChildScrollView(
+          padding: const EdgeInsets.fromLTRB(16, 0, 16, 28),
+          child: _MealCard(s: s, program: program, library: widget.library, eaters: eaters),
+        ),
+      );
+
+  Future<void> _shareShopping(Program program, List<ShoppingLine> lines) async {
+    final todo = lines.where((l) => !l.bought).map((l) {
+      final ing = program.ingredients[l.key]!;
+      return '• ${ing.label} × ${l.packs} (${ing.buyUnit})';
+    }).join('\n');
+    final text = 'مشتريات هذا الأسبوع من سفرتي:\n$todo';
+    await launchUrl(Uri.parse('https://wa.me/?text=${Uri.encodeComponent(text)}'), mode: LaunchMode.externalApplication);
+  }
+}
+
+/// الوجبة القادمة: البطاقة الكبيرة الوحيدة في أعلى «اليوم».
+class _NextMealHero extends StatelessWidget {
+  final SlotView s;
+  final Program program;
+  final Library library;
+  final int eaters;
+  final DateTime now;
+  const _NextMealHero({required this.s, required this.program, required this.library, required this.eaters, required this.now});
+
+  @override
+  Widget build(BuildContext context) {
+    final photo = s.option == null ? null : library.photoUrl(program.meta.id, s.option!.id);
+    final hm = s.time.split(':').map(int.parse).toList();
+    final diff = hm[0] * 60 + hm[1] - (now.hour * 60 + now.minute);
+    final when = diff <= 0 ? 'حان وقتها' : diff < 60 ? 'بعد $diff دقيقة' : 'بعد ${diff ~/ 60} ساعة';
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(26),
+        border: Border.all(color: Brand.honey, width: 2),
+        boxShadow: const [BoxShadow(color: Color(0x1F000000), blurRadius: 22, offset: Offset(0, 8))],
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        if (photo != null) DishPhoto(photo, width: double.infinity, height: 150),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
+          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Row(children: [
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 3),
+                decoration: BoxDecoration(color: Brand.honey, borderRadius: BorderRadius.circular(12)),
+                child: const Text('الوجبة القادمة', style: TextStyle(fontSize: 12, fontWeight: black, color: Colors.white)),
+              ),
+              const Spacer(),
+              Text('$when · ${ar12(s.time)}', style: const TextStyle(fontSize: 15, fontWeight: black, color: Brand.honey)),
+            ]),
+            const SizedBox(height: 8),
+            Text(s.option?.label ?? '—', style: const TextStyle(fontSize: 21, fontWeight: black)),
+            const SizedBox(height: 2),
+            Text('${s.slot.name} · لـ$eaters', style: const TextStyle(fontSize: 14, color: Brand.grey)),
+          ]),
+        ),
+      ]),
+    );
+  }
+}
+
+class _DayDoneHero extends StatelessWidget {
+  final int done, total;
+  const _DayDoneHero({required this.done, required this.total});
+  @override
+  Widget build(BuildContext context) => CardBox(
+        color: Brand.green,
+        child: Row(children: [
+          const Icon(Icons.check_circle, color: Colors.white, size: 38),
+          const SizedBox(width: 12),
+          Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            const Text('انتهت وجبات اليوم', style: TextStyle(color: Colors.white, fontSize: 19, fontWeight: black)),
+            Text('حُضّرت $done من $total — نراك غدًا', style: const TextStyle(color: Colors.white70, fontSize: 14)),
+          ])),
+        ]),
+      );
+}
+
+class _Quick extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final VoidCallback? onTap;
+  const _Quick(this.icon, this.label, this.onTap);
+  @override
+  Widget build(BuildContext context) => Expanded(
+        child: Opacity(
+          opacity: onTap == null ? .4 : 1,
+          child: CardBox(
+            onTap: onTap,
+            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 4),
+            child: Column(children: [
+              Container(
+                width: 40, height: 40,
+                decoration: BoxDecoration(color: Brand.green.withValues(alpha: .1), borderRadius: BorderRadius.circular(14)),
+                child: Icon(icon, color: Brand.green, size: 22),
+              ),
+              const SizedBox(height: 6),
+              Text(label, textAlign: TextAlign.center,
+                  style: const TextStyle(fontSize: 12.5, fontWeight: FontWeight.w800, color: Brand.green, height: 1.3)),
+            ]),
+          ),
+        ),
+      );
+}
+
+class _MealRow extends StatelessWidget {
+  final SlotView s;
+  final bool isNext;
+  final VoidCallback onTap;
+  const _MealRow({required this.s, required this.isNext, required this.onTap});
+  @override
+  Widget build(BuildContext context) => CardBox(
+        onTap: onTap,
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+        border: isNext ? Border.all(color: Brand.honey, width: 2) : null,
+        child: Row(children: [
+          Container(
+            width: 34, height: 34,
+            decoration: BoxDecoration(shape: BoxShape.circle,
+                color: s.prepared ? Brand.green : Brand.honey.withValues(alpha: .18)),
+            child: Icon(s.prepared ? Icons.check : Icons.schedule, size: 18, color: s.prepared ? Colors.white : Brand.honey),
+          ),
+          const SizedBox(width: 12),
+          Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Text(s.slot.name, style: const TextStyle(fontSize: 16, fontWeight: black)),
+            Text(s.option?.label ?? '—', maxLines: 1, overflow: TextOverflow.ellipsis,
+                style: const TextStyle(fontSize: 13, color: Brand.grey)),
+          ])),
+          Text(ar12(s.time), style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w800, color: Brand.honey)),
+          const SizedBox(width: 4),
+          const Icon(Icons.chevron_left, color: Colors.grey, size: 20),
+        ]),
+      );
+}
+
+class _ShoppingSummary extends StatelessWidget {
+  final List<ShoppingLine> lines;
+  final VoidCallback onTap;
+  const _ShoppingSummary({required this.lines, required this.onTap});
+  @override
+  Widget build(BuildContext context) {
+    final done = lines.where((l) => l.bought).length;
+    final total = lines.fold<double>(0, (a, l) => a + l.packs * l.unitPrice);
+    return CardBox(
+      onTap: onTap,
+      child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+        const Text('مشتريات هذا الأسبوع', style: TextStyle(fontSize: 17, fontWeight: black, color: Brand.green)),
+        const SizedBox(height: 10),
+        ClipRRect(
+          borderRadius: BorderRadius.circular(6),
+          child: LinearProgressIndicator(
+            value: lines.isEmpty ? 0 : done / lines.length, minHeight: 10,
+            color: Brand.green, backgroundColor: Brand.green.withValues(alpha: .12),
+          ),
+        ),
+        const SizedBox(height: 8),
+        Row(children: [
+          Text('اشتريت $done من ${lines.length}', style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w700, color: Brand.grey)),
+          const Spacer(),
+          Text('التكلفة التقديرية ${total.toStringAsFixed(0)} ر.س',
+              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w700, color: Brand.grey)),
+        ]),
+      ]),
     );
   }
 }
@@ -121,15 +364,14 @@ class _BigToggle extends StatelessWidget {
   Widget build(BuildContext context) => GestureDetector(
         onTap: onTap,
         child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 12),
+          padding: const EdgeInsets.symmetric(vertical: 10),
           decoration: BoxDecoration(
             color: selected ? Brand.green : Colors.white,
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(14),
             border: Border.all(color: Brand.green, width: 2),
-            boxShadow: const [BoxShadow(color: Color(0x14000000), blurRadius: 6)],
           ),
           child: Text(label, textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 18, fontWeight: black, color: selected ? Colors.white : Brand.green)),
+              style: TextStyle(fontSize: 16, fontWeight: black, color: selected ? Colors.white : Brand.green)),
         ),
       );
 }
@@ -139,23 +381,15 @@ class _MealCard extends StatelessWidget {
   final Program program;
   final Library library;
   final int eaters;
-  final bool next;
-  const _MealCard({required this.s, required this.program, required this.library, required this.eaters, this.next = false});
+  const _MealCard({required this.s, required this.program, required this.library, required this.eaters});
 
   @override
   Widget build(BuildContext context) {
     final photo = s.option == null ? null : library.photoUrl(program.meta.id, s.option!.id);
     return CardBox(
       padding: const EdgeInsets.all(20),
-      border: Border.all(color: next ? Brand.honey : Brand.honey.withValues(alpha: .3), width: next ? 3 : 2),
+      border: Border.all(color: Brand.honey.withValues(alpha: .3), width: 2),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        if (next)
-          Container(
-            margin: const EdgeInsets.only(bottom: 8),
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
-            decoration: BoxDecoration(color: Brand.honey, borderRadius: BorderRadius.circular(20)),
-            child: const Text('الوجبة القادمة', style: TextStyle(fontSize: 12, fontWeight: black, color: Colors.white)),
-          ),
         if (s.prepared)
           const Padding(padding: EdgeInsets.only(bottom: 6), child: Text('✅ حُضّرت', style: TextStyle(fontWeight: black, color: Brand.green))),
         Row(children: [

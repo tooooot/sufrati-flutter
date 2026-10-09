@@ -101,7 +101,8 @@ class SufratiApp extends StatelessWidget {
           builder: (_, _) => StoreLoader(
                 db: db, links: links, library: library,
                 role: _session.role == Role.doctor ? Role.doctor : Role.owner,
-                builder: (store) => PatientScreen(store: store, library: library),
+                builder: (store) => PatientScreen(store: store, library: library, links: links,
+                    userName: _session.user?.name ?? '', showHome: _session.role != Role.doctor),
               )),
       GoRoute(path: '/cook',
           builder: (_, _) => StoreLoader(

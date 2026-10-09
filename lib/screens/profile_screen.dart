@@ -2,16 +2,28 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../auth/roles.dart';
 import '../auth/session.dart';
 import '../data/links.dart';
+import '../routing.dart';
 import '../theme.dart';
 import '../widgets/common.dart';
 
-/// ملفي الشخصي: بياناتي من Google/Apple، وأدواري وبيوتي، وتبديل الدور، والخروج وحذف الحساب.
+/// ملفي الشخصي: هويتي، وتبديل الدور بنقرة (مفتاح مقسوم)، وبيوتي، والخصوصية والبيانات، والخروج.
 class ProfileScreen extends StatelessWidget {
   final Session session;
   final LinkService links;
   const ProfileScreen({super.key, required this.session, required this.links});
+
+  Future<void> _switchTo(BuildContext context, Role r) async {
+    if (r == Role.doctor && !links.isDoctor) {
+      await links.requestDoctor(); // الطبيب بموافقة المدير لا بالاختيار
+      if (context.mounted) context.go('/doctor-pending');
+      return;
+    }
+    session.chooseRole(r);
+    if (context.mounted) context.go(landing(session));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -24,40 +36,99 @@ class ProfileScreen extends StatelessWidget {
           GreenHeader(
             icon: '👤', title: name, subtitle: u?.email,
             leading: IconButton(icon: const Icon(Icons.arrow_back, color: Colors.white),
-                onPressed: () => context.canPop() ? context.pop() : context.go('/')),
+                onPressed: () => context.canPop() ? context.pop() : context.go(landing(session))),
           ),
           Center(
             child: ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 480),
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(16, 20, 16, 32),
+                padding: const EdgeInsets.fromLTRB(16, 16, 16, 32),
                 child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-                  const Text('أدواري وبيوتي', style: TextStyle(fontWeight: black, fontSize: 17)),
-                  const SizedBox(height: 8),
-                  if (links.memberships.isEmpty)
-                    const CardBox(child: Text('لست مرتبطاً ببيت بعد. اختر دورك لتبدأ.', style: TextStyle(color: Brand.grey))),
-                  for (final m in links.memberships) ...[
-                    CardBox(child: Row(children: [
-                      const Icon(Icons.home_outlined, color: Brand.green),
-                      const SizedBox(width: 10),
-                      Expanded(child: Text(m.householdLabel, style: const TextStyle(fontWeight: black))),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                        decoration: BoxDecoration(color: Brand.cream, borderRadius: BorderRadius.circular(20)),
-                        child: Text(roleName(m.role), style: const TextStyle(fontSize: 12, fontWeight: black, color: Brand.green)),
-                      ),
-                    ])),
+                  // تبديل الدور بنقرة
+                  CardBox(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                    const Text('أنت الآن تستخدم سفرتي كـ', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w800, color: Brand.grey)),
                     const SizedBox(height: 8),
+                    Container(
+                      padding: const EdgeInsets.all(4),
+                      decoration: BoxDecoration(color: Brand.green.withValues(alpha: .09), borderRadius: BorderRadius.circular(16)),
+                      child: Row(children: [
+                        for (final r in const [Role.owner, Role.cook, Role.doctor])
+                          Expanded(
+                            child: GestureDetector(
+                              onTap: () => _switchTo(context, r),
+                              child: AnimatedContainer(
+                                duration: const Duration(milliseconds: 160),
+                                padding: const EdgeInsets.symmetric(vertical: 12),
+                                decoration: BoxDecoration(
+                                  color: session.role == r ? Brand.green : Colors.transparent,
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: Text(roleName(r), textAlign: TextAlign.center,
+                                    style: TextStyle(fontSize: 15, fontWeight: black,
+                                        color: session.role == r ? Colors.white : Brand.green)),
+                              ),
+                            ),
+                          ),
+                      ]),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(switch (session.role) {
+                      Role.owner => 'ترى وتعدّل كل شيء في بيتك وتدعو من تشاء.',
+                      Role.cook => 'ترى وجبات اليوم ومكوّناتها فقط وتضغط «حُضّرت».',
+                      Role.doctor => 'ترى خطط من ربطوك بهم فقط. يعتمد مدير سفرتي حسابك.',
+                      _ => 'اختر دورك للبدء.',
+                    }, style: const TextStyle(fontSize: 12.5, color: Brand.grey, height: 1.7)),
+                  ])),
+                  const SizedBox(height: 20),
+                  const _GroupTitle('بيوتي'),
+                  if (links.memberships.isEmpty)
+                    const CardBox(child: Text('لست مرتبطاً ببيت بعد. اختر دورك لتبدأ.', style: TextStyle(color: Brand.grey)))
+                  else
+                    CardBox(
+                      padding: EdgeInsets.zero,
+                      child: Column(children: [
+                        for (final (i, m) in links.memberships.indexed) ...[
+                          if (i > 0) const Divider(height: 1),
+                          Padding(
+                            padding: const EdgeInsets.all(16),
+                            child: Row(children: [
+                              const Icon(Icons.home_outlined, color: Brand.green),
+                              const SizedBox(width: 10),
+                              Expanded(child: Text(m.householdLabel, style: const TextStyle(fontWeight: black))),
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                                decoration: BoxDecoration(color: Brand.cream, borderRadius: BorderRadius.circular(20)),
+                                child: Text(roleName(m.role), style: const TextStyle(fontSize: 12, fontWeight: black, color: Brand.green)),
+                              ),
+                            ]),
+                          ),
+                        ],
+                      ]),
+                    ),
+                  const SizedBox(height: 20),
+                  const _GroupTitle('الخصوصية والبيانات'),
+                  CardBox(
+                    padding: EdgeInsets.zero,
+                    child: Column(children: [
+                      _Row(Icons.privacy_tip_outlined, 'سياسة الخصوصية',
+                          () => launchUrl(Uri.parse('https://maeda.wardyat.net/privacy'), mode: LaunchMode.externalApplication)),
+                      const Divider(height: 1),
+                      _Row(Icons.delete_forever, 'حذف حسابي وبياناتي', () => _confirmDelete(context), danger: true),
+                    ]),
+                  ),
+                  if (session.isAdmin) ...[
+                    const SizedBox(height: 20),
+                    const _GroupTitle('الإدارة'),
+                    CardBox(padding: EdgeInsets.zero, child: _Row(Icons.admin_panel_settings, 'لوحة المدير', () => context.go('/admin'))),
                   ],
-                  const SizedBox(height: 8),
-                  _Tile(icon: Icons.swap_horiz, label: 'تغيير الدور', onTap: () => context.go('/role')),
-                  _Tile(icon: Icons.home, label: 'بيتي وأعضاؤه', onTap: () => context.go('/household')),
-                  if (session.isAdmin) _Tile(icon: Icons.admin_panel_settings, label: 'لوحة المدير', onTap: () => context.go('/admin')),
-                  _Tile(icon: Icons.privacy_tip_outlined, label: 'سياسة الخصوصية',
-                      onTap: () => launchUrl(Uri.parse('https://maeda.wardyat.net/privacy'), mode: LaunchMode.externalApplication)),
-                  const SizedBox(height: 8),
-                  _Tile(icon: Icons.logout, label: 'تسجيل الخروج', onTap: () => session.auth.signOut()),
-                  _Tile(icon: Icons.delete_forever, label: 'حذف حسابي وبياناتي', danger: true, onTap: () => _confirmDelete(context)),
+                  const SizedBox(height: 20),
+                  OutlinedButton.icon(
+                    style: OutlinedButton.styleFrom(minimumSize: const Size.fromHeight(52), side: const BorderSide(color: Brand.green, width: 2),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16))),
+                    icon: const Icon(Icons.logout, color: Brand.green),
+                    label: const Text('تسجيل الخروج', style: TextStyle(fontWeight: black, fontSize: 16, color: Brand.green)),
+                    onPressed: () => session.auth.signOut(),
+                  ),
                 ]),
               ),
             ),
@@ -92,23 +163,32 @@ class ProfileScreen extends StatelessWidget {
       );
 }
 
-class _Tile extends StatelessWidget {
+class _GroupTitle extends StatelessWidget {
+  final String text;
+  const _GroupTitle(this.text);
+  @override
+  Widget build(BuildContext context) => Padding(
+        padding: const EdgeInsets.fromLTRB(6, 0, 6, 8),
+        child: Text(text, style: const TextStyle(fontSize: 14, fontWeight: black, color: Brand.honey)),
+      );
+}
+
+class _Row extends StatelessWidget {
   final IconData icon;
   final String label;
   final VoidCallback onTap;
   final bool danger;
-  const _Tile({required this.icon, required this.label, required this.onTap, this.danger = false});
+  const _Row(this.icon, this.label, this.onTap, {this.danger = false});
   @override
-  Widget build(BuildContext context) => Padding(
-        padding: const EdgeInsets.only(bottom: 8),
-        child: CardBox(
-          onTap: onTap,
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+  Widget build(BuildContext context) => InkWell(
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.all(16),
           child: Row(children: [
             Icon(icon, color: danger ? Colors.red : Brand.green),
             const SizedBox(width: 12),
             Expanded(child: Text(label, style: TextStyle(fontWeight: FontWeight.w700, color: danger ? Colors.red : null))),
-            const Text('‹', style: TextStyle(fontSize: 20, color: Colors.grey)),
+            const Icon(Icons.chevron_left, color: Colors.grey),
           ]),
         ),
       );

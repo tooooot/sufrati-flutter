@@ -1,5 +1,5 @@
 // مخزن البيت الحقيقي: households/{hid}/weeks/{yyyy-MM-dd} و shopping/{yyyy-MM-dd}.
-// من يملك صلاحية الإدارة (صاحب البيت/الطبيب) يولّد خطة الأسبوع عند أول فتح؛ الطاهي يقرأ فقط ويعلّم «جاهز».
+// من يملك صلاحية الإدارة (صاحب الخطة/الطبيب) يولّد خطة الأسبوع عند أول فتح؛ الطاهي يقرأ فقط ويعلّم «جاهز».
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -12,11 +12,11 @@ import 'models.dart';
 import 'repository.dart';
 import 'store.dart';
 
-/// الطاهي فتح الأسبوع قبل أن يجهّز صاحب البيت أو الطبيب خطته.
+/// الطاهي فتح الأسبوع قبل أن يجهّز صاحب الخطة أو الطبيب خطته.
 class PlanNotReady implements Exception {
   const PlanNotReady();
   @override
-  String toString() => 'لم تُجهَّز خطة هذا الأسبوع بعد. اطلب من صاحب البيت فتح التطبيق.';
+  String toString() => 'لم تُجهَّز خطة هذا الأسبوع بعد. اطلب من صاحب الخطة فتح التطبيق.';
 }
 
 String weekId(DateTime ws) =>

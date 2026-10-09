@@ -11,7 +11,7 @@ import '../widgets/common.dart';
 import '../widgets/link_explainer.dart';
 import '../widgets/profile_button.dart';
 
-/// «بيتي» لصاحب البيت: ملخص البيت + أعضاؤه (الطاهي والطبيب) + إصدار دعوات الربط.
+/// «بيتي» كشاشة مستقلة (مسار /household) — محتواها نفسه تبويب «بيتي» في لوحة صاحب الخطة.
 class HouseholdScreen extends StatelessWidget {
   final LinkService links;
   final Library library;
@@ -33,50 +33,51 @@ class HouseholdScreen extends StatelessWidget {
                 constraints: const BoxConstraints(maxWidth: 480),
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(16, 20, 16, 32),
-                  child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-                    if (!links.hasHousehold) ...[
-                      CardBox(
-                        onTap: () => context.go('/browse'),
-                        color: Brand.amber50,
-                        border: Border.all(color: Brand.honey, width: 2),
-                        child: const Row(children: [
-                          Text('🥗', style: TextStyle(fontSize: 38)),
-                          SizedBox(width: 12),
-                          Expanded(child: Text('ابدأ بإنشاء بيتك: اختر النظام الغذائي المناسب',
-                              style: TextStyle(fontWeight: black, fontSize: 16, color: Brand.green))),
-                          Text('‹', style: TextStyle(fontSize: 22, color: Colors.grey)),
-                        ]),
-                      ),
-                    ] else ...[
-                      CardBox(
-                        onTap: () => context.go('/me'),
-                        child: const Row(children: [
-                          Text('🍽️', style: TextStyle(fontSize: 34)),
-                          SizedBox(width: 12),
-                          Expanded(child: Text('وجبات اليوم والمشتريات',
-                              style: TextStyle(fontWeight: black, fontSize: 16, color: Brand.green))),
-                          Text('‹', style: TextStyle(fontSize: 22, color: Colors.grey)),
-                        ]),
-                      ),
-                      const SizedBox(height: 18),
-                      const Text('أعضاء البيت', style: TextStyle(fontWeight: black, fontSize: 17)),
-                      const SizedBox(height: 8),
-                      _Member(icon: '👤', title: 'أنت', sub: 'صاحب البيت', done: true),
-                      const SizedBox(height: 8),
-                      _Slot(links: links, role: Role.cook, icon: '👨‍🍳', title: 'الطاهي',
-                          empty: 'لم يُربط طاهٍ بعد — يرى وجبات اليوم ومكوّناتها فقط'),
-                      const SizedBox(height: 8),
-                      _Slot(links: links, role: Role.doctor, icon: '🩺', title: 'الطبيب',
-                          empty: 'لم يُربط طبيب بعد — يتابع الخطة ويعدّلها'),
-                    ],
-                    const SizedBox(height: 18),
-                    const LinkExplainer(),
-                  ]),
+                  child: HouseholdBody(links: links),
                 ),
               ),
             ),
           ]),
         ),
+      );
+}
+
+/// محتوى «بيتي»: أعضاء البيت (الطاهي والطبيب) وإصدار دعوات الربط، أو الدعوة لإنشاء بيت.
+class HouseholdBody extends StatelessWidget {
+  final LinkService links;
+  const HouseholdBody({super.key, required this.links});
+
+  @override
+  Widget build(BuildContext context) => ListenableBuilder(
+        listenable: links,
+        builder: (context, _) => Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+          if (!links.hasHousehold)
+            CardBox(
+              onTap: () => context.go('/browse'),
+              color: Brand.amber50,
+              border: Border.all(color: Brand.honey, width: 2),
+              child: const Row(children: [
+                Text('🥗', style: TextStyle(fontSize: 38)),
+                SizedBox(width: 12),
+                Expanded(child: Text('ابدأ بإنشاء بيتك: اختر النظام الغذائي المناسب',
+                    style: TextStyle(fontWeight: black, fontSize: 16, color: Brand.green))),
+                Text('‹', style: TextStyle(fontSize: 22, color: Colors.grey)),
+              ]),
+            )
+          else ...[
+            const Text('أعضاء البيت', style: TextStyle(fontWeight: black, fontSize: 17)),
+            const SizedBox(height: 8),
+            const _Member(icon: '👤', title: 'أنت', sub: 'صاحب الخطة', done: true),
+            const SizedBox(height: 8),
+            _Slot(links: links, role: Role.cook, icon: '👨‍🍳', title: 'الطاهي',
+                empty: 'لم يُربط طاهٍ بعد — يرى وجبات اليوم ومكوّناتها فقط'),
+            const SizedBox(height: 8),
+            _Slot(links: links, role: Role.doctor, icon: '🩺', title: 'الطبيب',
+                empty: 'لم يُربط طبيب بعد — يتابع الخطة ويعدّلها'),
+          ],
+          const SizedBox(height: 18),
+          const LinkExplainer(),
+        ]),
       );
 }
 
@@ -112,68 +113,66 @@ class _Slot extends StatelessWidget {
       return _Member(icon: icon, title: title, sub: 'انضم ✓ (${joined.usedBy})', done: true);
     }
     return CardBox(
-      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Row(children: [
-          Text(icon, style: const TextStyle(fontSize: 30)),
-          const SizedBox(width: 12),
-          Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text(title, style: const TextStyle(fontWeight: black, fontSize: 16)),
-            Text(pending == null ? empty : 'بانتظار أن يدخل الرمز', style: const TextStyle(fontSize: 12, color: Brand.grey)),
-          ])),
-          FilledButton(
-            style: FilledButton.styleFrom(backgroundColor: Brand.green),
-            onPressed: () async {
-              final inv = pending ?? await links.createInvite(role);
-              if (context.mounted) _showInvite(context, inv);
-            },
-            child: Text(pending == null ? 'دعوة' : 'عرض الرمز'),
-          ),
-        ]),
+      child: Row(children: [
+        Text(icon, style: const TextStyle(fontSize: 30)),
+        const SizedBox(width: 12),
+        Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Text(title, style: const TextStyle(fontWeight: black, fontSize: 16)),
+          Text(pending == null ? empty : 'بانتظار أن يدخل الرمز', style: const TextStyle(fontSize: 12, color: Brand.grey)),
+        ])),
+        FilledButton(
+          style: FilledButton.styleFrom(backgroundColor: Brand.green),
+          onPressed: () => inviteFlow(context, links, role),
+          child: Text(pending == null ? 'دعوة' : 'عرض الرمز'),
+        ),
       ]),
     );
   }
+}
 
-  void _showInvite(BuildContext context, Invite inv) {
-    final who = role == Role.cook ? 'الطاهي' : 'الطبيب';
-    final msg = 'دعوة للانضمام إلى بيتي في تطبيق سفرتي بدور $who.\nرمز الدعوة: ${inv.code}\n'
-        'سجّل دخولك في التطبيق، اختر «$who»، واكتب الرمز.';
-    showModalBottomSheet(
-      context: context,
-      showDragHandle: true,
-      builder: (_) => Padding(
-        padding: const EdgeInsets.fromLTRB(24, 4, 24, 28),
-        child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-          Text('رمز دعوة $who', textAlign: TextAlign.center, style: const TextStyle(fontWeight: black, fontSize: 18, color: Brand.green)),
-          const SizedBox(height: 14),
-          Container(
-            padding: const EdgeInsets.symmetric(vertical: 16),
-            decoration: BoxDecoration(color: Brand.cream, borderRadius: BorderRadius.circular(16)),
-            child: Text(inv.code, textAlign: TextAlign.center, textDirection: TextDirection.ltr,
-                style: const TextStyle(fontSize: 30, fontWeight: black, letterSpacing: 6, color: Brand.green)),
-          ),
-          const SizedBox(height: 6),
-          const Text('يعمل مرة واحدة · ينتهي بعد 7 أيام', textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 12, color: Brand.grey)),
-          const SizedBox(height: 16),
-          FilledButton.icon(
-            style: FilledButton.styleFrom(backgroundColor: const Color(0xFF25D366), minimumSize: const Size.fromHeight(50)),
-            icon: const Icon(Icons.send),
-            label: const Text('إرسال بواتساب', style: TextStyle(fontWeight: black)),
-            onPressed: () => launchUrl(Uri.parse('https://wa.me/?text=${Uri.encodeComponent(msg)}'),
-                mode: LaunchMode.externalApplication),
-          ),
-          const SizedBox(height: 8),
-          OutlinedButton.icon(
-            icon: const Icon(Icons.copy),
-            label: const Text('نسخ الرمز'),
-            onPressed: () {
-              Clipboard.setData(ClipboardData(text: inv.code));
-              Navigator.pop(context);
-              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('تم نسخ الرمز')));
-            },
-          ),
-        ]),
-      ),
-    );
-  }
+/// يصدر دعوة (أو يعرض المعلّقة) ويفتح نافذة الرمز مع مشاركة واتساب — تُستدعى من «بيتي» ومن الرئيسية.
+Future<void> inviteFlow(BuildContext context, LinkService links, Role role) async {
+  final inv = links.inviteFor(role) ?? await links.createInvite(role);
+  if (!context.mounted) return;
+  final who = role == Role.cook ? 'الطاهي' : 'الطبيب';
+  final msg = 'دعوة للانضمام إلى بيتي في تطبيق سفرتي بدور $who.\nرمز الدعوة: ${inv.code}\n'
+      'سجّل دخولك في التطبيق، اختر «$who»، واكتب الرمز.';
+  showModalBottomSheet(
+    context: context,
+    showDragHandle: true,
+    builder: (_) => Padding(
+      padding: const EdgeInsets.fromLTRB(24, 4, 24, 28),
+      child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+        Text('رمز دعوة $who', textAlign: TextAlign.center, style: const TextStyle(fontWeight: black, fontSize: 18, color: Brand.green)),
+        const SizedBox(height: 14),
+        Container(
+          padding: const EdgeInsets.symmetric(vertical: 16),
+          decoration: BoxDecoration(color: Brand.cream, borderRadius: BorderRadius.circular(16)),
+          child: Text(inv.code, textAlign: TextAlign.center, textDirection: TextDirection.ltr,
+              style: const TextStyle(fontSize: 30, fontWeight: black, letterSpacing: 6, color: Brand.green)),
+        ),
+        const SizedBox(height: 6),
+        const Text('يعمل مرة واحدة · ينتهي بعد 7 أيام', textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 12, color: Brand.grey)),
+        const SizedBox(height: 16),
+        FilledButton.icon(
+          style: FilledButton.styleFrom(backgroundColor: const Color(0xFF25D366), minimumSize: const Size.fromHeight(50)),
+          icon: const Icon(Icons.send),
+          label: const Text('إرسال بواتساب', style: TextStyle(fontWeight: black)),
+          onPressed: () => launchUrl(Uri.parse('https://wa.me/?text=${Uri.encodeComponent(msg)}'),
+              mode: LaunchMode.externalApplication),
+        ),
+        const SizedBox(height: 8),
+        OutlinedButton.icon(
+          icon: const Icon(Icons.copy),
+          label: const Text('نسخ الرمز'),
+          onPressed: () {
+            Clipboard.setData(ClipboardData(text: inv.code));
+            Navigator.pop(context);
+            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('تم نسخ الرمز')));
+          },
+        ),
+      ]),
+    ),
+  );
 }

@@ -3,7 +3,7 @@ import 'package:sufrati/auth/roles.dart';
 import 'package:sufrati/data/links.dart';
 
 void main() {
-  test('صاحب البيت يدعو الطاهي والطاهي يدخل الرمز مرة واحدة فقط', () async {
+  test('صاحب الخطة يدعو الطاهي والطاهي يدخل الرمز مرة واحدة فقط', () async {
     final l = MemoryLinkService();
     await l.createHousehold('بيت أبو عبدالله', 'kidney_salama', 2);
     expect(l.hasHousehold, isTrue);

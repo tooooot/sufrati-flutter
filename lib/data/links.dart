@@ -1,4 +1,4 @@
-// الربط بين صاحب البيت والطاهي والطبيب: كل ارتباط يتم برمز دعوة يصدره من يملك البيت ويدخله الطرف الآخر.
+// الربط بين صاحب الخطة والطاهي والطبيب: كل ارتباط يتم برمز دعوة يصدره من يملك البيت ويدخله الطرف الآخر.
 // LinkService واجهة؛ FirestoreLinkService هو التنفيذ الحقيقي، وMemoryLinkService للاختبارات.
 import 'dart:math';
 
@@ -37,7 +37,7 @@ abstract class LinkService extends ChangeNotifier {
     return null;
   }
 
-  // بيت صاحب البيت الحالي
+  // بيت صاحب الخطة الحالي
   bool get hasHousehold => membershipOf(Role.owner) != null;
   String get label => membershipOf(Role.owner)?.householdLabel ?? '';
   String get programId => membershipOf(Role.owner)?.programId ?? '';
@@ -46,7 +46,7 @@ abstract class LinkService extends ChangeNotifier {
   Invite? joinedBy(Role r);
 
   Future<void> createHousehold(String label, String programId, int eaters);
-  /// [householdId] اختياري: افتراضياً بيت صاحب البيت الحالي (والطبيب يمرّر بيت مريضه).
+  /// [householdId] اختياري: افتراضياً بيت صاحب الخطة الحالي (والطبيب يمرّر بيت مريضه).
   Future<Invite> createInvite(Role role, {String? householdId});
 
   /// الطبيب لا يُفعَّل بالاختيار الذاتي: يُرسَل طلب لمدير سفرتي.
@@ -144,7 +144,7 @@ String normalizeCode(String raw) => raw.trim().toUpperCase().replaceAll(RegExp(r
 
 /// يتحقق من صلاحية دعوة لمن سيدخلها بدور معيّن. يرجع نص الخطأ أو null.
 String? checkInvite(Invite? inv, Role asRole, DateTime now) {
-  if (inv == null) return 'الرمز غير صحيح. تأكد منه مع صاحب البيت.';
+  if (inv == null) return 'الرمز غير صحيح. تأكد منه مع صاحب الخطة.';
   if (inv.used) return 'هذا الرمز استُخدم من قبل.';
   if (inv.expires.isBefore(now)) return 'انتهت صلاحية الرمز. اطلب رمزاً جديداً.';
   if (inv.role != asRole) {
@@ -154,7 +154,7 @@ String? checkInvite(Invite? inv, Role asRole, DateTime now) {
 }
 
 String roleName(Role r) => switch (r) {
-      Role.owner => 'صاحب البيت',
+      Role.owner => 'صاحب الخطة',
       Role.cook => 'الطاهي',
       Role.doctor => 'الطبيب',
       Role.admin => 'مدير سفرتي',

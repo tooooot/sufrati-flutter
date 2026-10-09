@@ -1,6 +1,6 @@
 rules_version = '2';
 // قواعد أمان سفرتي — تنفّذ «جدول الصلاحيات» في FLUTTER_PLAN.md على الخادم (لا يكفي إخفاء الأزرار).
-// الأدوار داخل البيت: owner (صاحب البيت) / cook (الطباخ) / doctor (الطبيب). المدير = claim اسمه admin.
+// الأدوار داخل البيت: owner (صاحب الخطة) / cook (الطباخ) / doctor (الطبيب). المدير = claim اسمه admin.
 service cloud.firestore {
   match /databases/{db}/documents {
 

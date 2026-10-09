@@ -18,7 +18,7 @@ Future<(FirestoreLinkService, FakeAuthService)> user(FakeFirebaseFirestore db, S
 }
 
 void main() {
-  test('صاحب البيت ينشئ بيتاً ثم يدعو الطاهي فينضم برمز يعمل مرة واحدة', () async {
+  test('صاحب الخطة ينشئ بيتاً ثم يدعو الطاهي فينضم برمز يعمل مرة واحدة', () async {
     final db = FakeFirebaseFirestore();
     final (owner, _) = await user(db, 'u-owner');
     expect(owner.ready, isTrue);
@@ -40,7 +40,7 @@ void main() {
     expect(await cook.redeem(inv.code, Role.cook, who: 'ماريا'), isNull);
     await settle();
     expect(cook.membershipOf(Role.cook)?.householdLabel, 'بيت أبو عبدالله');
-    expect(owner.joinedBy(Role.cook)?.usedBy, 'ماريا', reason: 'صاحب البيت يرى من انضم');
+    expect(owner.joinedBy(Role.cook)?.usedBy, 'ماريا', reason: 'صاحب الخطة يرى من انضم');
     expect(owner.inviteFor(Role.cook), isNull);
 
     final (late, _) = await user(db, 'u-late');

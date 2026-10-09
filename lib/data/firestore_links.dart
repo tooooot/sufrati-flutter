@@ -196,7 +196,7 @@ class FirestoreLinkService extends LinkService {
     try {
       await b.commit();
     } on FirebaseException catch (e) {
-      if (e.code == 'permission-denied') return 'تعذّر الربط بهذا الرمز. اطلب رمزاً جديداً من صاحب البيت.';
+      if (e.code == 'permission-denied') return 'تعذّر الربط بهذا الرمز. اطلب رمزاً جديداً من صاحب الخطة.';
       rethrow;
     }
     return null;

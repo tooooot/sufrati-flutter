@@ -52,7 +52,7 @@ class _StoreLoaderState extends State<StoreLoader> {
           if (widget.db == null) return _Msg('🔒', 'الدخول متاح في تطبيق الجوال', 'ثبّت سفرتي على أندرويد أو آيفون.');
           if (m == null) {
             return _Msg('🏠', widget.role == Role.cook ? 'لست مرتبطاً ببيت بعد' : 'لا بيت بعد',
-                widget.role == Role.cook ? 'اطلب رمز الدعوة من صاحب البيت.' : 'أنشئ بيتك أو اطلب رمزاً من مريضك.',
+                widget.role == Role.cook ? 'اطلب رمز الدعوة من صاحب الخطة.' : 'أنشئ بيتك أو اطلب رمزاً من مريضك.',
                 action: widget.role == Role.cook ? ('إدخال الرمز', '/join/cook') : ('بيتي', '/household'));
           }
           if (_hid != m.householdId) _open(m);
