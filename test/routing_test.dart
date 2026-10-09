@@ -9,6 +9,13 @@ import 'package:sufrati/logic/shopping.dart';
 import 'package:sufrati/routing.dart';
 
 void main() {
+  test('الصفحة التعريفية للزائر على الويب فقط، والدعوة تُقبل قبل اختيار الدور', () {
+    final s = Session(FakeAuthService(), MemoryLinkService());
+    expect(appRedirect(s, '/', landingForGuests: true), isNull);
+    expect(appRedirect(s, '/'), startsWith('/login'));
+    expect(appRedirect(s, '/me', landingForGuests: true), startsWith('/login'));
+  });
+
   test('بلا دخول: كل شيء يذهب للدخول عدا التصفح', () {
     final s = Session(FakeAuthService(), MemoryLinkService());
     expect(appRedirect(s, '/'), startsWith('/login'));

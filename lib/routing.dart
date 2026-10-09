@@ -19,9 +19,10 @@ String landing(Session s) => switch (s.role) {
 bool _validNext(String? n) => n != null && n.startsWith('/') && !n.startsWith('//') && !n.startsWith('/login') && !n.startsWith('/loading');
 
 /// [full] المسار مع الاستعلام (لحفظه عند التحويل للدخول)، [next] وجهة محفوظة من قبل.
-String? appRedirect(Session s, String p, {String? full, String? next}) {
+String? appRedirect(Session s, String p, {String? full, String? next, bool landingForGuests = false}) {
   if (!s.signedIn) {
     if (isPublicPath(p)) return null;
+    if (landingForGuests && p == '/') return null; // الصفحة التعريفية للزائر (الويب)
     return '/login?next=${Uri.encodeComponent(full ?? p)}';
   }
   // نحفظ الوجهة أثناء التحميل أيضاً (وإلا ضاع الرابط العميق وتحديث الصفحة)
