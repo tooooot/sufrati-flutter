@@ -39,7 +39,7 @@ const Map<Perm, Set<Role>> _matrix = {
 
 bool can(Role role, Perm perm) => _matrix[perm]!.contains(role);
 
-/// من يستطيع دعوة من: المدير أيّاً كان، الصاحب ← طباخ/طبيب، الطبيب ← مريض (صاحب بيت)، الطباخ لا أحد.
+/// من يستطيع دعوة من: المدير أيّاً كان، الصاحب ← الطاهي/طبيب، الطبيب ← مريض (صاحب بيت)، الطباخ لا أحد.
 bool canInvite(Role inviter, Role invitee) => switch (inviter) {
       Role.admin => invitee != Role.admin,
       Role.owner => invitee == Role.cook || invitee == Role.doctor,

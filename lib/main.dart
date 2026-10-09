@@ -7,6 +7,7 @@ import 'package:go_router/go_router.dart';
 
 import 'auth/auth_service.dart';
 import 'auth/firebase_auth_service.dart';
+import 'auth/session.dart';
 import 'firebase_options.dart';
 import 'data/household.dart';
 import 'data/i18n.dart';
@@ -18,6 +19,7 @@ import 'screens/demo_screen.dart';
 import 'screens/login_screen.dart';
 import 'screens/patient_screen.dart';
 import 'screens/program_preview_screen.dart';
+import 'screens/role_screen.dart';
 import 'screens/start_screen.dart';
 import 'theme.dart';
 
@@ -45,7 +47,23 @@ class SufratiApp extends StatelessWidget {
   late final _demo = LocalStore(library,
       Household(id: 'demo', label: 'بيت تجريبي', programId: 'kidney_salama', eaters: 2, cookName: 'ماريا'));
 
-  late final _router = GoRouter(routes: [
+  // الجلسة: الدخول أولاً (Google/Apple) ثم اختيار الدور. التصفح والمعاينة يبقيان متاحين بلا حساب.
+  late final _session = Session(auth);
+
+  static bool _isPublic(String p) =>
+      p == '/login' || p == '/browse' || p.startsWith('/programs/') || p.startsWith('/demo');
+
+  late final _router = GoRouter(refreshListenable: _session, redirect: (_, state) {
+    final p = state.matchedLocation;
+    if (!_session.signedIn) return _isPublic(p) ? null : '/login';
+    if (p == '/login') return _session.needsRole ? '/role' : '/';
+    if (_session.needsRole && !_isPublic(p) && p != '/role') return '/role';
+    return null;
+  }, routes: [
+    GoRoute(path: '/role', builder: (_, _) => RoleScreen(session: _session)),
+    GoRoute(path: '/browse', builder: (_, _) => StartScreen(library: library)),
+    GoRoute(path: '/join', builder: (_, _) => const ComingNextScreen(title: 'الطاهي', message: 'أدخل رمز الدعوة الذي وصلك من صاحب البيت — يُفعَّل مع الدعوات قريباً')),
+    GoRoute(path: '/doctor-request', builder: (_, _) => const ComingNextScreen(title: 'الطبيب', message: 'يُرسَل طلبك لمدير سفرتي للموافقة — يُفعَّل قريباً')),
     GoRoute(path: '/login', builder: (_, s) => LoginScreen(auth: auth, next: s.uri.queryParameters['next'] ?? '/')),
     GoRoute(path: '/', builder: (_, _) => StartScreen(library: library)),
     GoRoute(path: '/programs/:id',

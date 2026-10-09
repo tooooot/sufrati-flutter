@@ -1,4 +1,4 @@
-// ترجمات لوحة الطباخ (عربي/إنجليزي/أمهري) — من assets/data/i18n.json (مُصدَّرة من maeda/app/i18n.py).
+// ترجمات لوحة الطاهي (عربي/إنجليزي/أمهري) — من assets/data/i18n.json (مُصدَّرة من maeda/app/i18n.py).
 import 'dart:convert';
 
 import 'package:flutter/services.dart' show rootBundle;

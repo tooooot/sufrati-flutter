@@ -11,13 +11,13 @@ class DemoScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Scaffold(
         body: ListView(padding: EdgeInsets.zero, children: [
-          const GreenHeader(icon: '🧪', title: 'معاينة اللوحات', subtitle: 'بيت تجريبي — نظام الكلى، شخصان، الطباخة ماريا'),
+          const GreenHeader(icon: '🧪', title: 'معاينة اللوحات', subtitle: 'بيت تجريبي — نظام الكلى، شخصان، الطاهي ماريا'),
           Padding(
             padding: const EdgeInsets.all(16),
             child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
               for (final (icon, title, sub, path) in [
                 ('👤', 'لوحة المريض / صاحب البيت', 'الوجبات · المشتريات · تعديل الأسبوع القادم', '/demo/me'),
-                ('👩‍🍳', 'لوحة الطباخ', 'الوجبة القادمة · الطريقة · «جاهز» · 3 لغات', '/demo/cook'),
+                ('👩‍🍳', 'لوحة الطاهي', 'الوجبة القادمة · الطريقة · «جاهز» · 3 لغات', '/demo/cook'),
               ]) ...[
                 CardBox(
                   onTap: () => context.go(path),

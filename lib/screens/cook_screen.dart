@@ -13,7 +13,7 @@ import '../theme.dart';
 import '../widgets/common.dart';
 import '../widgets/tabs_scaffold.dart';
 
-/// لوحة الطباخ — نقل لـ cook.html: الوجبة القادمة الآن · وجبات اليوم بالصور والطريقة · «جاهز» · 3 لغات.
+/// لوحة الطاهي — نقل لـ cook.html: الوجبة القادمة الآن · وجبات اليوم بالصور والطريقة · «جاهز» · 3 لغات.
 /// (تنبيهات الجوال المحلية تُضاف في بناء الأندرويد/الآيفون — لا تعمل في معاينة المتصفح.)
 class CookScreen extends StatefulWidget {
   final HouseholdStore store;

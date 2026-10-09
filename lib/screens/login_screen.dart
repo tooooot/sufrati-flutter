@@ -40,7 +40,7 @@ class _LoginScreenState extends State<LoginScreen> {
     final a = widget.auth;
     return Scaffold(
       body: ListView(padding: EdgeInsets.zero, children: [
-        const GreenHeader(icon: '🍽️', title: 'سفرتي', subtitle: 'سجّل دخولك لتصل إلى بيتك وخطتك'),
+        const GreenHeader(icon: '🍽️', title: 'سفرتي', subtitle: 'سجّل دخولك بحساب Google أو Apple ثم حدّد دورك'),
         Center(
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 420),
@@ -72,7 +72,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   child: const Text('سياسة الخصوصية'),
                 ),
                 const Divider(height: 40),
-                TextButton(onPressed: () => context.go('/start'), child: const Text('تصفّح الأنظمة بلا تسجيل')),
+                TextButton(onPressed: () => context.go('/browse'), child: const Text('تصفّح الأنظمة بلا تسجيل')),
               ]),
             ),
           ),
