@@ -229,7 +229,7 @@ Future<void> _addCustom(BuildContext context, HouseholdStore store, Program prog
               Wrap(spacing: 6, runSpacing: 6, children: [
                 for (final e in prog.ingredients.entries)
                   FilterChip(
-                    label: Text('${e.value.icon} ${e.value.label}', style: const TextStyle(fontSize: 12.5)),
+                    label: Text('${e.value.icon} ${e.value.name}', style: const TextStyle(fontSize: 12.5)),
                     selected: picked.contains(e.key),
                     onSelected: (v) => set(() => v ? picked.add(e.key) : picked.remove(e.key)),
                   ),
@@ -278,7 +278,7 @@ void showPantrySheet(BuildContext context, HouseholdStore store) => showModalBot
                         child: SwitchListTile(
                           dense: true,
                           activeThumbColor: Brand.green,
-                          title: Text('${i.value.icon} ${i.value.label}', style: const TextStyle(fontWeight: FontWeight.w800)),
+                          title: Text('${i.value.icon} ${i.value.name}', style: const TextStyle(fontWeight: FontWeight.w800)),
                           value: at.contains(i.key),
                           onChanged: (v) => store.setPantry(i.key, v),
                         ),

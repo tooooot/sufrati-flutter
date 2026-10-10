@@ -12,10 +12,12 @@ double parseQty(Object? v) {
 }
 
 class Ingredient {
-  final String key, label, icon, unit, buyUnit, category;
+  final String key, label, name, icon, unit, buyUnit, category;
   final double buyQty, buyPrice;
   Ingredient(this.key, Map<String, dynamic> j)
       : label = j['label'] ?? key,
+        // اسم المنتج للمشتريات والمخزن (label قد تحمل وحدة الطبخ مثل «غرام لحم غنم»)
+        name = j['name'] ?? j['label'] ?? key,
         icon = j['icon'] ?? '•',
         unit = j['unit'] ?? '',
         buyUnit = j['buy_unit'] ?? '',

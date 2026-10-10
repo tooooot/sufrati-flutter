@@ -601,7 +601,7 @@ class _ShoppingCard extends StatelessWidget {
                 Text(program.ingredients[l.key]!.icon, style: const TextStyle(fontSize: 28)),
                 const SizedBox(width: 8),
                 Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  Text(program.ingredients[l.key]!.label, style: TextStyle(fontWeight: FontWeight.bold, decoration: l.bought ? TextDecoration.lineThrough : null, color: l.bought ? Brand.grey : null)),
+                  Text(program.ingredients[l.key]!.name, style: TextStyle(fontWeight: FontWeight.bold, decoration: l.bought ? TextDecoration.lineThrough : null, color: l.bought ? Brand.grey : null)),
                   Text(program.ingredients[l.key]!.buyUnit, style: const TextStyle(fontSize: 13, color: Brand.grey)),
                 ])),
                 if (locked) ...[

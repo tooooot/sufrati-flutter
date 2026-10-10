@@ -1364,6 +1364,7 @@
  ],
  "INGREDIENTS": {
   "chicken": {
+   "name": "دجاج",
    "label": "دجاجة",
    "icon": "🍗",
    "unit": "دجاجة",
@@ -1373,6 +1374,7 @@
    "category": "meat"
   },
   "chicken_pieces": {
+   "name": "أوراك/صدور دجاج",
    "label": "أوراك/صدور دجاج",
    "icon": "🍗",
    "unit": "قطعة",
@@ -1382,6 +1384,7 @@
    "category": "meat"
   },
   "lamb": {
+   "name": "لحم غنم",
    "label": "غرام لحم غنم",
    "icon": "🥩",
    "unit": "غرام",
@@ -1391,6 +1394,7 @@
    "category": "meat"
   },
   "beef_mince": {
+   "name": "لحم مفروم",
    "label": "غرام لحم مفروم",
    "icon": "🥩",
    "unit": "غرام",
@@ -1400,6 +1404,7 @@
    "category": "meat"
   },
   "liver": {
+   "name": "كبدة غنم",
    "label": "غرام كبدة غنم",
    "icon": "🥩",
    "unit": "غرام",
@@ -1409,6 +1414,7 @@
    "category": "meat"
   },
   "fish": {
+   "name": "سمك",
    "label": "غرام سمك",
    "icon": "🐟",
    "unit": "غرام",
@@ -1418,6 +1424,7 @@
    "category": "meat"
   },
   "shrimp": {
+   "name": "روبيان",
    "label": "غرام روبيان",
    "icon": "🍤",
    "unit": "غرام",
@@ -1427,6 +1434,7 @@
    "category": "meat"
   },
   "egg": {
+   "name": "بيض",
    "label": "بيض",
    "icon": "🥚",
    "unit": "بيضة",
@@ -1436,6 +1444,7 @@
    "category": "dairy"
   },
   "yogurt": {
+   "name": "لبن/زبادي",
    "label": "لبن/زبادي",
    "icon": "🥛",
    "unit": "كوب",
@@ -1445,6 +1454,7 @@
    "category": "dairy"
   },
   "labneh": {
+   "name": "لبنة",
    "label": "لبنة",
    "icon": "🥣",
    "unit": "ملعقة",
@@ -1454,6 +1464,7 @@
    "category": "dairy"
   },
   "white_cheese": {
+   "name": "جبنة بيضاء",
    "label": "جبنة بيضاء",
    "icon": "🧀",
    "unit": "شريحة",
@@ -1463,6 +1474,7 @@
    "category": "dairy"
   },
   "cheese_grated": {
+   "name": "جبنة مبشورة",
    "label": "جبنة مبشورة",
    "icon": "🧀",
    "unit": "حصة",
@@ -1472,6 +1484,7 @@
    "category": "dairy"
   },
   "cream": {
+   "name": "قشطة",
    "label": "قشطة",
    "icon": "🥛",
    "unit": "ملعقة",
@@ -1481,6 +1494,7 @@
    "category": "dairy"
   },
   "milk": {
+   "name": "حليب",
    "label": "حليب",
    "icon": "🥛",
    "unit": "كوب",
@@ -1490,6 +1504,7 @@
    "category": "dairy"
   },
   "ghee": {
+   "name": "سمن",
    "label": "سمن",
    "icon": "🧈",
    "unit": "ملعقة",
@@ -1499,6 +1514,7 @@
    "category": "fat"
   },
   "butter": {
+   "name": "زبدة",
    "label": "زبدة",
    "icon": "🧈",
    "unit": "ملعقة",
@@ -1508,6 +1524,7 @@
    "category": "fat"
   },
   "oil": {
+   "name": "زيت طبخ",
    "label": "زيت طبخ",
    "icon": "🫒",
    "unit": "ملعقة",
@@ -1517,6 +1534,7 @@
    "category": "fat"
   },
   "nuts": {
+   "name": "مكسرات (لوز/فستق/زبيب)",
    "label": "مكسرات (لوز/فستق/زبيب)",
    "icon": "🌰",
    "unit": "ملعقة",
@@ -1526,6 +1544,7 @@
    "category": "fat"
   },
   "tomato": {
+   "name": "طماطم",
    "label": "طماطم",
    "icon": "🍅",
    "unit": "حبة",
@@ -1535,6 +1554,7 @@
    "category": "veg"
   },
   "onion": {
+   "name": "بصل",
    "label": "بصل",
    "icon": "🧅",
    "unit": "حبة",
@@ -1544,6 +1564,7 @@
    "category": "veg"
   },
   "potato": {
+   "name": "بطاطس",
    "label": "بطاطس",
    "icon": "🥔",
    "unit": "حبة",
@@ -1553,6 +1574,7 @@
    "category": "veg"
   },
   "carrot": {
+   "name": "جزر",
    "label": "جزر",
    "icon": "🥕",
    "unit": "حبة",
@@ -1562,6 +1584,7 @@
    "category": "veg"
   },
   "cucumber": {
+   "name": "خيار",
    "label": "خيار",
    "icon": "🥒",
    "unit": "حبة",
@@ -1571,6 +1594,7 @@
    "category": "veg"
   },
   "lettuce": {
+   "name": "خس",
    "label": "خس",
    "icon": "🥬",
    "unit": "حصة",
@@ -1580,6 +1604,7 @@
    "category": "veg"
   },
   "zucchini": {
+   "name": "كوسة",
    "label": "كوسة",
    "icon": "🥒",
    "unit": "حبة",
@@ -1589,6 +1614,7 @@
    "category": "veg"
   },
   "eggplant": {
+   "name": "باذنجان",
    "label": "باذنجان",
    "icon": "🍆",
    "unit": "حبة",
@@ -1598,6 +1624,7 @@
    "category": "veg"
   },
   "green_pepper": {
+   "name": "فلفل أخضر",
    "label": "فلفل أخضر",
    "icon": "🫑",
    "unit": "حبة",
@@ -1607,6 +1634,7 @@
    "category": "veg"
   },
   "okra": {
+   "name": "بامية",
    "label": "بامية",
    "icon": "🥬",
    "unit": "حصة",
@@ -1616,6 +1644,7 @@
    "category": "veg"
   },
   "molokhia": {
+   "name": "ملوخية",
    "label": "ملوخية",
    "icon": "🥬",
    "unit": "حصة",
@@ -1625,6 +1654,7 @@
    "category": "veg"
   },
   "green_beans": {
+   "name": "فاصوليا خضراء",
    "label": "فاصوليا خضراء",
    "icon": "🫛",
    "unit": "حصة",
@@ -1634,6 +1664,7 @@
    "category": "veg"
   },
   "garlic": {
+   "name": "ثوم",
    "label": "ثوم",
    "icon": "🧄",
    "unit": "فص",
@@ -1643,6 +1674,7 @@
    "category": "veg"
   },
   "lemon": {
+   "name": "ليمون",
    "label": "ليمون",
    "icon": "🍋",
    "unit": "حبة",
@@ -1652,6 +1684,7 @@
    "category": "veg"
   },
   "mint": {
+   "name": "نعناع",
    "label": "نعناع",
    "icon": "🌿",
    "unit": "حزمة صغيرة",
@@ -1661,6 +1694,7 @@
    "category": "veg"
   },
   "banana": {
+   "name": "موز",
    "label": "موز",
    "icon": "🍌",
    "unit": "حبة",
@@ -1670,6 +1704,7 @@
    "category": "fruit"
   },
   "apple": {
+   "name": "فاكهة موسمية",
    "label": "فاكهة موسمية",
    "icon": "🍎",
    "unit": "حبة",
@@ -1679,6 +1714,7 @@
    "category": "fruit"
   },
   "dates": {
+   "name": "تمر",
    "label": "تمر",
    "icon": "🌴",
    "unit": "حبة",
@@ -1688,6 +1724,7 @@
    "category": "fruit"
   },
   "rice": {
+   "name": "أرز بسمتي",
    "label": "كوب أرز بسمتي (نيّء)",
    "icon": "🍚",
    "unit": "كوب نيّء",
@@ -1697,6 +1734,7 @@
    "category": "grain"
   },
   "jareesh": {
+   "name": "جريش",
    "label": "كوب جريش",
    "icon": "🌾",
    "unit": "كوب نيّء",
@@ -1706,6 +1744,7 @@
    "category": "grain"
   },
   "flour": {
+   "name": "دقيق",
    "label": "كوب دقيق",
    "icon": "🌾",
    "unit": "كوب",
@@ -1715,6 +1754,7 @@
    "category": "grain"
   },
   "semolina": {
+   "name": "سميد",
    "label": "سميد",
    "icon": "🌾",
    "unit": "كوب",
@@ -1724,6 +1764,7 @@
    "category": "grain"
   },
   "pasta": {
+   "name": "معكرونة",
    "label": "كوب معكرونة (نيّئة)",
    "icon": "🍝",
    "unit": "كوب نيّء",
@@ -1733,6 +1774,7 @@
    "category": "grain"
   },
   "lentils": {
+   "name": "عدس",
    "label": "عدس",
    "icon": "🫘",
    "unit": "حصة",
@@ -1742,6 +1784,7 @@
    "category": "grain"
   },
   "foul": {
+   "name": "فول مدمس",
    "label": "فول مدمس",
    "icon": "🫘",
    "unit": "حصة",
@@ -1751,6 +1794,7 @@
    "category": "grain"
   },
   "tameez": {
+   "name": "خبز تميس",
    "label": "خبز تميس",
    "icon": "🫓",
    "unit": "رغيف",
@@ -1760,6 +1804,7 @@
    "category": "grain"
   },
   "samouli": {
+   "name": "خبز صامولي",
    "label": "خبز صامولي",
    "icon": "🥖",
    "unit": "حبة",
@@ -1769,6 +1814,7 @@
    "category": "grain"
   },
   "arabic_bread": {
+   "name": "خبز عربي",
    "label": "خبز عربي",
    "icon": "🫓",
    "unit": "رغيف",
@@ -1778,6 +1824,7 @@
    "category": "grain"
   },
   "dough": {
+   "name": "عجينة فطير جاهزة",
    "label": "عجينة فطير جاهزة",
    "icon": "🥟",
    "unit": "حصة",
@@ -1787,6 +1834,7 @@
    "category": "grain"
   },
   "thin_dough": {
+   "name": "عجينة سمبوسة",
    "label": "عجينة سمبوسة",
    "icon": "🥟",
    "unit": "ورقة",
@@ -1796,6 +1844,7 @@
    "category": "grain"
   },
   "kabsa_spice": {
+   "name": "بهارات كبسة",
    "label": "بهارات كبسة",
    "icon": "🌶️",
    "unit": "حصة",
@@ -1805,6 +1854,7 @@
    "category": "other"
   },
   "tomato_paste": {
+   "name": "معجون طماطم",
    "label": "معجون طماطم",
    "icon": "🥫",
    "unit": "ملعقة",
@@ -1814,6 +1864,7 @@
    "category": "other"
   },
   "zaatar": {
+   "name": "زعتر",
    "label": "زعتر",
    "icon": "🌿",
    "unit": "ملعقة",
@@ -1823,6 +1874,7 @@
    "category": "other"
   },
   "honey": {
+   "name": "عسل",
    "label": "عسل",
    "icon": "🍯",
    "unit": "ملعقة",
@@ -1832,6 +1884,7 @@
    "category": "other"
   },
   "sugar": {
+   "name": "سكر",
    "label": "سكر",
    "icon": "🍬",
    "unit": "ملعقة",
@@ -1841,6 +1894,7 @@
    "category": "other"
   },
   "tea": {
+   "name": "شاهي",
    "label": "شاهي",
    "icon": "🍵",
    "unit": "كوب",
@@ -1850,6 +1904,7 @@
    "category": "other"
   },
   "qahwa": {
+   "name": "قهوة سعودية",
    "label": "قهوة سعودية",
    "icon": "☕",
    "unit": "فنجان",
@@ -1859,6 +1914,7 @@
    "category": "other"
   },
   "kleija": {
+   "name": "كليجا",
    "label": "كليجا",
    "icon": "🍪",
    "unit": "قطعة",
@@ -1868,6 +1924,7 @@
    "category": "other"
   },
   "maamoul": {
+   "name": "معمول",
    "label": "معمول",
    "icon": "🍪",
    "unit": "قطعة",

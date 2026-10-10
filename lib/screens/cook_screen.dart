@@ -355,7 +355,7 @@ class _CookScreenState extends State<CookScreen> {
                 child: Text.rich(TextSpan(children: [
                   TextSpan(text: '${program.ingredients[l.key]!.icon} ', style: const TextStyle(fontSize: 22)),
                   TextSpan(text: '${l.packs}× ', style: const TextStyle(fontSize: 17, fontWeight: black)),
-                  TextSpan(text: widget.i18n.ingredient(pid, l.key, lang, program.ingredients[l.key]!.label),
+                  TextSpan(text: widget.i18n.ingredient(pid, l.key, lang, program.ingredients[l.key]!.name),
                       style: const TextStyle(fontSize: 17, fontWeight: FontWeight.bold)),
                 ])),
               ),
