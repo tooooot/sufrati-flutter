@@ -30,6 +30,7 @@ import 'data/repository.dart';
 import 'routing.dart';
 import 'screens/coming_next_screen.dart';
 import 'screens/cook_screen.dart';
+import 'screens/intro_screen.dart';
 import 'screens/landing_screen.dart';
 import 'screens/login_screen.dart';
 import 'screens/patient_screen.dart';
@@ -84,7 +85,7 @@ class SufratiApp extends StatelessWidget {
   late final _router = GoRouter(
     refreshListenable: _session,
     redirect: (_, state) => appRedirect(_session, state.matchedLocation,
-        full: state.uri.toString(), next: state.uri.queryParameters['next'], landingForGuests: kIsWeb),
+        full: state.uri.toString(), next: state.uri.queryParameters['next'], landingForGuests: true),
     routes: [
       GoRoute(path: '/loading', builder: (_, _) => const Scaffold(body: Center(child: CircularProgressIndicator()))),
       GoRoute(path: '/role', builder: (_, _) => RoleScreen(session: _session)),
@@ -100,7 +101,7 @@ class SufratiApp extends StatelessWidget {
           builder: (_, st) => JoinScreen(links: links, session: _session,
               role: st.pathParameters['role'] == 'doctor' ? Role.doctor : Role.cook)),
       GoRoute(path: '/login', builder: (_, s) => LoginScreen(auth: auth, next: s.uri.queryParameters['next'] ?? '/')),
-      GoRoute(path: '/', builder: (_, _) => kIsWeb ? LandingScreen(library: library) : StartScreen(library: library)),
+      GoRoute(path: '/', builder: (_, _) => kIsWeb ? LandingScreen(library: library) : const IntroScreen()),
       GoRoute(path: '/programs/:id',
           builder: (_, s) => ProgramPreviewScreen(library: library, programId: s.pathParameters['id']!)),
       GoRoute(path: '/me',

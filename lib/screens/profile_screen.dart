@@ -35,8 +35,16 @@ class ProfileScreen extends StatelessWidget {
         builder: (context, _) => ListView(padding: EdgeInsets.zero, children: [
           GreenHeader(
             icon: '👤', title: name, subtitle: u?.email,
-            leading: IconButton(icon: const Icon(Icons.arrow_back, color: Colors.white),
-                onPressed: () => context.canPop() ? context.pop() : context.go(landing(session))),
+            leading: Row(children: [
+              IconButton(icon: const Icon(Icons.arrow_back, color: Colors.white),
+                  onPressed: () => context.canPop() ? context.pop() : context.go(landing(session))),
+              const Spacer(),
+              TextButton.icon(
+                icon: const Icon(Icons.logout, color: Colors.white, size: 20),
+                label: const Text('خروج', style: TextStyle(color: Colors.white, fontWeight: black)),
+                onPressed: () => _signOut(context),
+              ),
+            ]),
           ),
           Center(
             child: ConstrainedBox(
@@ -127,7 +135,7 @@ class ProfileScreen extends StatelessWidget {
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16))),
                     icon: const Icon(Icons.logout, color: Brand.green),
                     label: const Text('تسجيل الخروج', style: TextStyle(fontWeight: black, fontSize: 16, color: Brand.green)),
-                    onPressed: () => session.auth.signOut(),
+                    onPressed: () => _signOut(context),
                   ),
                 ]),
               ),
@@ -136,6 +144,17 @@ class ProfileScreen extends StatelessWidget {
         ]),
       ),
     );
+  }
+
+  Future<void> _signOut(BuildContext context) async {
+    final messenger = ScaffoldMessenger.of(context);
+    final router = GoRouter.of(context);
+    try {
+      await session.auth.signOut();
+      router.go('/login');
+    } catch (_) {
+      messenger.showSnackBar(const SnackBar(content: Text('تعذّر تسجيل الخروج. حاول مرة أخرى.')));
+    }
   }
 
   void _confirmDelete(BuildContext context) => showDialog<void>(
