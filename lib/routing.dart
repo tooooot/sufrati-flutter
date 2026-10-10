@@ -34,6 +34,6 @@ String? appRedirect(Session s, String p, {String? full, String? next, bool landi
   }
   if (p == '/admin' && !s.isAdmin) return landing(s);
   // الملف الشخصي متاح دائماً بعد الدخول (منه يُغيَّر الدور أو يُخرَج)، وما عداه يتطلب دوراً
-  if (s.needsRole && !isPublicPath(p) && p != '/role' && p != '/profile' && p != '/doctor-pending' && !p.startsWith('/i/') && !p.startsWith('/dr/')) return '/role';
+  if (s.needsRole && !isPublicPath(p) && p != '/role' && p != '/profile' && p != '/doctor-pending' && !p.startsWith('/i/') && !p.startsWith('/dr/') && !p.startsWith('/r/')) return '/role';
   return null;
 }

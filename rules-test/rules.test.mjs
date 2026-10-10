@@ -185,3 +185,22 @@ test('روابط التسويق: قراءة بالرمز للجميع، وتسج
   await assertFails(updateDoc(doc(anon(), 'pitchLinks/TOK1'), { openedAt: Timestamp.now() }), 'مرة واحدة');
   await assertSucceeds(setDoc(doc(as('adm', { admin: true }), 'pitchLinks/TOK3'), { kind: 'cook', name: 'ماريا' }));
 });
+
+test('التسويق: المستهدفون للمدير وحده، وختم «سجّل» مرة واحدة باسم صاحبه', async () => {
+  await env.withSecurityRulesDisabled(async (ctx) => {
+    await setDoc(doc(ctx.firestore(), 'marketingTargets/T1'), { name: 'د. خالد', phone: '0500000000' });
+    await setDoc(doc(ctx.firestore(), 'pitchLinks/TOK9'), { kind: 'doctor', name: 'خالد', openedAt: null });
+  });
+  await assertFails(getDoc(doc(anon(), 'marketingTargets/T1')));
+  await assertFails(getDoc(doc(as('doc'), 'marketingTargets/T1')));
+  await assertFails(getDocs(collection(as('own'), 'marketingTargets')));
+  await assertFails(setDoc(doc(as('own'), 'marketingTargets/T2'), { name: 'x' }));
+  await assertSucceeds(getDoc(doc(as('adm', { admin: true }), 'marketingTargets/T1')));
+  await assertSucceeds(setDoc(doc(as('adm', { admin: true }), 'marketingTargets/T2'), { name: 'y' }));
+  // ختم التسجيل
+  await assertFails(updateDoc(doc(anon(), 'pitchLinks/TOK9'), { registeredAt: Timestamp.now(), registeredBy: 'x' }), 'غير مسجَّل');
+  await assertFails(updateDoc(doc(as('own'), 'pitchLinks/TOK9'), { registeredAt: Timestamp.now(), registeredBy: 'غيري' }), 'باسم غيره');
+  await assertFails(updateDoc(doc(as('own'), 'pitchLinks/TOK9'), { registeredAt: Timestamp.now(), registeredBy: 'own', name: 'مزوّر' }));
+  await assertSucceeds(updateDoc(doc(as('own'), 'pitchLinks/TOK9'), { registeredAt: Timestamp.now(), registeredBy: 'own' }));
+  await assertFails(updateDoc(doc(as('cok'), 'pitchLinks/TOK9'), { registeredAt: Timestamp.now(), registeredBy: 'cok' }), 'مرة واحدة');
+});

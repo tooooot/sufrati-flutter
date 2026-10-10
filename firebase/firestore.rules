@@ -160,8 +160,18 @@ service cloud.firestore {
       allow get: if true;
       allow list: if isAdmin();
       allow create, delete: if isAdmin();
-      allow update: if isAdmin() || (resource.data.get('openedAt', null) == null
-        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['openedAt']));
+      allow update: if isAdmin()
+        || (resource.data.get('openedAt', null) == null
+            && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['openedAt']))
+        // «سجّل»: مستخدم مسجَّل يختم الرابط مرة واحدة باسمه فقط
+        || (signedIn() && resource.data.get('registeredAt', null) == null
+            && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['registeredAt', 'registeredBy'])
+            && request.resource.data.registeredBy == request.auth.uid);
+    }
+
+    // ---- قسم التسويق: قائمة المستهدفين (المدير وحده؛ فيها أرقام تواصل مهنية منشورة للعموم) ----
+    match /marketingTargets/{id} {
+      allow read, write: if isAdmin();
     }
 
     match /{other=**} { allow read, write: if false; }

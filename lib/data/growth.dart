@@ -42,6 +42,9 @@ abstract class GrowthService {
   Future<void> decline(LinkRequest r);
 
   Future<PitchLink?> pitch(String token);
+
+  /// يختم رابط التسويق «سجّل» باسم المستخدم الحالي (مرة واحدة، فشله لا يمنع شيئاً).
+  Future<void> markRegistered(String token);
 }
 
 String newDoctorCode(Random r) {
@@ -146,6 +149,13 @@ class FirestoreGrowthService implements GrowthService {
   }
 
   @override
+  Future<void> markRegistered(String token) async {
+    try {
+      await db.doc('pitchLinks/$token').update({'registeredAt': FieldValue.serverTimestamp(), 'registeredBy': _me});
+    } catch (_) {}
+  }
+
+  @override
   Future<PitchLink?> pitch(String token) async {
     try {
       final ref = db.doc('pitchLinks/$token');
@@ -215,4 +225,8 @@ class MemoryGrowthService implements GrowthService {
 
   @override
   Future<PitchLink?> pitch(String token) async => pitches[token];
+
+  final registered = <String>[];
+  @override
+  Future<void> markRegistered(String token) async => registered.add(token);
 }

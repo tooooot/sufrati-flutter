@@ -25,6 +25,19 @@ class AdminScreen extends StatelessWidget {
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(16, 20, 16, 32),
                 child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+                  CardBox(
+                    onTap: () => context.go('/admin/marketing'),
+                    child: const Row(children: [
+                      Icon(Icons.campaign, color: Brand.honey, size: 30),
+                      SizedBox(width: 12),
+                      Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                        Text('التسويق', style: TextStyle(fontWeight: black, fontSize: 17)),
+                        Text('مهام اليوم، إرسال واتساب، ومعاينة العروض', style: TextStyle(fontSize: 12, color: Brand.grey)),
+                      ])),
+                      Icon(Icons.chevron_left),
+                    ]),
+                  ),
+                  const SizedBox(height: 20),
                   const Text('طلبات تفعيل الأطباء', style: TextStyle(fontWeight: black, fontSize: 17)),
                   const SizedBox(height: 8),
                   _Doctors(db: d),

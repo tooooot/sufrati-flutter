@@ -21,6 +21,7 @@ import 'screens/doctor_join_screen.dart';
 import 'screens/doctor_pending_screen.dart';
 import 'screens/doctor_profile_screen.dart';
 import 'screens/doctor_public_screen.dart';
+import 'screens/marketing_screen.dart';
 import 'screens/pitch_screen.dart';
 import 'screens/house_create_screen.dart';
 import 'screens/household_screen.dart';
@@ -36,7 +37,6 @@ import 'routing.dart';
 import 'screens/coming_next_screen.dart';
 import 'screens/cook_screen.dart';
 import 'screens/intro_screen.dart';
-import 'screens/landing_screen.dart';
 import 'screens/login_screen.dart';
 import 'screens/patient_screen.dart';
 import 'screens/program_preview_screen.dart';
@@ -107,6 +107,8 @@ class SufratiApp extends StatelessWidget {
           builder: (_, st) => NewHouseScreen(library: library, links: links, session: _session, growth: growth, doctorCode: st.uri.queryParameters['dr'])),
       GoRoute(path: '/p/:token', builder: (_, st) => PitchScreen(growth: growth, token: st.pathParameters['token'])),
       GoRoute(path: '/pitch/:kind', builder: (_, st) => PitchScreen(growth: growth, kind: st.pathParameters['kind'])),
+      GoRoute(path: '/r/:token', builder: (_, st) => RegisteredStamp(growth: growth, session: _session, token: st.pathParameters['token']!)),
+      GoRoute(path: '/admin/marketing', builder: (_, _) => MarketingScreen(db: db, growth: growth)),
       GoRoute(path: '/dr/:code', builder: (_, st) => DoctorPublicScreen(growth: growth, code: st.pathParameters['code']!)),
       GoRoute(path: '/dr/:code/join',
           builder: (_, st) => DoctorJoinScreen(session: _session, growth: growth, code: st.pathParameters['code']!)),
@@ -119,7 +121,7 @@ class SufratiApp extends StatelessWidget {
           builder: (_, st) => JoinScreen(links: links, session: _session,
               role: st.pathParameters['role'] == 'doctor' ? Role.doctor : Role.cook)),
       GoRoute(path: '/login', builder: (_, s) => LoginScreen(auth: auth, next: s.uri.queryParameters['next'] ?? '/')),
-      GoRoute(path: '/', builder: (_, _) => kIsWeb ? LandingScreen(library: library) : IntroScreen()),
+      GoRoute(path: '/', builder: (_, _) => IntroScreen()),
       GoRoute(path: '/programs/:id',
           builder: (_, s) => ProgramPreviewScreen(library: library, programId: s.pathParameters['id']!)),
       GoRoute(path: '/me',

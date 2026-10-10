@@ -32,5 +32,7 @@ class PitchScreen extends StatelessWidget {
         beats: beatsFor(kind, name: name),
         greeting: name.isEmpty ? null : 'أهلاً $name',
         ctaLabel: _cta[kind] ?? 'ابدأ الآن',
+        // الرابط الشخصي يُختم «سجّل» بعد الدخول عبر /r/<رمز>
+        ctaRoute: token == null ? '/login' : '/login?next=${Uri.encodeComponent('/r/$token')}',
       );
 }

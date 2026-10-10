@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../theme.dart';
 import 'pitch_content.dart';
@@ -49,7 +50,10 @@ class _IntroScreenState extends State<IntroScreen> with SingleTickerProviderStat
           gradient: LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [Color(0xFF2A7358), Brand.green, Color(0xFF123D2D)]),
         ),
         child: SafeArea(
-          child: GestureDetector(
+          child: Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 560),
+              child: GestureDetector(
             behavior: HitTestBehavior.opaque,
             onTapUp: (d) {
               final w = MediaQuery.sizeOf(context).width;
@@ -135,6 +139,16 @@ class _IntroScreenState extends State<IntroScreen> with SingleTickerProviderStat
                         onPressed: () => context.go('/browse'),
                         child: const Text('تصفّح الأنظمة بلا تسجيل', style: TextStyle(color: Brand.cream, fontWeight: black, decoration: TextDecoration.underline)),
                       ),
+                      Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                        TextButton(
+                          onPressed: () => launchUrl(Uri.parse('https://maeda.wardyat.net/privacy')),
+                          child: const Text('سياسة الخصوصية', style: TextStyle(color: Colors.white70, fontSize: 12)),
+                        ),
+                        TextButton(
+                          onPressed: () => launchUrl(Uri.parse('https://maeda.wardyat.net/delete-account')),
+                          child: const Text('حذف الحساب', style: TextStyle(color: Colors.white70, fontSize: 12)),
+                        ),
+                      ]),
                     ]),
                   ),
                 ),
@@ -145,6 +159,8 @@ class _IntroScreenState extends State<IntroScreen> with SingleTickerProviderStat
                   child: Text('المس الشاشة للتالي', style: TextStyle(color: Colors.white54, fontSize: 12)),
                 ),
             ]),
+              ),
+            ),
           ),
         ),
       ),
