@@ -17,7 +17,9 @@ void main() {
     expect(m, contains('فريق تطبيق «سفرتي»'));
     expect(m, contains('https://maeda.wardyat.net/p/ABC'));
     expect(m, contains('اكتب «لا»'));
-    expect(buildMessage(TargetKind.groupOwner, 'سلمى', 'x'), contains('جروبك'));
+    expect(buildMessage(TargetKind.coach, 'سلمى', 'x'), contains('جمهورك'));
+    expect(TargetKindX.parse('group_owner'), TargetKind.coach, reason: 'الاسم القديم يعمل');
+    expect(TargetKind.values.every((k) => k.pitchKind == 'doctor'), isTrue, reason: 'دور واحد للأخصائي وصاحب الجروب');
   });
 
   test('الحالة المعروضة: الرفض والتأجيل يغلبان، ثم الأعلى تقدماً', () {

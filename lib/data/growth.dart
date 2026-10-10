@@ -80,9 +80,11 @@ class FirestoreGrowthService implements GrowthService {
     final fields = {'name': name.trim(), 'specialty': specialty.trim(), 'city': city.trim(), 'bio': bio.trim(), 'licenseNo': licenseNo.trim()};
     final mine = await myProfile();
     if (mine != null) {
-      await db.doc('doctors/${mine.code}').update(fields);
+      // تغيير الاسم أو رقم الترخيص يعيد البروفايل لمراجعة المدير (الاعتماد يخصّ ما راجعه)
+      final recheck = mine.verified && (fields['name'] != mine.name || fields['licenseNo'] != mine.licenseNo);
+      await db.doc('doctors/${mine.code}').update({...fields, if (recheck) 'verified': false});
       return DoctorProfile(code: mine.code, uid: mine.uid, name: fields['name']!, specialty: fields['specialty']!, city: fields['city']!,
-          bio: fields['bio']!, licenseNo: fields['licenseNo']!, verified: mine.verified);
+          bio: fields['bio']!, licenseNo: fields['licenseNo']!, verified: mine.verified && !recheck);
     }
     final code = newDoctorCode(_rnd);
     final b = db.batch();
@@ -189,8 +191,9 @@ class MemoryGrowthService implements GrowthService {
   Future<DoctorProfile> saveProfile({required String name, String specialty = '', String city = '', String bio = '', String licenseNo = ''}) async {
     _myCode ??= newDoctorCode(Random(1));
     final old = profiles[_myCode];
+    final recheck = old != null && old.verified && (old.name != name || old.licenseNo != licenseNo);
     return profiles[_myCode!] = DoctorProfile(code: _myCode!, uid: uid, name: name, specialty: specialty, city: city, bio: bio,
-        licenseNo: licenseNo, verified: old?.verified ?? false);
+        licenseNo: licenseNo, verified: (old?.verified ?? false) && !recheck);
   }
 
   @override

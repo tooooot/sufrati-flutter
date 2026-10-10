@@ -135,12 +135,15 @@ service cloud.firestore {
         || resource.data.get('verified', false) == true
         || (signedIn() && resource.data.uid == request.auth.uid);
       allow list: if isAdmin();
-      allow create: if signedIn() && request.resource.data.uid == request.auth.uid
+      // المدير ينشئ البروفايل المعتمد عند الموافقة على طلب الطبيب (موافقة واحدة)؛ والطبيب المعتمد ينشئ بروفايله غير معتمد
+      allow create: if isAdmin() || (signedIn() && request.resource.data.uid == request.auth.uid
         && get(/databases/$(db)/documents/users/$(request.auth.uid)).data.get('isDoctor', false) == true
-        && request.resource.data.get('verified', false) == false;
+        && request.resource.data.get('verified', false) == false);
+      // الطبيب لا يرفع verified أبداً، لكن له خفضه (تعديل الاسم/الترخيص يعيده لمراجعة المدير)
       allow update: if isAdmin() || (signedIn() && resource.data.uid == request.auth.uid
         && request.resource.data.uid == resource.data.uid
-        && request.resource.data.get('verified', false) == resource.data.get('verified', false));
+        && (request.resource.data.get('verified', false) == false
+            || request.resource.data.get('verified', false) == resource.data.get('verified', false)));
       allow delete: if isAdmin() || (signedIn() && resource.data.uid == request.auth.uid);
 
       // طلب ربط من مريض: صاحب بيت يطلب الارتباط بالطبيب ومعه دعوة طبيب من بيته؛ الطبيب يقبل (يستهلك الدعوة) أو يرفض.

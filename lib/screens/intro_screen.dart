@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -18,8 +19,10 @@ class IntroScreen extends StatefulWidget {
   final bool showBrowse;
   /// شريط اختياري أعلى اللقطة (مثل أزرار اللغة).
   final Widget? header;
+  /// مدة اللقطة (أطول للغة الثانية).
+  final Duration beatDuration;
   IntroScreen({super.key, List<PitchBeat>? beats, this.greeting, this.ctaLabel = 'ابدأ الآن', this.ctaRoute = '/login',
-      this.skipLabel = 'تخطَّ', this.tapHint = 'المس الشاشة للتالي', this.showBrowse = true, this.header})
+      this.skipLabel = 'تخطَّ', this.tapHint = 'المس الشاشة للتالي', this.showBrowse = true, this.header, this.beatDuration = const Duration(milliseconds: 5200)})
       : beats = beats ?? beatsFor('user');
 
   @override
@@ -28,17 +31,27 @@ class IntroScreen extends StatefulWidget {
 
 class _IntroScreenState extends State<IntroScreen> with SingleTickerProviderStateMixin {
   int get _beats => widget.beats.length;
-  late final AnimationController _c = AnimationController(vsync: this, duration: const Duration(milliseconds: 5200))
+  late final AnimationController _c = AnimationController(vsync: this, duration: widget.beatDuration)
     ..addStatusListener((s) {
       if (s == AnimationStatus.completed && _i < _beats - 1) _go(_i + 1);
-    })
-    ..forward();
+    });
   int _i = 0;
+  bool _started = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // من فعّل «تقليل الحركة»: لا تقدّم تلقائي، ويتنقل بنفسه باللمس
+    if (!_started) {
+      _started = true;
+      MediaQuery.of(context).disableAnimations ? _c.value = 1 : _c.forward();
+    }
+  }
 
   void _go(int i) {
     if (i < 0 || i >= _beats) return;
     setState(() => _i = i);
-    _c.forward(from: 0);
+    MediaQuery.of(context).disableAnimations ? _c.value = 1 : _c.forward(from: 0);
   }
 
   @override
@@ -60,8 +73,28 @@ class _IntroScreenState extends State<IntroScreen> with SingleTickerProviderStat
           child: Center(
             child: ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 560),
-              child: GestureDetector(
+              child: Focus(
+                autofocus: true,
+                onKeyEvent: (_, e) {
+                  if (e is! KeyDownEvent) return KeyEventResult.ignored;
+                  final rtl = Directionality.of(context) == TextDirection.rtl;
+                  final k = e.logicalKey;
+                  if (k == LogicalKeyboardKey.space || k == LogicalKeyboardKey.enter || k == (rtl ? LogicalKeyboardKey.arrowLeft : LogicalKeyboardKey.arrowRight)) {
+                    _go(_i + 1);
+                  } else if (k == (rtl ? LogicalKeyboardKey.arrowRight : LogicalKeyboardKey.arrowLeft)) {
+                    _go(_i - 1);
+                  } else {
+                    return KeyEventResult.ignored;
+                  }
+                  return KeyEventResult.handled;
+                },
+                child: GestureDetector(
             behavior: HitTestBehavior.opaque,
+            // اضغط مطولاً لإيقاف التقدّم (لقراءة بطيئة) وارفع إصبعك لاستئنافه
+            onLongPressStart: (_) => _c.stop(),
+            onLongPressEnd: (_) {
+              if (!MediaQuery.of(context).disableAnimations && _i < _beats - 1) _c.forward();
+            },
             onTapUp: (d) {
               final w = MediaQuery.sizeOf(context).width;
               // RTL: الجهة اليمنى = التالي، واليسرى = السابق
@@ -170,6 +203,7 @@ class _IntroScreenState extends State<IntroScreen> with SingleTickerProviderStat
                   child: Text(widget.tapHint, style: const TextStyle(color: Colors.white54, fontSize: 12)),
                 ),
             ]),
+                ),
               ),
             ),
           ),

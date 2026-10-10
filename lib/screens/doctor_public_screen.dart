@@ -39,7 +39,7 @@ class DoctorPublicScreen extends StatelessWidget {
                       Row(mainAxisAlignment: MainAxisAlignment.center, children: [
                         const Icon(Icons.verified, color: Brand.honey),
                         const SizedBox(width: 6),
-                        const Text('موثَّق من إدارة سفرتي', style: TextStyle(fontWeight: black, color: Brand.green)),
+                        const Text('معتمد من إدارة سفرتي', style: TextStyle(fontWeight: black, color: Brand.green)),
                       ]),
                       if (d.bio.isNotEmpty) ...[
                         const SizedBox(height: 14),

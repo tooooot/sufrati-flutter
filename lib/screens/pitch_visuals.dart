@@ -240,7 +240,7 @@ class DoctorProfileVisual extends StatelessWidget {
                     child: Container(
                       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
                       decoration: BoxDecoration(color: Brand.green.withValues(alpha: .1), borderRadius: BorderRadius.circular(14)),
-                      child: const Text('موثَّق من إدارة سفرتي', style: TextStyle(color: Brand.green, fontWeight: black, fontSize: 13)),
+                      child: const Text('معتمد من إدارة سفرتي', style: TextStyle(color: Brand.green, fontWeight: black, fontSize: 13)),
                     )),
                 const SizedBox(height: 6),
               ]),

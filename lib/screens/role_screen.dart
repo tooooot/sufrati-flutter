@@ -29,14 +29,13 @@ class RoleScreen extends StatelessWidget {
                 for (final (role, icon, title, sub) in const [
                   (Role.owner, '🏠', 'صاحب الخطة', 'أتابع نظامي الغذائي أو نظام أحد أفراد بيتي'),
                   (Role.cook, '👨‍🍳', 'الطاهي', 'دعاني صاحب الخطة وعندي رمز الدعوة'),
-                  (Role.doctor, '🩺', 'الطبيب', 'أتابع مرضاي وأجهّز أنظمتهم — يتطلب موافقة مدير سفرتي'),
+                  (Role.doctor, '🩺', 'الطبيب', 'طبيب أو أخصائي: أتابع مرضاي وأنشر أنظمتي — مراجعة واحدة من الإدارة'),
                 ]) ...[
                   CardBox(
                     onTap: () async {
                       if (role == Role.doctor && !session.links.isDoctor) {
-                        // الطبيب لا يُفعَّل بالاختيار: طلب لمدير سفرتي
-                        await session.links.requestDoctor();
-                        if (context.mounted) context.go('/doctor-pending');
+                        // الطبيب لا يُفعَّل بالاختيار: يقدّم بياناته المهنية مرة واحدة ويراجعها المدير
+                        context.go(session.links.doctorRequested ? '/doctor-pending' : '/doctor/apply');
                         return;
                       }
                       session.chooseRole(role);

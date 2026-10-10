@@ -108,8 +108,8 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
                           Expanded(
                             child: Text(
                               p == null
-                                  ? 'أنشئ ملفك: بعد حفظه تراجعه الإدارة وتضع عليه شارة «موثَّق».'
-                                  : (p.verified ? 'موثَّق — رابطك يعمل للجميع.' : 'قيد المراجعة — رابطك سيعمل بعد اعتماد الإدارة.'),
+                                  ? 'أنشئ ملفك: بعد حفظه تراجعه الإدارة وتضع عليه شارة «معتمد».'
+                                  : (p.verified ? 'معتمد — رابطك يعمل للجميع.' : 'قيد المراجعة — رابطك سيعمل بعد اعتماد الإدارة.'),
                               style: const TextStyle(fontWeight: FontWeight.w800, height: 1.6),
                             ),
                           ),

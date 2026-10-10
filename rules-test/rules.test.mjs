@@ -204,3 +204,14 @@ test('التسويق: المستهدفون للمدير وحده، وختم «س
   await assertSucceeds(updateDoc(doc(as('own'), 'pitchLinks/TOK9'), { registeredAt: Timestamp.now(), registeredBy: 'own' }));
   await assertFails(updateDoc(doc(as('cok'), 'pitchLinks/TOK9'), { registeredAt: Timestamp.now(), registeredBy: 'cok' }), 'مرة واحدة');
 });
+
+test('موافقة واحدة: المدير ينشئ البروفايل المعتمد، والطبيب يخفض verified ولا يرفعه', async () => {
+  await assertSucceeds(setDoc(doc(as('adm', { admin: true }), 'doctors/ADM1'), { uid: 'doc', name: 'د. أ', licenseNo: '1', verified: true }));
+  await assertFails(setDoc(doc(as('own'), 'doctors/ADM2'), { uid: 'doc', name: 'منتحل', verified: true }), 'غير المدير لا ينشئ معتمداً');
+  // الطبيب يعدّل نبذته ويبقى معتمداً
+  await assertSucceeds(updateDoc(doc(as('doc'), 'doctors/ADM1'), { bio: 'نبذة' }));
+  // خفض verified (بعد تعديل الاسم/الترخيص) مسموح، ثم لا يعيد رفعه
+  await assertSucceeds(updateDoc(doc(as('doc'), 'doctors/ADM1'), { name: 'د. جديد', verified: false }));
+  await assertFails(updateDoc(doc(as('doc'), 'doctors/ADM1'), { verified: true }));
+  await assertSucceeds(updateDoc(doc(as('adm', { admin: true }), 'doctors/ADM1'), { verified: true }));
+});

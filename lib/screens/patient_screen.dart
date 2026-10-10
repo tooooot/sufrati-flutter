@@ -93,6 +93,49 @@ class _TodayTab extends StatefulWidget {
   State<_TodayTab> createState() => _TodayTabState();
 }
 
+/// «ابدأ بهذه الخطوات»: بيتك جاهز ← ادعُ طاهيك ← راجع مشترياتك. تُغلق بنقرة وتختفي نهائياً حين ينضم الطاهي.
+class _FirstSteps extends StatefulWidget {
+  final LinkService links;
+  final TabsController tabs;
+  const _FirstSteps({required this.links, required this.tabs});
+  @override
+  State<_FirstSteps> createState() => _FirstStepsState();
+}
+
+class _FirstStepsState extends State<_FirstSteps> {
+  bool _hidden = false;
+
+  @override
+  Widget build(BuildContext context) {
+    if (_hidden) return const SizedBox.shrink();
+    final invited = widget.links.inviteFor(Role.cook) != null;
+    Widget row(bool done, String label, VoidCallback? onTap) => InkWell(
+          onTap: onTap,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 7),
+            child: Row(children: [
+              Icon(done ? Icons.check_circle : Icons.radio_button_unchecked, color: done ? Brand.green : Brand.honey, size: 24),
+              const SizedBox(width: 10),
+              Expanded(child: Text(label, style: TextStyle(fontWeight: black, fontSize: 15, decoration: done ? TextDecoration.lineThrough : null, color: done ? Brand.grey : null))),
+              if (onTap != null && !done) const Icon(Icons.chevron_left, color: Brand.grey),
+            ]),
+          ),
+        );
+    return CardBox(
+      child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+        Row(children: [
+          const Expanded(child: Text('ابدأ بهذه الخطوات', style: TextStyle(fontSize: 17, fontWeight: black, color: Brand.green))),
+          IconButton(visualDensity: VisualDensity.compact, icon: const Icon(Icons.close, size: 20), onPressed: () => setState(() => _hidden = true)),
+        ]),
+        row(true, 'أنشأت بيتك واخترت نظامك', null),
+        row(invited, invited ? 'أرسلتَ دعوة الطاهي — بانتظار دخوله' : 'ادعُ طاهيك برابط واتساب (يصله شرح بلغته)',
+            () => inviteFlow(context, widget.links, Role.cook)),
+        row(false, 'راجع قائمة مشتريات هذا الأسبوع', () => widget.tabs.select(1)),
+      ]),
+    );
+  }
+}
+
 class _TodayTabState extends State<_TodayTab> {
   bool tomorrow = false;
 
@@ -115,6 +158,11 @@ class _TodayTabState extends State<_TodayTab> {
         final eaters = widget.store.household.eaters;
         final tip = program.userTips.isEmpty ? null : program.userTips[_ordinal(now) % program.userTips.length];
         return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+          // خطوات البداية لصاحب الخطة الجديد: تختفي حين ينضم الطاهي
+          if (widget.canInvite && widget.links.joinedBy(Role.cook) == null) ...[
+            _FirstSteps(links: widget.links, tabs: widget.tabs),
+            const SizedBox(height: 14),
+          ],
           if (!tomorrow)
             next != null
                 ? _NextMealHero(s: next, program: program, library: widget.library, eaters: eaters, now: now)

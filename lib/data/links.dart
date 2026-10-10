@@ -66,7 +66,8 @@ abstract class LinkService extends ChangeNotifier {
   /// الطبيب لا يُفعَّل بالاختيار الذاتي: يُرسَل طلب لمدير سفرتي.
   bool get isDoctor;
   bool get doctorRequested;
-  Future<void> requestDoctor();
+  /// يرسل طلب التفعيل للمدير مع مسودة بياناته المهنية (الاسم، التخصص، المدينة، النبذة، الترخيص) لتُراجَع مرة واحدة.
+  Future<void> requestDoctor({Map<String, String>? draft});
 
   /// صاحب الخطة: إلغاء دعوة معلّقة أو إزالة من انضم بهذا الدور (يخرج من البيت وتُحذف دعواته).
   Future<void> removeRole(Role role);
@@ -127,7 +128,7 @@ class MemoryLinkService extends LinkService {
   @override
   bool get doctorRequested => _doctorRequested;
   @override
-  Future<void> requestDoctor() async {
+  Future<void> requestDoctor({Map<String, String>? draft}) async {
     _doctorRequested = true;
     notifyListeners();
   }

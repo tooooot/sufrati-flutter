@@ -17,8 +17,8 @@ class ProfileScreen extends StatelessWidget {
 
   Future<void> _switchTo(BuildContext context, Role r) async {
     if (r == Role.doctor && !links.isDoctor) {
-      await links.requestDoctor(); // الطبيب بموافقة المدير لا بالاختيار
-      if (context.mounted) context.go('/doctor-pending');
+      // الطبيب بموافقة المدير لا بالاختيار: بياناته المهنية تُراجَع مرة واحدة
+      if (context.mounted) context.go(links.doctorRequested ? '/doctor-pending' : '/doctor/apply');
       return;
     }
     session.chooseRole(r);

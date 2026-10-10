@@ -45,10 +45,10 @@ void main() {
     expect(await g.pitch('NOPE'), isNull);
   });
 
-  test('لقطات العرض: أربع لكل دور، وكلها ببنية سليمة', () {
+  test('لقطات العرض: 4–5 لكل دور (الطبيب/الجروب دور واحد)، وكلها ببنية سليمة', () {
     for (final k in ['user', 'doctor', 'group', 'cook', 'غير معروف']) {
       final b = beatsFor(k, name: 'د. خالد');
-      expect(b, hasLength(4), reason: k);
+      expect(b.length, anyOf(4, 5), reason: k);
       for (final x in b) {
         expect(x.title, isNotEmpty);
         expect(x.sub, isNotEmpty);
@@ -75,6 +75,7 @@ void main() {
       }
     }
     expect(cookBeats('xx').first.title, cookBeats('ar').first.title);
+    expect(beatsFor('group').length, beatsFor('doctor').length, reason: 'group اسم قديم لعرض الطبيب');
     expect(chromeFor('en').rtl, isFalse);
     expect(chromeFor('am').rtl, isFalse);
     expect(chromeFor('ar').rtl, isTrue);

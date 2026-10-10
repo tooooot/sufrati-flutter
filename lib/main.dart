@@ -17,6 +17,7 @@ import 'data/firestore_links.dart';
 import 'data/growth.dart';
 import 'data/links.dart';
 import 'screens/admin_screen.dart';
+import 'screens/doctor_apply_screen.dart';
 import 'screens/doctor_join_screen.dart';
 import 'screens/doctor_pending_screen.dart';
 import 'screens/doctor_profile_screen.dart';
@@ -99,6 +100,7 @@ class SufratiApp extends StatelessWidget {
     routes: [
       GoRoute(path: '/loading', builder: (_, _) => const Scaffold(body: Center(child: CircularProgressIndicator()))),
       GoRoute(path: '/role', builder: (_, _) => RoleScreen(session: _session)),
+      GoRoute(path: '/doctor/apply', builder: (_, _) => DoctorApplyScreen(session: _session)),
       GoRoute(path: '/doctor-pending', builder: (_, _) => DoctorPendingScreen(session: _session)),
       GoRoute(path: '/admin', builder: (_, _) => AdminScreen(db: db)),
       GoRoute(path: '/browse', builder: (_, _) => StartScreen(library: library)),

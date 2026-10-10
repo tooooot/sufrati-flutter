@@ -17,7 +17,7 @@ class PitchScreen extends StatefulWidget {
 }
 
 class _PitchScreenState extends State<PitchScreen> {
-  static const _cta = {'doctor': 'ابدأ بملفي المهني', 'group': 'ابدأ وانشر رابطي'};
+  static const _cta = {'doctor': 'ابدأ بملفي المهني', 'group': 'ابدأ بملفي المهني'};
   late String _lang = pitchLangs.containsKey(widget.lang) ? widget.lang! : 'ar';
 
   @override
@@ -49,6 +49,7 @@ class _PitchScreenState extends State<PitchScreen> {
       skipLabel: c.skip,
       tapHint: c.tap,
       showBrowse: !cook,
+      beatDuration: cook ? const Duration(milliseconds: 7000) : const Duration(milliseconds: 5200), // لغة ثانية ← وقت قراءة أطول
       header: cook
           ? Wrap(spacing: 8, children: [
               for (final e in pitchLangs.entries)

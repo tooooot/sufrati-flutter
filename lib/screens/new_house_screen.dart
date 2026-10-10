@@ -93,6 +93,14 @@ class _NewHouseScreenState extends State<NewHouseScreen> {
                     ),
                     const SizedBox(height: 10),
                   ],
+                  if (_program == 'kidney_salama')
+                    Container(
+                      margin: const EdgeInsets.only(bottom: 6),
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(color: Brand.amber50, borderRadius: BorderRadius.circular(14), border: Border.all(color: Brand.honey)),
+                      child: const Text('هذا النظام لمرضى الكلى منقول من دليل مستشفى متخصص. استشر طبيبك قبل البدء، ويمكنك دعوة طبيبك لمتابعة خطتك بعد إنشاء البيت.',
+                          style: TextStyle(fontSize: 13, height: 1.7, fontWeight: FontWeight.w700)),
+                    ),
                   const SizedBox(height: 10),
                   const Text('٢ · سمِّ بيتك', style: TextStyle(fontSize: 17, fontWeight: black, color: Brand.green)),
                   const SizedBox(height: 10),

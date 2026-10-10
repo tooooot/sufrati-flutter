@@ -229,7 +229,8 @@ class FirestoreLinkService extends LinkService {
   }
 
   @override
-  Future<void> requestDoctor() => db.doc('users/$_me').set({'doctorRequested': true}, SetOptions(merge: true));
+  Future<void> requestDoctor({Map<String, String>? draft}) => db.doc('users/$_me').set(
+      {'doctorRequested': true, 'doctorDraft': ?draft}, SetOptions(merge: true));
 
   @override
   Future<void> deleteMyData() async {

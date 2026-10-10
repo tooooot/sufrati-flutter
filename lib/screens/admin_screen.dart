@@ -1,7 +1,10 @@
+import 'dart:math';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../data/growth.dart';
 import '../theme.dart';
 import '../widgets/common.dart';
 
@@ -42,7 +45,7 @@ class AdminScreen extends StatelessWidget {
                   const SizedBox(height: 8),
                   _Doctors(db: d),
                   const SizedBox(height: 20),
-                  const Text('بروفايلات الأطباء (التوثيق)', style: TextStyle(fontWeight: black, fontSize: 17)),
+                  const Text('بروفايلات الأطباء (الاعتماد)', style: TextStyle(fontWeight: black, fontSize: 17)),
                   const SizedBox(height: 8),
                   _Profiles(db: d),
                   const SizedBox(height: 22),
@@ -79,8 +82,15 @@ class _Doctors extends StatelessWidget {
                 child: CardBox(
                   child: Row(children: [
                     Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                      Text(d.data()['name'] as String? ?? '', style: const TextStyle(fontWeight: black)),
+                      Text((d.data()['doctorDraft'] as Map?)?['name'] as String? ?? d.data()['name'] as String? ?? '', style: const TextStyle(fontWeight: black)),
                       Text(d.data()['email'] as String? ?? '', style: const TextStyle(fontSize: 12, color: Brand.grey)),
+                      if (d.data()['doctorDraft'] is Map) ...[
+                        Text('${(d.data()['doctorDraft'] as Map)['specialty'] ?? ''} · ${(d.data()['doctorDraft'] as Map)['city'] ?? ''}',
+                            style: const TextStyle(fontSize: 12, color: Brand.grey)),
+                        Text('ترخيص: ${(d.data()['doctorDraft'] as Map)['licenseNo'] ?? 'غير مذكور'}',
+                            style: const TextStyle(fontSize: 12.5, fontWeight: FontWeight.w800)),
+                      ] else
+                        const Text('بلا بيانات مهنية (طلب قديم)', style: TextStyle(fontSize: 12, color: Brand.grey)),
                     ])),
                     IconButton(
                       tooltip: 'رفض',
@@ -89,8 +99,8 @@ class _Doctors extends StatelessWidget {
                     ),
                     FilledButton(
                       style: FilledButton.styleFrom(backgroundColor: Brand.green),
-                      onPressed: () => d.reference.update({'isDoctor': true, 'doctorRequested': false}),
-                      child: const Text('تفعيل'),
+                      onPressed: () => _approve(context, d),
+                      child: const Text('اعتماد'),
                     ),
                   ]),
                 ),
@@ -98,6 +108,47 @@ class _Doctors extends StatelessWidget {
           ]);
         },
       );
+}
+
+/// الموافقة الواحدة: تفعيل الحساب + بروفايل عام معتمد + رمز الرابط، بعد أن يقرّ المدير أنه راجع الترخيص.
+Future<void> _approve(BuildContext context, QueryDocumentSnapshot<Map<String, dynamic>> d) async {
+  final draft = d.data()['doctorDraft'] as Map?;
+  var checked = false;
+  final ok = await showDialog<bool>(
+    context: context,
+    builder: (c) => StatefulBuilder(
+      builder: (c, set) => AlertDialog(
+        title: const Text('اعتماد الطبيب'),
+        content: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Text('${draft?['name'] ?? d.data()['name'] ?? ''}\n${draft?['specialty'] ?? ''} · ${draft?['city'] ?? ''}\nالترخيص: ${draft?['licenseNo'] ?? 'غير مذكور'}',
+              style: const TextStyle(fontWeight: FontWeight.w800, height: 1.7)),
+          const SizedBox(height: 10),
+          CheckboxListTile(
+            contentPadding: EdgeInsets.zero, controlAffinity: ListTileControlAffinity.leading,
+            value: checked, onChanged: (v) => set(() => checked = v ?? false),
+            title: const Text('راجعتُ رقم الترخيص لدى الهيئة السعودية للتخصصات الصحية', style: TextStyle(fontSize: 13)),
+          ),
+        ]),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(c, false), child: const Text('إلغاء')),
+          FilledButton(onPressed: checked ? () => Navigator.pop(c, true) : null, child: const Text('اعتماد')),
+        ],
+      ),
+    ),
+  );
+  if (ok != true) return;
+  final b = d.reference.firestore.batch();
+  final user = <String, Object>{'isDoctor': true, 'doctorRequested': false};
+  if (draft != null && d.data()['doctorCode'] == null) {
+    final code = newDoctorCode(Random.secure());
+    b.set(d.reference.firestore.doc('doctors/$code'), {
+      'uid': d.id, 'name': draft['name'] ?? '', 'specialty': draft['specialty'] ?? '', 'city': draft['city'] ?? '', 'bio': draft['bio'] ?? '',
+      'licenseNo': draft['licenseNo'] ?? '', 'verified': true, 'createdAt': FieldValue.serverTimestamp(),
+    });
+    user['doctorCode'] = code;
+  }
+  b.update(d.reference, user);
+  await b.commit();
 }
 
 class _Reports extends StatelessWidget {
