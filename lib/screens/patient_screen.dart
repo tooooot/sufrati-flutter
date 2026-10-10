@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../data/household.dart';
 import '../data/models.dart';
@@ -11,6 +12,7 @@ import '../logic/shopping.dart';
 import '../theme.dart';
 import '../logic/dates.dart';
 import '../widgets/common.dart';
+import '../widgets/meal_extras.dart';
 import '../widgets/profile_button.dart';
 import '../widgets/tabs_scaffold.dart';
 import '../auth/roles.dart';
@@ -75,7 +77,7 @@ class _PatientScreenState extends State<PatientScreen> {
               (_) => _TodayTab(store: store, library: widget.library, links: widget.links, tabs: _tabs, canInvite: widget.showHome)),
           TabItem(Icons.shopping_cart_outlined, 'المشتريات', (_) => _ShoppingTab(store: store)),
           TabItem(Icons.calendar_month_outlined, 'الأسبوع', (_) => _NextWeekTab(store: store, library: widget.library)),
-          if (widget.showHome) TabItem(Icons.home_outlined, 'بيتي', (_) => HouseholdBody(links: widget.links)),
+          if (widget.showHome) TabItem(Icons.home_outlined, 'بيتي', (_) => Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [_EatersCard(store: store), const SizedBox(height: 14), HouseholdBody(links: widget.links)])),
         ],
       ),
     );
@@ -91,6 +93,29 @@ class _TodayTab extends StatefulWidget {
   const _TodayTab({required this.store, required this.library, required this.links, required this.tabs, required this.canInvite});
   @override
   State<_TodayTab> createState() => _TodayTabState();
+}
+
+/// عدد من يأكل: ± والكميات والمشتريات تتغير فوراً (صاحب الخطة أو الطبيب فقط).
+class _EatersCard extends StatelessWidget {
+  final HouseholdStore store;
+  const _EatersCard({required this.store});
+  @override
+  Widget build(BuildContext context) => ListenableBuilder(
+        listenable: store,
+        builder: (context, _) {
+          final n = store.household.eaters;
+          return CardBox(
+            child: Row(children: [
+              const Icon(Icons.groups, color: Brand.green, size: 30),
+              const SizedBox(width: 10),
+              const Expanded(child: Text('عدد من يأكل في بيتك', style: TextStyle(fontWeight: black, fontSize: 16))),
+              IconButton(onPressed: n > 1 ? () => store.setEaters(n - 1) : null, icon: const Icon(Icons.remove_circle_outline, color: Brand.green)),
+              Text('$n', style: const TextStyle(fontSize: 22, fontWeight: black)),
+              IconButton(onPressed: n < 20 ? () => store.setEaters(n + 1) : null, icon: const Icon(Icons.add_circle_outline, color: Brand.green)),
+            ]),
+          );
+        },
+      );
 }
 
 /// «ابدأ بهذه الخطوات»: بيتك جاهز ← ادعُ طاهيك ← راجع مشترياتك. تُغلق بنقرة وتختفي نهائياً حين ينضم الطاهي.
@@ -175,6 +200,18 @@ class _TodayTabState extends State<_TodayTab> {
             const SizedBox(width: 10),
             _Quick(Icons.autorenew, 'تعديل الأسبوع', () => widget.tabs.select(2)),
           ]),
+          if (widget.canInvite) ...[
+            const SizedBox(height: 10),
+            CardBox(
+              onTap: () => context.go('/cook/me'),
+              child: const Row(children: [
+                Icon(Icons.alarm, color: Brand.honey, size: 28),
+                SizedBox(width: 10),
+                Expanded(child: Text('أطبخ بنفسي: افتح شاشة الطبخ والتنبيهات (فك الدجاج، نقع الأرز…)', style: TextStyle(fontWeight: black, fontSize: 14, height: 1.5))),
+                Icon(Icons.chevron_left, color: Brand.grey),
+              ]),
+            ),
+          ],
           const SizedBox(height: 20),
           Row(children: [
             Expanded(child: Text(tomorrow ? 'وجبات الغد' : 'وجبات اليوم',
@@ -453,6 +490,17 @@ class _MealCard extends StatelessWidget {
         Wrap(spacing: 8, runSpacing: 8, children: [
           for (final it in scaledItems(s.option, eaters, program.ingredients)) _Chip(it.icon, it.qtyLabel, it.label),
         ]),
+        if (s.option != null) ...[
+          MealReminders(option: s.option!),
+          if (s.option!.recipe != null && program.recipes[s.option!.recipe] is Map) ...[
+            const SizedBox(height: 12),
+            const Text('طريقة التحضير', style: TextStyle(fontWeight: black, fontSize: 16, color: Brand.green)),
+            const SizedBox(height: 4),
+            for (final (i, st) in ((program.recipes[s.option!.recipe] as Map)['steps'] as List).indexed)
+              Padding(padding: const EdgeInsets.only(bottom: 4), child: Text('${i + 1}. $st', style: const TextStyle(fontSize: 14.5, height: 1.6))),
+          ],
+          MealVideoButton(option: s.option!),
+        ],
       ]),
     );
   }

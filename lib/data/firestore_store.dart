@@ -110,13 +110,37 @@ class FirestoreStore extends HouseholdStore {
     if (!canManage) throw const PlanNotReady();
     final p = await program();
     final days = List.generate(7, (_) => <String, String>{});
-    for (final pick in pickWeekOptions(p)) {
+    // لا يكرر الأسبوع الجديد وجبات الأسبوع الماضي حرفياً (ربّة البيت تكره التكرار)
+    final prev = _weeks[weekId(weekStart.subtract(const Duration(days: 7)))];
+    final avoid = <String, Set<String>>{};
+    for (final d in prev?.days ?? const <Map<String, String>>[]) {
+      d.forEach((slot, opt) => (avoid[slot] ??= {}).add(opt));
+    }
+    for (final pick in pickWeekOptions(p, avoid: avoid)) {
       days[pick.day][pick.slotId] = pick.option.id;
     }
     final plan = WeekPlan(weekStart, days);
     _weeks[id] = plan;
     await db.doc('households/$hid/weeks/$id').set({'days': days, 'prepared': <String>[], 'createdAt': FieldValue.serverTimestamp()});
     return plan;
+  }
+
+  @override
+  Future<void> setEaters(int n) async {
+    final v = n.clamp(1, 20);
+    if (!canManage || v == household.eaters) return;
+    household.eaters = v;
+    await db.doc('households/$hid').update({'eaters': v});
+    // الكميات تتبع العدد: نعيد حساب مشتريات هذا الأسبوع والقادم مع إبقاء ما اشتُري
+    final now = DateTime.now().toUtc().add(const Duration(hours: 3));
+    final ws = weekStartFor(DateTime(now.year, now.month, now.day));
+    for (final w in [ws, ws.add(const Duration(days: 7))]) {
+      if (_weeks.containsKey(weekId(w))) {
+        _shopping.remove(weekId(w));
+        await _saveShopping(w, await _build(w, previous: _prevLines[weekId(w)]));
+      }
+    }
+    notifyListeners();
   }
 
   @override

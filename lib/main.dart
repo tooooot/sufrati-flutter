@@ -144,6 +144,12 @@ class SufratiApp extends StatelessWidget {
                 db: db, links: links, library: library, role: Role.cook,
                 builder: (store) => CookScreen(store: store, library: library, i18n: i18n, links: links),
               )),
+      // صاحبة الخطة التي تطبخ بنفسها: شاشة الطبخ والتنبيهات على بيتها
+      GoRoute(path: '/cook/me',
+          builder: (_, _) => StoreLoader(
+                db: db, links: links, library: library, role: Role.owner,
+                builder: (store) => CookScreen(store: store, library: library, i18n: i18n, links: links, ownerMode: true),
+              )),
       GoRoute(path: '/signup/custom', builder: (_, _) => const ComingNextScreen(title: 'نظامك الخاص')),
       GoRoute(path: '/signup/:id',
           builder: (_, s) => HouseCreateScreen(library: library, links: links, programId: s.pathParameters['id']!)),

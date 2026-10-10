@@ -18,6 +18,8 @@ abstract class HouseholdStore extends ChangeNotifier {
   Future<void> setPrepared(DateTime weekStart, int day, String slot, bool value);
   Future<List<ShoppingLine>> shopping(DateTime weekStart);
   Future<void> updateShopping(DateTime weekStart, String key, {int? packs, bool? bought});
+  /// عدد من يأكل: يغيّر كميات الوجبات والمشتريات فوراً.
+  Future<void> setEaters(int n);
 }
 
 class LocalStore extends HouseholdStore {
@@ -51,6 +53,13 @@ class LocalStore extends HouseholdStore {
     (await week(weekStart)).days[day][slot] = optionId;
     _shopping.remove(weekStart); // يُعاد حسابها مع الحفاظ على تعديلات المستخدم
     await shopping(weekStart);
+    notifyListeners();
+  }
+
+  @override
+  Future<void> setEaters(int n) async {
+    household.eaters = n.clamp(1, 20);
+    _shopping.clear();
     notifyListeners();
   }
 

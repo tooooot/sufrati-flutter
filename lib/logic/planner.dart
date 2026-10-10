@@ -70,7 +70,8 @@ class Pick {
 }
 
 /// خيار لكل وجبة × 7 أيام، مع الحدود الأسبوعية وتناوب نوع اليوم وعدم التكرار المتتالي — نفس _pick_week_options.
-List<Pick> pickWeekOptions(Program program, {Random? random}) {
+/// [avoid]: خيارات الأسبوع السابق لكل وجبة (slotId ← معرّفات) — تُستبعد ما دام فيه بديل، فلا يتكرر الأسبوع الجديد حرفياً.
+List<Pick> pickWeekOptions(Program program, {Random? random, Map<String, Set<String>>? avoid}) {
   final rnd = random ?? Random();
   final pattern = program.dayTypePattern;
   final tagCounts = {for (final t in program.limits.keys) t: 0};
@@ -90,7 +91,8 @@ List<Pick> pickWeekOptions(Program program, {Random? random}) {
         return true;
       }
 
-      var candidates = options.where((o) => ok(o) && o.id != last[slot.id]).toList();
+      var candidates = options.where((o) => ok(o) && o.id != last[slot.id] && !(avoid?[slot.id]?.contains(o.id) ?? false)).toList();
+      if (candidates.isEmpty) candidates = options.where((o) => ok(o) && o.id != last[slot.id]).toList();
       if (candidates.isEmpty) candidates = options.where(ok).toList();
       if (candidates.isEmpty) candidates = options;
       final chosen = candidates[rnd.nextInt(candidates.length)];
@@ -120,7 +122,10 @@ List<Pick> pickWeekOptions(Program program, {Random? random}) {
       final dayType = pattern?[p.day];
       final okOpts = tagged.where((o) => dayType == null || o.dayType == null || o.dayType == dayType).toList();
       if (okOpts.isNotEmpty) {
-        p.option = okOpts[rnd.nextInt(okOpts.length)];
+        // نفضّل بديلاً لم يُقدَّم الأسبوع الماضي إن وُجد
+        final fresh = okOpts.where((o) => !(avoid?[host.id]?.contains(o.id) ?? false)).toList();
+        final pool = fresh.isNotEmpty ? fresh : okOpts;
+        p.option = pool[rnd.nextInt(pool.length)];
         need--;
       }
     }

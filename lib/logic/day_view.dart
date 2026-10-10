@@ -24,7 +24,14 @@ Future<DayView> dayView(HouseholdStore store, Program program, DateTime date) as
   final ws = weekStartFor(date);
   final idx = DateTime(date.year, date.month, date.day).difference(ws).inDays;
   final WeekPlan plan = await store.week(ws);
-  final times = resolveMealTimes(date, store.household.city, store.household.mealLinks);
+  // روابط الوجبات بالصلوات: افتراضي النظام (مثل جلسة المغرب) يحلّ محل الافتراضي العام ما لم يخصّصها البيت
+  final links = {
+    for (final e in store.household.mealLinks.entries)
+      e.key: (program.mealLinks[e.key] != null && e.value.prayer == defaultMealLinks[e.key]?.prayer && e.value.offset == defaultMealLinks[e.key]?.offset)
+          ? program.mealLinks[e.key]!
+          : e.value,
+  };
+  final times = resolveMealTimes(date, store.household.city, links);
   return DayView(date, ws, idx, [
     for (final slot in program.slots)
       SlotView(

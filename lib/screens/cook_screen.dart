@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart' show defaultTargetPlatform, TargetPlatform;
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../data/i18n.dart';
 import '../data/links.dart';
@@ -16,6 +17,7 @@ import '../logic/planner.dart';
 import '../logic/prayer.dart';
 import '../theme.dart';
 import '../widgets/common.dart';
+import '../widgets/meal_extras.dart';
 import '../widgets/tabs_scaffold.dart';
 
 /// لوحة الطاهي — نقل لـ cook.html: الوجبة القادمة الآن · وجبات اليوم بالصور والطريقة · «جاهز» · 3 لغات.
@@ -25,7 +27,9 @@ class CookScreen extends StatefulWidget {
   final Library library;
   final CookI18n i18n;
   final LinkService links;
-  const CookScreen({super.key, required this.store, required this.library, required this.i18n, required this.links});
+  /// صاحبة الخطة التي تطبخ بنفسها: نفس شاشة الطاهي (تنبيهات الوقت والتذكيرات) على بيتها، مع زر رجوع.
+  final bool ownerMode;
+  const CookScreen({super.key, required this.store, required this.library, required this.i18n, required this.links, this.ownerMode = false});
 
   @override
   State<CookScreen> createState() => _CookScreenState();
@@ -146,7 +150,10 @@ class _CookScreenState extends State<CookScreen> {
         title: cookName.isNotEmpty ? '${ui('hello')} $cookName 👋' : ui('kitchen_default'),
         subtitle: '$dayName — ${ui('cooking_for')} $eaters 👤',
         leading: Row(children: [
-          const ProfileButton(),
+          if (widget.ownerMode)
+            IconButton(icon: const Icon(Icons.arrow_back, color: Colors.white), onPressed: () => context.go('/me'))
+          else
+            const ProfileButton(),
           const Spacer(),
           Wrap(spacing: 6, children: [
             for (final e in widget.i18n.langs.entries)
@@ -249,6 +256,7 @@ class _CookScreenState extends State<CookScreen> {
               ])),
             ),
         ]),
+        if (s.option != null) MealVideoButton(option: s.option!, lang: lang),
         if (recipe != null) ...[
           const SizedBox(height: 12),
           Container(

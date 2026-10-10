@@ -37,6 +37,17 @@ Future<List<CookAlert>> buildCookAlerts(HouseholdStore store, CookI18n i18n,
       final name = i18n.slotName(s.slot.id, lang, s.slot.name);
       final dish = i18n.option(program.meta.id, opt.id, lang, opt.label);
       final body = dish.isEmpty ? ar12(hm, lang) : '$dish · ${ar12(hm, lang)}';
+      // تذكيرات التحضير المبكر الخاصة بالوجبة (فك الدجاج الليلة قبل الغداء مثلاً): معرّفاتها 3..9 بعد معرّف الوجبة
+      for (final (ri, r) in opt.remind.indexed) {
+        final fireAt = at.subtract(Duration(minutes: (r.hoursBefore * 60).round()));
+        if (!fireAt.isAfter(nowSaudi) || ri > 6) continue;
+        out.add(CookAlert(
+          int.parse('${date.month.toString().padLeft(2, '0')}${date.day.toString().padLeft(2, '0')}') * 100 + idx * 10 + 3 + ri,
+          fireAt,
+          '⏰ $name — ${dish.isEmpty ? '' : dish}',
+          r.text,
+        ));
+      }
       for (final (kind, fireAt) in [('prep', at.subtract(const Duration(minutes: prepLeadMinutes))), ('serve', at)]) {
         if (!fireAt.isAfter(nowSaudi)) continue;
         out.add(CookAlert(

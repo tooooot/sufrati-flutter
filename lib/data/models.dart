@@ -1,5 +1,6 @@
 // نماذج الأنظمة الغذائية — تُقرأ من assets/data (مُصدَّرة آلياً من maeda بـ tools/export_programs.py).
 
+import '../logic/prayer.dart';
 /// كمية: رقم صحيح أو كسر نصي "1/2" (الكسور تبقى دقيقة كما في بايثون Fraction).
 double parseQty(Object? v) {
   if (v is num) return v.toDouble();
@@ -27,14 +28,22 @@ class MealOption {
   final String id, label;
   final List<String> tags;
   final List<(String, double)> items;
-  final String? recipe, dayType;
+  final String? recipe, dayType, videoQ, photoPrompt;
+  /// تذكيرات تحضير قبل الوجبة (فك الدجاج، نقع الأرز…): نص + كم ساعة قبل موعد الوجبة.
+  final List<({String text, double hoursBefore})> remind;
   MealOption(Map<String, dynamic> j)
       : id = j['id'],
         label = j['label'],
         tags = List<String>.from(j['tags'] ?? const []),
         items = [for (final it in (j['items'] as List? ?? const [])) (it[0] as String, parseQty(it[1]))],
         recipe = j['recipe'],
-        dayType = j['day_type'];
+        dayType = j['day_type'],
+        videoQ = j['video_q'],
+        photoPrompt = j['photo_prompt'],
+        remind = [for (final r in (j['remind'] as List? ?? const [])) (text: r['text'] as String, hoursBefore: parseQty(r['hours_before']))];
+
+  /// بحث تيك توك عن طريقة هذه الوجبة (رابط بحث دائم الصلاحية، لا رابط فيديو بعينه قد يُحذف).
+  Uri? get videoUrl => videoQ == null ? null : Uri.https('www.tiktok.com', '/search', {'q': videoQ});
 }
 
 class MealSlot {
@@ -75,6 +84,8 @@ class Program {
   final Map<String, WeeklyLimit> limits;
   final List<String>? dayTypePattern;
   final List<Map<String, dynamic>> cookInstructions, userTips, cookTips;
+  /// ربط وجبات هذا النظام بالصلوات (يغلب الافتراضي العام): {'meal3': PrayerLink('Maghrib', 20)}.
+  final Map<String, PrayerLink> mealLinks;
 
   Program(this.meta, Map<String, dynamic> j)
       : slots = [for (final s in j['MEAL_SLOTS'] as List) MealSlot(s)],
@@ -89,7 +100,11 @@ class Program {
         dayTypePattern = (j['DAY_TYPE_PATTERN'] as List?)?.cast<String>(),
         cookInstructions = _maps(j['COOK_INSTRUCTIONS']),
         userTips = _maps(j['USER_TIPS']),
-        cookTips = _maps(j['COOK_TIPS']);
+        cookTips = _maps(j['COOK_TIPS']),
+        mealLinks = {
+          for (final e in (j['MEAL_LINKS'] as Map<String, dynamic>? ?? const {}).entries)
+            e.key: PrayerLink(e.value['prayer'] as String, (e.value['offset'] as num).toInt())
+        };
 
   static List<Map<String, dynamic>> _maps(Object? v) =>
       v is List ? [for (final x in v) Map<String, dynamic>.from(x)] : const [];

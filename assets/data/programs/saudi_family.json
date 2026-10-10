@@ -1,0 +1,2104 @@
+{
+ "MEAL_SLOTS": [
+  {
+   "id": "meal1",
+   "name": "الفطور",
+   "icon": "🌅",
+   "default_time": "07:30",
+   "options": [
+    {
+     "id": "s1o1",
+     "label": "فول مدمس بالطماطم والزيت مع خبز تميس",
+     "tags": [],
+     "items": [
+      [
+       "foul",
+       1
+      ],
+      [
+       "tomato",
+       0.5
+      ],
+      [
+       "onion",
+       0.25
+      ],
+      [
+       "oil",
+       0.5
+      ],
+      [
+       "lemon",
+       0.25
+      ],
+      [
+       "tameez",
+       1
+      ]
+     ],
+     "video_q": "فول مدمس سعودي طريقة الفطور",
+     "photo_prompt": "Saudi breakfast: a shared bowl of foul medames with chopped tomato, onion, olive oil and lemon, served with warm tameez flatbread. Served on a plain white ceramic plate, overhead 45-degree angle, warm natural light, appetizing home-style presentation, photorealistic. No text, no watermark."
+    },
+    {
+     "id": "s1o2",
+     "label": "شكشوكة بيض مع خبز صامولي",
+     "tags": [],
+     "items": [
+      [
+       "egg",
+       2
+      ],
+      [
+       "tomato",
+       1
+      ],
+      [
+       "onion",
+       0.25
+      ],
+      [
+       "green_pepper",
+       0.25
+      ],
+      [
+       "samouli",
+       1
+      ]
+     ],
+     "recipe": "shakshuka",
+     "video_q": "شكشوكة بيض طريقة سهلة",
+     "photo_prompt": "Shakshuka: eggs poached in a tomato and green pepper sauce in a cast-iron pan, with samouli bread on the side. Served on a plain white ceramic plate, overhead 45-degree angle, warm natural light, appetizing home-style presentation, photorealistic. No text, no watermark."
+    },
+    {
+     "id": "s1o3",
+     "label": "بيض مخفوق بالجبنة مع صامولي وشاهي",
+     "tags": [],
+     "items": [
+      [
+       "egg",
+       2
+      ],
+      [
+       "white_cheese",
+       1
+      ],
+      [
+       "samouli",
+       1
+      ]
+     ],
+     "video_q": "بيض مخفوق بالجبن فطور سريع",
+     "photo_prompt": "Fluffy scrambled eggs with white cheese on a plate with samouli bread and a glass of Saudi tea. Served on a plain white ceramic plate, overhead 45-degree angle, warm natural light, appetizing home-style presentation, photorealistic. No text, no watermark."
+    },
+    {
+     "id": "s1o4",
+     "label": "عصيدة بالسمن والعسل (تقليدية)",
+     "tags": [],
+     "items": [
+      [
+       "flour",
+       0.5
+      ],
+      [
+       "ghee",
+       1
+      ],
+      [
+       "honey",
+       1
+      ],
+      [
+       "dates",
+       2
+      ]
+     ],
+     "recipe": "asida",
+     "video_q": "عصيدة سعودية بالسمن والعسل",
+     "photo_prompt": "Traditional Saudi asida: a smooth dome of cooked wheat dough in a shallow bowl with a well of melted ghee and honey, dates on the side. Served on a plain white ceramic plate, overhead 45-degree angle, warm natural light, appetizing home-style presentation, photorealistic. No text, no watermark."
+    },
+    {
+     "id": "s1o5",
+     "label": "معصوب بالموز والقشطة والعسل (حجازي)",
+     "tags": [],
+     "items": [
+      [
+       "tameez",
+       1
+      ],
+      [
+       "banana",
+       1
+      ],
+      [
+       "cream",
+       1
+      ],
+      [
+       "honey",
+       1
+      ]
+     ],
+     "video_q": "معصوب حجازي بالموز والقشطة",
+     "photo_prompt": "Hijazi masoub: mashed bread with banana, topped with cream and honey and nuts, served on a plate. Served on a plain white ceramic plate, overhead 45-degree angle, warm natural light, appetizing home-style presentation, photorealistic. No text, no watermark."
+    },
+    {
+     "id": "s1o6",
+     "label": "كبدة غنم بالطماطم مع خبز",
+     "tags": [
+      "red_meat"
+     ],
+     "items": [
+      [
+       "liver",
+       1
+      ],
+      [
+       "tomato",
+       0.5
+      ],
+      [
+       "onion",
+       0.25
+      ],
+      [
+       "tameez",
+       1
+      ]
+     ],
+     "video_q": "كبدة غنم سعودية بالطماطم",
+     "photo_prompt": "Sauteed lamb liver with tomato and onion in a small pan next to tameez bread. Served on a plain white ceramic plate, overhead 45-degree angle, warm natural light, appetizing home-style presentation, photorealistic. No text, no watermark."
+    },
+    {
+     "id": "s1o7",
+     "label": "فطيرة جبنة وزعتر بالفرن",
+     "tags": [],
+     "items": [
+      [
+       "dough",
+       1
+      ],
+      [
+       "white_cheese",
+       1
+      ],
+      [
+       "zaatar",
+       0.5
+      ],
+      [
+       "oil",
+       0.5
+      ]
+     ],
+     "video_q": "فطائر جبنة وزعتر بالفرن",
+     "photo_prompt": "Baked cheese and zaatar pastries, golden, on a wooden board. Served on a plain white ceramic plate, overhead 45-degree angle, warm natural light, appetizing home-style presentation, photorealistic. No text, no watermark."
+    },
+    {
+     "id": "s1o8",
+     "label": "لبنة وزعتر وخيار مع خبز عربي",
+     "tags": [],
+     "items": [
+      [
+       "labneh",
+       2
+      ],
+      [
+       "zaatar",
+       0.5
+      ],
+      [
+       "cucumber",
+       0.5
+      ],
+      [
+       "tomato",
+       0.5
+      ],
+      [
+       "arabic_bread",
+       1
+      ]
+     ],
+     "photo_prompt": "Labneh drizzled with olive oil and zaatar with cucumber, tomato and Arabic bread. Served on a plain white ceramic plate, overhead 45-degree angle, warm natural light, appetizing home-style presentation, photorealistic. No text, no watermark."
+    }
+   ]
+  },
+  {
+   "id": "meal2",
+   "name": "الغداء",
+   "icon": "☀️",
+   "default_time": "13:30",
+   "options": [
+    {
+     "id": "s2o1",
+     "label": "كبسة دجاج",
+     "tags": [
+      "kabsa"
+     ],
+     "items": [
+      [
+       "chicken",
+       1
+      ],
+      [
+       "rice",
+       1.25
+      ],
+      [
+       "tomato",
+       0.5
+      ],
+      [
+       "onion",
+       0.5
+      ],
+      [
+       "carrot",
+       0.25
+      ],
+      [
+       "kabsa_spice",
+       0.2
+      ],
+      [
+       "oil",
+       0.5
+      ],
+      [
+       "tomato_paste",
+       0.3
+      ],
+      [
+       "cucumber",
+       0.5
+      ],
+      [
+       "lemon",
+       0.25
+      ]
+     ],
+     "recipe": "kabsa",
+     "remind": [
+      {
+       "text": "أخرجي الدجاج من الفريزر الآن ليذوب",
+       "hours_before": 14
+      },
+      {
+       "text": "انقعي الأرز البسمتي (نصف ساعة قبل الطبخ)",
+       "hours_before": 1.5
+      },
+      {
+       "text": "ابدئي طبخ الكبسة — تحتاج ساعة ونصفاً",
+       "hours_before": 2
+      }
+     ],
+     "video_q": "طريقة كبسة دجاج سعودية",
+     "photo_prompt": "Saudi chicken kabsa: a huge mound of spiced golden-brown rice on a very large family platter for 6 people, topped with whole roasted chicken pieces, fried onions, toasted almonds and raisins, with a small bowl of tomato daqoos sauce and a fresh salad on the side. Served on one very large round family serving platter (for 5-6 people), overhead 45-degree angle, warm natural light, rich appetizing colors, photorealistic. No text, no watermark."
+    },
+    {
+     "id": "s2o2",
+     "label": "كبسة لحم",
+     "tags": [
+      "kabsa",
+      "red_meat"
+     ],
+     "items": [
+      [
+       "lamb",
+       1
+      ],
+      [
+       "rice",
+       1.25
+      ],
+      [
+       "onion",
+       0.5
+      ],
+      [
+       "tomato",
+       0.5
+      ],
+      [
+       "kabsa_spice",
+       0.2
+      ],
+      [
+       "ghee",
+       0.5
+      ],
+      [
+       "cucumber",
+       0.5
+      ]
+     ],
+     "recipe": "kabsa_lamb",
+     "remind": [
+      {
+       "text": "أخرجي اللحم من الفريزر الآن ليذوب",
+       "hours_before": 14
+      },
+      {
+       "text": "انقعي الأرز البسمتي (نصف ساعة قبل الطبخ)",
+       "hours_before": 1.5
+      },
+      {
+       "text": "ابدئي سلق اللحم — يحتاج ساعتين",
+       "hours_before": 3.5
+      }
+     ],
+     "video_q": "كبسة لحم غنم طريقة",
+     "photo_prompt": "Saudi lamb kabsa: spiced rice on a very large family platter for 6 people topped with tender lamb pieces, toasted nuts, raisins and fried onions, daqoos sauce and salad on the side. Served on one very large round family serving platter (for 5-6 people), overhead 45-degree angle, warm natural light, rich appetizing colors, photorealistic. No text, no watermark."
+    },
+    {
+     "id": "s2o3",
+     "label": "مندي دجاج",
+     "tags": [
+      "kabsa"
+     ],
+     "items": [
+      [
+       "chicken",
+       1
+      ],
+      [
+       "rice",
+       1.25
+      ],
+      [
+       "kabsa_spice",
+       0.2
+      ],
+      [
+       "oil",
+       0.5
+      ],
+      [
+       "cucumber",
+       0.5
+      ],
+      [
+       "lemon",
+       0.25
+      ]
+     ],
+     "recipe": "mandi",
+     "remind": [
+      {
+       "text": "أخرجي الدجاج من الفريزر الآن ليذوب",
+       "hours_before": 14
+      },
+      {
+       "text": "تبّلي الدجاج من الظهر ليتشرّب النكهة",
+       "hours_before": 6
+      }
+     ],
+     "video_q": "مندي دجاج في الفرن طريقة سهلة",
+     "photo_prompt": "Chicken mandi: smoky roasted chicken halves resting on white fragrant rice on a very large family platter for 6 people, with a bowl of hot sauce and sliced lemon. Served on one very large round family serving platter (for 5-6 people), overhead 45-degree angle, warm natural light, rich appetizing colors, photorealistic. No text, no watermark."
+    },
+    {
+     "id": "s2o4",
+     "label": "مقلوبة دجاج وباذنجان",
+     "tags": [
+      "kabsa"
+     ],
+     "items": [
+      [
+       "chicken",
+       1
+      ],
+      [
+       "rice",
+       1
+      ],
+      [
+       "eggplant",
+       0.5
+      ],
+      [
+       "potato",
+       0.5
+      ],
+      [
+       "tomato",
+       0.5
+      ],
+      [
+       "onion",
+       0.25
+      ],
+      [
+       "kabsa_spice",
+       0.2
+      ],
+      [
+       "oil",
+       1
+      ]
+     ],
+     "recipe": "maqluba",
+     "remind": [
+      {
+       "text": "أخرجي الدجاج من الفريزر الآن ليذوب",
+       "hours_before": 14
+      },
+      {
+       "text": "انقعي الأرز البسمتي (نصف ساعة قبل الطبخ)",
+       "hours_before": 1.5
+      },
+      {
+       "text": "ابدئي المقلوبة — تحتاج ساعتين",
+       "hours_before": 2.5
+      }
+     ],
+     "video_q": "مقلوبة دجاج وباذنجان طريقة",
+     "photo_prompt": "Maqluba: an upside-down dome of layered rice, golden roasted eggplant, potato and chicken turned out onto a very large family platter for 6 people, garnished with fried almonds and parsley. Served on one very large round family serving platter (for 5-6 people), overhead 45-degree angle, warm natural light, rich appetizing colors, photorealistic. No text, no watermark."
+    },
+    {
+     "id": "s2o5",
+     "label": "برياني دجاج",
+     "tags": [
+      "kabsa"
+     ],
+     "items": [
+      [
+       "chicken",
+       1
+      ],
+      [
+       "rice",
+       1.25
+      ],
+      [
+       "onion",
+       1
+      ],
+      [
+       "yogurt",
+       0.5
+      ],
+      [
+       "tomato",
+       0.5
+      ],
+      [
+       "kabsa_spice",
+       0.2
+      ],
+      [
+       "oil",
+       1
+      ]
+     ],
+     "recipe": "biryani",
+     "remind": [
+      {
+       "text": "أخرجي الدجاج من الفريزر الآن ليذوب",
+       "hours_before": 14
+      },
+      {
+       "text": "تبّلي الدجاج بلبن وبهارات من الليلة السابقة",
+       "hours_before": 15
+      }
+     ],
+     "video_q": "برياني دجاج طريقة",
+     "photo_prompt": "Chicken biryani: layered saffron-colored and white rice with spiced chicken and fried onions on a very large family platter for 6 people. Served on one very large round family serving platter (for 5-6 people), overhead 45-degree angle, warm natural light, rich appetizing colors, photorealistic. No text, no watermark."
+    },
+    {
+     "id": "s2o6",
+     "label": "جريش باللحم",
+     "tags": [
+      "red_meat"
+     ],
+     "items": [
+      [
+       "jareesh",
+       1.25
+      ],
+      [
+       "lamb",
+       0.5
+      ],
+      [
+       "milk",
+       0.5
+      ],
+      [
+       "ghee",
+       0.5
+      ],
+      [
+       "onion",
+       0.25
+      ]
+     ],
+     "recipe": "jareesh",
+     "remind": [
+      {
+       "text": "انقعي الجريش ساعتين على الأقل",
+       "hours_before": 4
+      },
+      {
+       "text": "أخرجي اللحم من الفريزر الآن ليذوب",
+       "hours_before": 14
+      }
+     ],
+     "video_q": "جريش سعودي باللحم",
+     "photo_prompt": "Traditional Saudi jareesh: creamy cracked wheat porridge topped with lamb, melted ghee and caramelized onions in a large shared serving bowl for 5 people. Served on one very large round family serving platter (for 5-6 people), overhead 45-degree angle, warm natural light, rich appetizing colors, photorealistic. No text, no watermark."
+    },
+    {
+     "id": "s2o7",
+     "label": "مرقوق لحم وخضار",
+     "tags": [
+      "red_meat"
+     ],
+     "items": [
+      [
+       "flour",
+       0.75
+      ],
+      [
+       "lamb",
+       0.5
+      ],
+      [
+       "potato",
+       0.5
+      ],
+      [
+       "zucchini",
+       0.5
+      ],
+      [
+       "carrot",
+       0.25
+      ],
+      [
+       "tomato",
+       0.5
+      ],
+      [
+       "onion",
+       0.25
+      ]
+     ],
+     "recipe": "margoog",
+     "remind": [
+      {
+       "text": "أخرجي اللحم من الفريزر الآن ليذوب",
+       "hours_before": 14
+      }
+     ],
+     "video_q": "مرقوق سعودي بالخضار واللحم",
+     "photo_prompt": "Saudi margoog: a large shared pot of thin dough squares in a rich tomato stew with lamb, zucchini, carrot and potato, served in a deep family dish for 5 people. Served on one very large round family serving platter (for 5-6 people), overhead 45-degree angle, warm natural light, rich appetizing colors, photorealistic. No text, no watermark."
+    },
+    {
+     "id": "s2o8",
+     "label": "قرصان دجاج",
+     "tags": [],
+     "items": [
+      [
+       "flour",
+       0.75
+      ],
+      [
+       "chicken",
+       0.75
+      ],
+      [
+       "tomato",
+       0.5
+      ],
+      [
+       "onion",
+       0.5
+      ],
+      [
+       "zucchini",
+       0.25
+      ]
+     ],
+     "recipe": "qursan",
+     "remind": [
+      {
+       "text": "أخرجي الدجاج من الفريزر الآن ليذوب",
+       "hours_before": 14
+      }
+     ],
+     "video_q": "قرصان سعودي بالدجاج",
+     "photo_prompt": "Saudi qursan: torn flatbread soaked in a tomato and chicken stew with zucchini in a large deep family dish. Served on one very large round family serving platter (for 5-6 people), overhead 45-degree angle, warm natural light, rich appetizing colors, photorealistic. No text, no watermark."
+    },
+    {
+     "id": "s2o9",
+     "label": "سليق حجازي بالدجاج",
+     "tags": [
+      "kabsa"
+     ],
+     "items": [
+      [
+       "chicken",
+       1
+      ],
+      [
+       "rice",
+       1.25
+      ],
+      [
+       "milk",
+       1
+      ],
+      [
+       "ghee",
+       0.5
+      ],
+      [
+       "onion",
+       0.25
+      ]
+     ],
+     "recipe": "sleeq",
+     "remind": [
+      {
+       "text": "أخرجي الدجاج من الفريزر الآن ليذوب",
+       "hours_before": 14
+      }
+     ],
+     "video_q": "سليق حجازي بالدجاج",
+     "photo_prompt": "Hijazi sleeq: creamy white rice cooked in milk with poached chicken pieces on top in a large family dish for 5 people. Served on one very large round family serving platter (for 5-6 people), overhead 45-degree angle, warm natural light, rich appetizing colors, photorealistic. No text, no watermark."
+    },
+    {
+     "id": "s2o10",
+     "label": "مكرونة بالبشاميل",
+     "tags": [
+      "red_meat"
+     ],
+     "items": [
+      [
+       "pasta",
+       1.25
+      ],
+      [
+       "beef_mince",
+       0.75
+      ],
+      [
+       "milk",
+       1
+      ],
+      [
+       "flour",
+       0.1
+      ],
+      [
+       "butter",
+       0.5
+      ],
+      [
+       "cheese_grated",
+       0.5
+      ],
+      [
+       "onion",
+       0.25
+      ]
+     ],
+     "recipe": "bechamel",
+     "remind": [
+      {
+       "text": "أخرجي اللحم المفروم من الفريزر الآن",
+       "hours_before": 8
+      }
+     ],
+     "video_q": "مكرونة بشاميل طريقة",
+     "photo_prompt": "Baked bechamel pasta: a large golden-brown tray of macaroni with minced meat and creamy bechamel, a square portion lifted to show the layers, for a family of 5. Served on one very large round family serving platter (for 5-6 people), overhead 45-degree angle, warm natural light, rich appetizing colors, photorealistic. No text, no watermark."
+    },
+    {
+     "id": "s2o11",
+     "label": "صيادية سمك",
+     "tags": [
+      "fish"
+     ],
+     "items": [
+      [
+       "fish",
+       1
+      ],
+      [
+       "rice",
+       1
+      ],
+      [
+       "onion",
+       1
+      ],
+      [
+       "oil",
+       1
+      ],
+      [
+       "lemon",
+       0.25
+      ]
+     ],
+     "recipe": "sayadiya",
+     "remind": [
+      {
+       "text": "أخرجي السمك من الفريزر الآن",
+       "hours_before": 8
+      }
+     ],
+     "video_q": "صيادية سمك طريقة",
+     "photo_prompt": "Sayadiya: fried white fish fillets over brown caramelized-onion rice on a very large family platter for 5 people with lemon wedges. Served on one very large round family serving platter (for 5-6 people), overhead 45-degree angle, warm natural light, rich appetizing colors, photorealistic. No text, no watermark."
+    },
+    {
+     "id": "s2o12",
+     "label": "سمك مشوي مع أرز أحمر",
+     "tags": [
+      "fish"
+     ],
+     "items": [
+      [
+       "fish",
+       1
+      ],
+      [
+       "rice",
+       1
+      ],
+      [
+       "tomato",
+       0.5
+      ],
+      [
+       "lemon",
+       0.5
+      ],
+      [
+       "oil",
+       0.5
+      ],
+      [
+       "tomato_paste",
+       0.3
+      ]
+     ],
+     "remind": [
+      {
+       "text": "أخرجي السمك من الفريزر الآن",
+       "hours_before": 8
+      }
+     ],
+     "video_q": "سمك مشوي بالفرن مع أرز",
+     "photo_prompt": "Grilled whole fish with red tomato rice and lemon on a large family platter for 5 people. Served on one very large round family serving platter (for 5-6 people), overhead 45-degree angle, warm natural light, rich appetizing colors, photorealistic. No text, no watermark."
+    },
+    {
+     "id": "s2o13",
+     "label": "كبسة روبيان",
+     "tags": [
+      "fish"
+     ],
+     "items": [
+      [
+       "shrimp",
+       1.5
+      ],
+      [
+       "rice",
+       1.25
+      ],
+      [
+       "onion",
+       0.5
+      ],
+      [
+       "tomato",
+       0.5
+      ],
+      [
+       "kabsa_spice",
+       0.2
+      ],
+      [
+       "oil",
+       0.5
+      ]
+     ],
+     "recipe": "kabsa",
+     "remind": [
+      {
+       "text": "أخرجي الروبيان من الفريزر الآن",
+       "hours_before": 6
+      },
+      {
+       "text": "انقعي الأرز البسمتي (نصف ساعة قبل الطبخ)",
+       "hours_before": 1.5
+      }
+     ],
+     "video_q": "كبسة روبيان طريقة",
+     "photo_prompt": "Shrimp kabsa: spiced rice with plump shrimp on a very large family platter for 5 people, with lemon and a fresh salad. Served on one very large round family serving platter (for 5-6 people), overhead 45-degree angle, warm natural light, rich appetizing colors, photorealistic. No text, no watermark."
+    },
+    {
+     "id": "s2o14",
+     "label": "ملوخية بالدجاج مع أرز",
+     "tags": [],
+     "items": [
+      [
+       "molokhia",
+       1
+      ],
+      [
+       "chicken",
+       1
+      ],
+      [
+       "rice",
+       1
+      ],
+      [
+       "garlic",
+       0.5
+      ],
+      [
+       "lemon",
+       0.25
+      ]
+     ],
+     "remind": [
+      {
+       "text": "أخرجي الدجاج من الفريزر الآن ليذوب",
+       "hours_before": 14
+      }
+     ],
+     "video_q": "ملوخية بالدجاج طريقة",
+     "photo_prompt": "Molokhia: dark green jute-leaf stew with chicken pieces next to white rice, served in two large family dishes for 5 people. Served on one very large round family serving platter (for 5-6 people), overhead 45-degree angle, warm natural light, rich appetizing colors, photorealistic. No text, no watermark."
+    },
+    {
+     "id": "s2o15",
+     "label": "بامية باللحم مع أرز",
+     "tags": [
+      "red_meat"
+     ],
+     "items": [
+      [
+       "okra",
+       1.5
+      ],
+      [
+       "lamb",
+       0.5
+      ],
+      [
+       "rice",
+       1
+      ],
+      [
+       "tomato",
+       0.5
+      ],
+      [
+       "onion",
+       0.25
+      ]
+     ],
+     "remind": [
+      {
+       "text": "أخرجي اللحم من الفريزر الآن ليذوب",
+       "hours_before": 14
+      }
+     ],
+     "video_q": "بامية باللحم طريقة",
+     "photo_prompt": "Okra stew with lamb in rich tomato sauce next to white rice in family serving dishes for 5 people. Served on one very large round family serving platter (for 5-6 people), overhead 45-degree angle, warm natural light, rich appetizing colors, photorealistic. No text, no watermark."
+    },
+    {
+     "id": "s2o16",
+     "label": "مجدرة عدس بالأرز (خفيفة)",
+     "tags": [
+      "light"
+     ],
+     "items": [
+      [
+       "lentils",
+       1
+      ],
+      [
+       "rice",
+       0.75
+      ],
+      [
+       "onion",
+       1
+      ],
+      [
+       "oil",
+       1
+      ],
+      [
+       "yogurt",
+       0.5
+      ]
+     ],
+     "video_q": "مجدرة عدس بالأرز",
+     "photo_prompt": "Mujaddara: lentils and rice topped with crispy fried onions, with yogurt on the side, in a large family bowl. Served on one very large round family serving platter (for 5-6 people), overhead 45-degree angle, warm natural light, rich appetizing colors, photorealistic. No text, no watermark."
+    }
+   ]
+  },
+  {
+   "id": "meal3",
+   "name": "جلسة المغرب",
+   "icon": "☕",
+   "default_time": "18:30",
+   "options": [
+    {
+     "id": "s3o1",
+     "label": "قهوة سعودية وتمر وشاهي",
+     "tags": [
+      "light"
+     ],
+     "items": [
+      [
+       "qahwa",
+       1
+      ],
+      [
+       "dates",
+       3
+      ],
+      [
+       "tea",
+       1
+      ],
+      [
+       "sugar",
+       1
+      ]
+     ],
+     "photo_prompt": "A traditional Saudi gathering tray: a brass dallah coffee pot, small finjan cups, a bowl of Ajwa dates and a glass of tea, on a wooden tray. Served on a plain white ceramic plate, overhead 45-degree angle, warm natural light, appetizing home-style presentation, photorealistic. No text, no watermark."
+    },
+    {
+     "id": "s3o2",
+     "label": "شاهي بالنعناع وكليجا",
+     "tags": [
+      "sweet"
+     ],
+     "items": [
+      [
+       "tea",
+       1
+      ],
+      [
+       "mint",
+       1
+      ],
+      [
+       "kleija",
+       2
+      ],
+      [
+       "sugar",
+       1
+      ]
+     ],
+     "photo_prompt": "Glasses of mint tea with plates of Qassim kleija date cookies on a tray. Served on a plain white ceramic plate, overhead 45-degree angle, warm natural light, appetizing home-style presentation, photorealistic. No text, no watermark."
+    },
+    {
+     "id": "s3o3",
+     "label": "قهوة وتمر ولقيمات",
+     "tags": [
+      "sweet"
+     ],
+     "items": [
+      [
+       "qahwa",
+       1
+      ],
+      [
+       "dates",
+       2
+      ],
+      [
+       "flour",
+       0.1
+      ],
+      [
+       "oil",
+       0.5
+      ],
+      [
+       "sugar",
+       1
+      ]
+     ],
+     "recipe": "luqaimat",
+     "remind": [
+      {
+       "text": "جهّزي عجينة اللقيمات لتتخمّر",
+       "hours_before": 2.5
+      }
+     ],
+     "video_q": "لقيمات سعودية مقرمشة",
+     "photo_prompt": "A plate of golden luqaimat dumplings drizzled with sugar syrup beside Saudi coffee cups and dates. Served on a plain white ceramic plate, overhead 45-degree angle, warm natural light, appetizing home-style presentation, photorealistic. No text, no watermark."
+    },
+    {
+     "id": "s3o4",
+     "label": "شاهي كرك ومعمول",
+     "tags": [
+      "sweet"
+     ],
+     "items": [
+      [
+       "tea",
+       1
+      ],
+      [
+       "milk",
+       0.5
+      ],
+      [
+       "sugar",
+       1
+      ],
+      [
+       "maamoul",
+       2
+      ]
+     ],
+     "photo_prompt": "Karak chai in glass cups with maamoul date cookies on a tray. Served on a plain white ceramic plate, overhead 45-degree angle, warm natural light, appetizing home-style presentation, photorealistic. No text, no watermark."
+    },
+    {
+     "id": "s3o5",
+     "label": "أم علي مع شاهي",
+     "tags": [
+      "sweet"
+     ],
+     "items": [
+      [
+       "milk",
+       1
+      ],
+      [
+       "dough",
+       0.5
+      ],
+      [
+       "nuts",
+       0.5
+      ],
+      [
+       "cream",
+       0.5
+      ],
+      [
+       "sugar",
+       1
+      ],
+      [
+       "tea",
+       1
+      ]
+     ],
+     "recipe": "umali",
+     "video_q": "أم علي بالفرن طريقة سهلة",
+     "photo_prompt": "Um Ali: a bubbling golden-top pudding of puff pastry, milk, cream and nuts in a family baking dish with a glass of tea. Served on one very large round family serving platter (for 5-6 people), overhead 45-degree angle, warm natural light, rich appetizing colors, photorealistic. No text, no watermark."
+    },
+    {
+     "id": "s3o6",
+     "label": "فواكه وتمر وقهوة",
+     "tags": [
+      "light"
+     ],
+     "items": [
+      [
+       "apple",
+       1
+      ],
+      [
+       "dates",
+       3
+      ],
+      [
+       "qahwa",
+       1
+      ]
+     ],
+     "photo_prompt": "A platter of cut seasonal fruit with dates and small cups of Saudi coffee. Served on a plain white ceramic plate, overhead 45-degree angle, warm natural light, appetizing home-style presentation, photorealistic. No text, no watermark."
+    }
+   ]
+  },
+  {
+   "id": "meal4",
+   "name": "العشاء",
+   "icon": "🌙",
+   "default_time": "20:30",
+   "options": [
+    {
+     "id": "s4o1",
+     "label": "شاورما دجاج منزلية",
+     "tags": [],
+     "items": [
+      [
+       "chicken_pieces",
+       1
+      ],
+      [
+       "samouli",
+       1
+      ],
+      [
+       "garlic",
+       0.5
+      ],
+      [
+       "cucumber",
+       0.25
+      ],
+      [
+       "tomato",
+       0.25
+      ]
+     ],
+     "remind": [
+      {
+       "text": "تبّلي الدجاج من الظهر",
+       "hours_before": 6
+      },
+      {
+       "text": "أخرجي الدجاج من الفريزر الآن ليذوب",
+       "hours_before": 14
+      }
+     ],
+     "video_q": "شاورما دجاج بالبيت",
+     "photo_prompt": "Homemade chicken shawarma sandwiches in samouli bread with garlic sauce, a platter of 5 sandwiches. Served on one very large round family serving platter (for 5-6 people), overhead 45-degree angle, warm natural light, rich appetizing colors, photorealistic. No text, no watermark."
+    },
+    {
+     "id": "s4o2",
+     "label": "سمبوسة جبن ولحم بالفرن",
+     "tags": [],
+     "items": [
+      [
+       "thin_dough",
+       3
+      ],
+      [
+       "beef_mince",
+       0.25
+      ],
+      [
+       "white_cheese",
+       0.5
+      ],
+      [
+       "onion",
+       0.25
+      ]
+     ],
+     "video_q": "سمبوسة بالفرن طريقة",
+     "photo_prompt": "A tray of crisp baked samosas filled with cheese and minced meat. Served on one very large round family serving platter (for 5-6 people), overhead 45-degree angle, warm natural light, rich appetizing colors, photorealistic. No text, no watermark."
+    },
+    {
+     "id": "s4o3",
+     "label": "بيض بالجبنة وخضار مع خبز",
+     "tags": [
+      "light"
+     ],
+     "items": [
+      [
+       "egg",
+       2
+      ],
+      [
+       "white_cheese",
+       0.5
+      ],
+      [
+       "tomato",
+       0.5
+      ],
+      [
+       "cucumber",
+       0.5
+      ],
+      [
+       "samouli",
+       1
+      ]
+     ],
+     "photo_prompt": "Cheese omelette with sliced tomato and cucumber and bread. Served on a plain white ceramic plate, overhead 45-degree angle, warm natural light, appetizing home-style presentation, photorealistic. No text, no watermark."
+    },
+    {
+     "id": "s4o4",
+     "label": "شوربة عدس مع خبز محمّص",
+     "tags": [
+      "light"
+     ],
+     "items": [
+      [
+       "lentils",
+       0.75
+      ],
+      [
+       "carrot",
+       0.25
+      ],
+      [
+       "onion",
+       0.25
+      ],
+      [
+       "lemon",
+       0.25
+      ],
+      [
+       "tameez",
+       1
+      ]
+     ],
+     "video_q": "شوربة عدس سعودية",
+     "photo_prompt": "Creamy red lentil soup in a bowl with lemon and toasted bread. Served on a plain white ceramic plate, overhead 45-degree angle, warm natural light, appetizing home-style presentation, photorealistic. No text, no watermark."
+    },
+    {
+     "id": "s4o5",
+     "label": "فطائر جبنة وزعتر",
+     "tags": [],
+     "items": [
+      [
+       "dough",
+       1
+      ],
+      [
+       "white_cheese",
+       1
+      ],
+      [
+       "zaatar",
+       0.5
+      ]
+     ],
+     "video_q": "فطائر جبنة وزعتر",
+     "photo_prompt": "Golden cheese and zaatar pastries on a family platter. Served on one very large round family serving platter (for 5-6 people), overhead 45-degree angle, warm natural light, rich appetizing colors, photorealistic. No text, no watermark."
+    },
+    {
+     "id": "s4o6",
+     "label": "دجاج مع بطاطس مشوية",
+     "tags": [],
+     "items": [
+      [
+       "chicken_pieces",
+       1
+      ],
+      [
+       "potato",
+       1.5
+      ],
+      [
+       "oil",
+       0.5
+      ]
+     ],
+     "remind": [
+      {
+       "text": "أخرجي الدجاج من الفريزر الآن ليذوب",
+       "hours_before": 14
+      }
+     ],
+     "video_q": "دجاج وبطاطس بالفرن",
+     "photo_prompt": "Oven-roasted chicken thighs with golden potato wedges in a large family baking tray. Served on one very large round family serving platter (for 5-6 people), overhead 45-degree angle, warm natural light, rich appetizing colors, photorealistic. No text, no watermark."
+    },
+    {
+     "id": "s4o7",
+     "label": "سلطة دجاج مشوي مع خبز",
+     "tags": [
+      "light"
+     ],
+     "items": [
+      [
+       "chicken_pieces",
+       1
+      ],
+      [
+       "lettuce",
+       0.5
+      ],
+      [
+       "tomato",
+       0.5
+      ],
+      [
+       "cucumber",
+       0.5
+      ],
+      [
+       "lemon",
+       0.25
+      ],
+      [
+       "arabic_bread",
+       1
+      ]
+     ],
+     "photo_prompt": "Grilled chicken salad with lettuce, tomato and cucumber and Arabic bread. Served on a plain white ceramic plate, overhead 45-degree angle, warm natural light, appetizing home-style presentation, photorealistic. No text, no watermark."
+    },
+    {
+     "id": "s4o8",
+     "label": "ساندويتش لبنة وخيار",
+     "tags": [
+      "light"
+     ],
+     "items": [
+      [
+       "arabic_bread",
+       1
+      ],
+      [
+       "labneh",
+       2
+      ],
+      [
+       "cucumber",
+       0.5
+      ]
+     ],
+     "photo_prompt": "Labneh and cucumber wraps in Arabic bread. Served on a plain white ceramic plate, overhead 45-degree angle, warm natural light, appetizing home-style presentation, photorealistic. No text, no watermark."
+    }
+   ]
+  }
+ ],
+ "INGREDIENTS": {
+  "chicken": {
+   "label": "دجاج (ربع دجاجة)",
+   "icon": "🍗",
+   "unit": "ربع دجاجة",
+   "buy_unit": "دجاجة كاملة (≈1.2 كيلو)",
+   "buy_qty": 4,
+   "buy_price": 22,
+   "category": "meat"
+  },
+  "chicken_pieces": {
+   "label": "أوراك/صدور دجاج",
+   "icon": "🍗",
+   "unit": "قطعة",
+   "buy_unit": "كيلو أوراك دجاج (≈4 قطع)",
+   "buy_qty": 4,
+   "buy_price": 18,
+   "category": "meat"
+  },
+  "lamb": {
+   "label": "لحم غنم",
+   "icon": "🥩",
+   "unit": "حصة (150غ)",
+   "buy_unit": "كيلو لحم غنم (≈6 حصص)",
+   "buy_qty": 6,
+   "buy_price": 65,
+   "category": "meat"
+  },
+  "beef_mince": {
+   "label": "لحم مفروم",
+   "icon": "🥩",
+   "unit": "حصة (100غ)",
+   "buy_unit": "كيلو لحم مفروم (≈10 حصص)",
+   "buy_qty": 10,
+   "buy_price": 42,
+   "category": "meat"
+  },
+  "liver": {
+   "label": "كبدة غنم",
+   "icon": "🥩",
+   "unit": "حصة (80غ)",
+   "buy_unit": "كيلو كبدة (≈12 حصة)",
+   "buy_qty": 12,
+   "buy_price": 35,
+   "category": "meat"
+  },
+  "fish": {
+   "label": "سمك فيليه",
+   "icon": "🐟",
+   "unit": "حصة (150غ)",
+   "buy_unit": "كيلو سمك (≈6 حصص)",
+   "buy_qty": 6,
+   "buy_price": 38,
+   "category": "meat"
+  },
+  "shrimp": {
+   "label": "روبيان",
+   "icon": "🍤",
+   "unit": "حصة (100غ)",
+   "buy_unit": "كيلو روبيان (≈10 حصص)",
+   "buy_qty": 10,
+   "buy_price": 55,
+   "category": "meat"
+  },
+  "egg": {
+   "label": "بيض",
+   "icon": "🥚",
+   "unit": "بيضة",
+   "buy_unit": "كرتون بيض (30 حبة)",
+   "buy_qty": 30,
+   "buy_price": 15,
+   "category": "dairy"
+  },
+  "yogurt": {
+   "label": "لبن/زبادي",
+   "icon": "🥛",
+   "unit": "كوب",
+   "buy_unit": "عبوة لبن (6 أكواب)",
+   "buy_qty": 6,
+   "buy_price": 7,
+   "category": "dairy"
+  },
+  "labneh": {
+   "label": "لبنة",
+   "icon": "🥣",
+   "unit": "ملعقة",
+   "buy_unit": "علبة لبنة (≈20 ملعقة)",
+   "buy_qty": 20,
+   "buy_price": 10,
+   "category": "dairy"
+  },
+  "white_cheese": {
+   "label": "جبنة بيضاء",
+   "icon": "🧀",
+   "unit": "شريحة",
+   "buy_unit": "علبة جبنة (≈10 شرائح)",
+   "buy_qty": 10,
+   "buy_price": 12,
+   "category": "dairy"
+  },
+  "cheese_grated": {
+   "label": "جبنة مبشورة",
+   "icon": "🧀",
+   "unit": "حصة",
+   "buy_unit": "كيس جبنة مبشورة (≈10 حصص)",
+   "buy_qty": 10,
+   "buy_price": 14,
+   "category": "dairy"
+  },
+  "cream": {
+   "label": "قشطة",
+   "icon": "🥛",
+   "unit": "ملعقة",
+   "buy_unit": "علبة قشطة (≈10 ملاعق)",
+   "buy_qty": 10,
+   "buy_price": 6,
+   "category": "dairy"
+  },
+  "milk": {
+   "label": "حليب",
+   "icon": "🥛",
+   "unit": "كوب",
+   "buy_unit": "لتر حليب (4 أكواب)",
+   "buy_qty": 4,
+   "buy_price": 6,
+   "category": "dairy"
+  },
+  "ghee": {
+   "label": "سمن",
+   "icon": "🧈",
+   "unit": "ملعقة",
+   "buy_unit": "علبة سمن (≈30 ملعقة)",
+   "buy_qty": 30,
+   "buy_price": 25,
+   "category": "fat"
+  },
+  "butter": {
+   "label": "زبدة",
+   "icon": "🧈",
+   "unit": "ملعقة",
+   "buy_unit": "علبة زبدة (≈30 ملعقة)",
+   "buy_qty": 30,
+   "buy_price": 22,
+   "category": "fat"
+  },
+  "oil": {
+   "label": "زيت طبخ",
+   "icon": "🫒",
+   "unit": "ملعقة",
+   "buy_unit": "لتر زيت (≈60 ملعقة)",
+   "buy_qty": 60,
+   "buy_price": 12,
+   "category": "fat"
+  },
+  "nuts": {
+   "label": "مكسرات (لوز/فستق/زبيب)",
+   "icon": "🌰",
+   "unit": "ملعقة",
+   "buy_unit": "كيس مكسرات (≈20 ملعقة)",
+   "buy_qty": 20,
+   "buy_price": 25,
+   "category": "fat"
+  },
+  "tomato": {
+   "label": "طماطم",
+   "icon": "🍅",
+   "unit": "حبة",
+   "buy_unit": "كيلو طماطم (≈6 حبات)",
+   "buy_qty": 6,
+   "buy_price": 5,
+   "category": "veg"
+  },
+  "onion": {
+   "label": "بصل",
+   "icon": "🧅",
+   "unit": "حبة",
+   "buy_unit": "كيس بصل (≈8 حبات)",
+   "buy_qty": 8,
+   "buy_price": 5,
+   "category": "veg"
+  },
+  "potato": {
+   "label": "بطاطس",
+   "icon": "🥔",
+   "unit": "حبة",
+   "buy_unit": "كيلو بطاطس (≈5 حبات)",
+   "buy_qty": 5,
+   "buy_price": 5,
+   "category": "veg"
+  },
+  "carrot": {
+   "label": "جزر",
+   "icon": "🥕",
+   "unit": "حبة",
+   "buy_unit": "كيلو جزر (≈6 حبات)",
+   "buy_qty": 6,
+   "buy_price": 4,
+   "category": "veg"
+  },
+  "cucumber": {
+   "label": "خيار",
+   "icon": "🥒",
+   "unit": "حبة",
+   "buy_unit": "كيلو خيار (≈6 حبات)",
+   "buy_qty": 6,
+   "buy_price": 5,
+   "category": "veg"
+  },
+  "lettuce": {
+   "label": "خس",
+   "icon": "🥬",
+   "unit": "حصة",
+   "buy_unit": "حبة خس (≈4 حصص)",
+   "buy_qty": 4,
+   "buy_price": 4,
+   "category": "veg"
+  },
+  "zucchini": {
+   "label": "كوسة",
+   "icon": "🥒",
+   "unit": "حبة",
+   "buy_unit": "كيلو كوسة (≈5 حبات)",
+   "buy_qty": 5,
+   "buy_price": 6,
+   "category": "veg"
+  },
+  "eggplant": {
+   "label": "باذنجان",
+   "icon": "🍆",
+   "unit": "حبة",
+   "buy_unit": "كيلو باذنجان (≈3 حبات)",
+   "buy_qty": 3,
+   "buy_price": 6,
+   "category": "veg"
+  },
+  "green_pepper": {
+   "label": "فلفل أخضر",
+   "icon": "🫑",
+   "unit": "حبة",
+   "buy_unit": "كيلو فلفل (≈10 حبات)",
+   "buy_qty": 10,
+   "buy_price": 7,
+   "category": "veg"
+  },
+  "okra": {
+   "label": "بامية",
+   "icon": "🥬",
+   "unit": "حصة",
+   "buy_unit": "كيلو بامية (≈6 حصص)",
+   "buy_qty": 6,
+   "buy_price": 10,
+   "category": "veg"
+  },
+  "molokhia": {
+   "label": "ملوخية",
+   "icon": "🥬",
+   "unit": "حصة",
+   "buy_unit": "كيس ملوخية مجمّدة (≈6 حصص)",
+   "buy_qty": 6,
+   "buy_price": 8,
+   "category": "veg"
+  },
+  "green_beans": {
+   "label": "فاصوليا خضراء",
+   "icon": "🫛",
+   "unit": "حصة",
+   "buy_unit": "كيلو فاصوليا (≈6 حصص)",
+   "buy_qty": 6,
+   "buy_price": 9,
+   "category": "veg"
+  },
+  "garlic": {
+   "label": "ثوم",
+   "icon": "🧄",
+   "unit": "فص",
+   "buy_unit": "كيس ثوم (≈40 فصاً)",
+   "buy_qty": 40,
+   "buy_price": 4,
+   "category": "veg"
+  },
+  "lemon": {
+   "label": "ليمون",
+   "icon": "🍋",
+   "unit": "حبة",
+   "buy_unit": "كيلو ليمون (≈8 حبات)",
+   "buy_qty": 8,
+   "buy_price": 7,
+   "category": "veg"
+  },
+  "mint": {
+   "label": "نعناع",
+   "icon": "🌿",
+   "unit": "حزمة صغيرة",
+   "buy_unit": "ربطة نعناع (≈6 حزم)",
+   "buy_qty": 6,
+   "buy_price": 2,
+   "category": "veg"
+  },
+  "banana": {
+   "label": "موز",
+   "icon": "🍌",
+   "unit": "حبة",
+   "buy_unit": "كيلو موز (≈6 حبات)",
+   "buy_qty": 6,
+   "buy_price": 7,
+   "category": "fruit"
+  },
+  "apple": {
+   "label": "فاكهة موسمية",
+   "icon": "🍎",
+   "unit": "حبة",
+   "buy_unit": "كيلو فاكهة (≈5 حبات)",
+   "buy_qty": 5,
+   "buy_price": 8,
+   "category": "fruit"
+  },
+  "dates": {
+   "label": "تمر",
+   "icon": "🌴",
+   "unit": "حبة",
+   "buy_unit": "علبة تمر (≈40 حبة)",
+   "buy_qty": 40,
+   "buy_price": 25,
+   "category": "fruit"
+  },
+  "rice": {
+   "label": "أرز بسمتي مطبوخ",
+   "icon": "🍚",
+   "unit": "كوب مطبوخ",
+   "buy_unit": "كيس أرز بسمتي (كيلو ≈ 6 أكواب مطبوخة)",
+   "buy_qty": 6,
+   "buy_price": 12,
+   "category": "grain"
+  },
+  "jareesh": {
+   "label": "جريش",
+   "icon": "🌾",
+   "unit": "كوب مطبوخ",
+   "buy_unit": "كيس جريش (كيلو ≈ 6 أكواب)",
+   "buy_qty": 6,
+   "buy_price": 10,
+   "category": "grain"
+  },
+  "flour": {
+   "label": "دقيق قمح",
+   "icon": "🌾",
+   "unit": "كوب",
+   "buy_unit": "كيس دقيق (كيلو ≈ 8 أكواب)",
+   "buy_qty": 8,
+   "buy_price": 5,
+   "category": "grain"
+  },
+  "semolina": {
+   "label": "سميد",
+   "icon": "🌾",
+   "unit": "كوب",
+   "buy_unit": "كيس سميد (كيلو ≈ 6 أكواب)",
+   "buy_qty": 6,
+   "buy_price": 6,
+   "category": "grain"
+  },
+  "pasta": {
+   "label": "معكرونة",
+   "icon": "🍝",
+   "unit": "كوب",
+   "buy_unit": "كيس معكرونة (≈5 أكواب)",
+   "buy_qty": 5,
+   "buy_price": 5,
+   "category": "grain"
+  },
+  "lentils": {
+   "label": "عدس",
+   "icon": "🫘",
+   "unit": "حصة",
+   "buy_unit": "كيس عدس (كيلو ≈ 12 حصة)",
+   "buy_qty": 12,
+   "buy_price": 8,
+   "category": "grain"
+  },
+  "foul": {
+   "label": "فول مدمس",
+   "icon": "🫘",
+   "unit": "حصة",
+   "buy_unit": "علبة فول (≈3 حصص)",
+   "buy_qty": 3,
+   "buy_price": 4,
+   "category": "grain"
+  },
+  "tameez": {
+   "label": "خبز تميس",
+   "icon": "🫓",
+   "unit": "رغيف",
+   "buy_unit": "كيس خبز تميس (≈6 أرغفة)",
+   "buy_qty": 6,
+   "buy_price": 8,
+   "category": "grain"
+  },
+  "samouli": {
+   "label": "خبز صامولي",
+   "icon": "🥖",
+   "unit": "حبة",
+   "buy_unit": "كيس صامولي (10 حبات)",
+   "buy_qty": 10,
+   "buy_price": 8,
+   "category": "grain"
+  },
+  "arabic_bread": {
+   "label": "خبز عربي",
+   "icon": "🫓",
+   "unit": "رغيف",
+   "buy_unit": "ربطة خبز عربي (5 أرغفة)",
+   "buy_qty": 5,
+   "buy_price": 3,
+   "category": "grain"
+  },
+  "dough": {
+   "label": "عجينة فطير جاهزة",
+   "icon": "🥟",
+   "unit": "حصة",
+   "buy_unit": "عجينة فطير (≈6 حصص)",
+   "buy_qty": 6,
+   "buy_price": 9,
+   "category": "grain"
+  },
+  "thin_dough": {
+   "label": "عجينة سمبوسة",
+   "icon": "🥟",
+   "unit": "ورقة",
+   "buy_unit": "عجين رقيق (20 ورقة)",
+   "buy_qty": 20,
+   "buy_price": 9,
+   "category": "grain"
+  },
+  "kabsa_spice": {
+   "label": "بهارات كبسة",
+   "icon": "🌶️",
+   "unit": "حصة",
+   "buy_unit": "علبة بهارات كبسة (≈20 حصة)",
+   "buy_qty": 20,
+   "buy_price": 10,
+   "category": "other"
+  },
+  "tomato_paste": {
+   "label": "معجون طماطم",
+   "icon": "🥫",
+   "unit": "ملعقة",
+   "buy_unit": "علبة معجون (≈15 ملعقة)",
+   "buy_qty": 15,
+   "buy_price": 4,
+   "category": "other"
+  },
+  "zaatar": {
+   "label": "زعتر",
+   "icon": "🌿",
+   "unit": "ملعقة",
+   "buy_unit": "علبة زعتر (≈30 ملعقة)",
+   "buy_qty": 30,
+   "buy_price": 8,
+   "category": "other"
+  },
+  "honey": {
+   "label": "عسل",
+   "icon": "🍯",
+   "unit": "ملعقة",
+   "buy_unit": "عبوة عسل (≈20 ملعقة)",
+   "buy_qty": 20,
+   "buy_price": 25,
+   "category": "other"
+  },
+  "sugar": {
+   "label": "سكر",
+   "icon": "🍬",
+   "unit": "ملعقة",
+   "buy_unit": "كيس سكر (≈100 ملعقة)",
+   "buy_qty": 100,
+   "buy_price": 5,
+   "category": "other"
+  },
+  "tea": {
+   "label": "شاهي",
+   "icon": "🍵",
+   "unit": "كوب",
+   "buy_unit": "علبة شاهي (≈100 كوب)",
+   "buy_qty": 100,
+   "buy_price": 18,
+   "category": "other"
+  },
+  "qahwa": {
+   "label": "قهوة سعودية",
+   "icon": "☕",
+   "unit": "فنجان",
+   "buy_unit": "كيس قهوة سعودية (≈40 فنجاناً)",
+   "buy_qty": 40,
+   "buy_price": 30,
+   "category": "other"
+  },
+  "kleija": {
+   "label": "كليجا",
+   "icon": "🍪",
+   "unit": "قطعة",
+   "buy_unit": "علبة كليجا (≈20 قطعة)",
+   "buy_qty": 20,
+   "buy_price": 25,
+   "category": "other"
+  },
+  "maamoul": {
+   "label": "معمول",
+   "icon": "🍪",
+   "unit": "قطعة",
+   "buy_unit": "علبة معمول (≈20 قطعة)",
+   "buy_qty": 20,
+   "buy_price": 22,
+   "category": "other"
+  }
+ },
+ "RECIPES": {
+  "kabsa": {
+   "title": "الكبسة",
+   "icon": "🍳",
+   "steps": [
+    "نظّفي الدجاج وقطّعيه أرباعاً، وتبّليه بملح وبهارات الكبسة وثوم.",
+    "في قدر كبير قلّي البصل بالزيت حتى يذبل، ثم أضيفي الدجاج وقلّبيه حتى يتغير لونه.",
+    "أضيفي الطماطم المفرومة ومعجون الطماطم والجزر المبشور وبهارات الكبسة، واتركيها دقيقتين.",
+    "غطّي بالماء المغلي (بمقدار يغطي الدجاج)، واتركيه نصف ساعة حتى ينضج.",
+    "أخرجي الدجاج، وأضيفي الأرز المنقوع والمصفّى للمرق (كوب أرز: كوب ونصف مرق) وغطّي على نار هادئة حتى ينضج.",
+    "حمّري الدجاج في الفرن عشر دقائق، وقدّميه فوق الأرز مع الدقوس والسلطة."
+   ]
+  },
+  "kabsa_lamb": {
+   "title": "كبسة اللحم",
+   "icon": "🍳",
+   "steps": [
+    "اسلقي اللحم مع بصل وبهار وملح حتى يلين (ساعة ونصف أو أقل في ضغط).",
+    "أخرجي اللحم وصفّي مرقه، ثم قلّي البصل بالسمن وأضيفي الطماطم والبهارات.",
+    "أضيفي المرق المصفّى ثم الأرز المنقوع واتركيه على نار هادئة حتى ينضج.",
+    "حمّري اللحم بالفرن قليلاً وقدّميه فوق الأرز."
+   ]
+  },
+  "mandi": {
+   "title": "المندي",
+   "icon": "🍳",
+   "steps": [
+    "تبّلي الدجاج بملح وبهارات المندي وزيت وليمون من الليلة السابقة إن أمكن.",
+    "اشويه في الفرن على حرارة متوسطة حتى ينضج ويحمّر.",
+    "اطبخي الأرز بمرق خفيف وبهار المندي (بلا طماطم) حتى ينضج ناصعاً.",
+    "قدّمي الدجاج المشوي فوق الأرز مع السلطة والصلصة الحارّة."
+   ]
+  },
+  "maqluba": {
+   "title": "المقلوبة",
+   "icon": "🍳",
+   "steps": [
+    "قطّعي الباذنجان والبطاطس شرائح وحمّريها بالفرن أو القلي الخفيف.",
+    "اسلقي الدجاج مع بهارات المقلوبة وبصل، وصفّي المرق واحتفظي به.",
+    "في قدر مدهون رتّبي الطماطم ثم الخضار ثم الدجاج، وفوقها الأرز المنقوع.",
+    "أضيفي المرق الساخن حتى يغطي الأرز بقليل، واتركيه على نار هادئة حتى ينضج.",
+    "اتركيها عشر دقائق ثم اقلبيها على صحن التقديم الكبير."
+   ]
+  },
+  "biryani": {
+   "title": "البرياني",
+   "icon": "🍳",
+   "steps": [
+    "تبّلي الدجاج بلبن وبهارات وثوم من الليلة السابقة إن أمكن.",
+    "قلّي بصلاً كثيراً حتى يحمرّ واحتفظي بنصفه للتزيين.",
+    "أضيفي الدجاج والطماطم واتركيه حتى ينضج جزئياً.",
+    "سلقي الأرز نصف سلقة، ورتّبيه طبقات مع الدجاج، وغطّي بإحكام على نار هادئة 25 دقيقة."
+   ]
+  },
+  "jareesh": {
+   "title": "الجريش",
+   "icon": "🍳",
+   "steps": [
+    "انقعي الجريش ساعتين على الأقل، واسلقي اللحم مع بصل حتى يلين.",
+    "أضيفي الجريش للمرق واتركيه على نار هادئة وهو يُقلَّب حتى يتماسك.",
+    "أضيفي الحليب والسمن بالتدريج واضربيه بالمضرب حتى يصير ناعماً متجانساً.",
+    "قدّميه بالسمن والبصل المحمّر."
+   ]
+  },
+  "margoog": {
+   "title": "المرقوق",
+   "icon": "🍳",
+   "steps": [
+    "اعجني الدقيق بماء وملح وزيت حتى تصير عجينة لينة، ثم افرديها رقيقة وقطّعيها مربعات.",
+    "اسلقي اللحم مع بصل، ثم أضيفي الطماطم والخضار مقطعة وبهارات.",
+    "أضيفي مربعات العجين للمرق وهو يغلي واتركيها حتى تنضج وتتماسك."
+   ]
+  },
+  "qursan": {
+   "title": "القرصان",
+   "icon": "🍳",
+   "steps": [
+    "اعجني الدقيق بماء وملح، وأفرديه رقيقاً واخبزيه على الصاج أو بالفرن أقراصاً.",
+    "اطبخي مرق الدجاج بالطماطم والبصل والكوسة والبهارات.",
+    "كسّري الخبز في صحن عميق وصبّي عليه المرق والدجاج."
+   ]
+  },
+  "sleeq": {
+   "title": "السليق",
+   "icon": "🍳",
+   "steps": [
+    "اسلقي الدجاج مع ملح وهيل وبصل، وصفّي المرق.",
+    "في قدر أضيفي الأرز مع مرق الدجاج والحليب (قدر ما يكفي) واتركيه على نار هادئة حتى ينضج كريمياً.",
+    "أضيفي السمن في آخره وقدّميه مع الدجاج."
+   ]
+  },
+  "bechamel": {
+   "title": "مكرونة البشاميل",
+   "icon": "🍳",
+   "steps": [
+    "قلّي اللحم المفروم مع بصل وملح وبهار حتى ينضج.",
+    "اسلقي المعكرونة وصفّيها.",
+    "حضّري البشاميل: ذوّبي الزبدة وأضيفي الدقيق وحرّكي، ثم الحليب بالتدريج حتى يثخن مع قليل ملح وجوزة الطيب.",
+    "رتّبي في صينية: معكرونة ثم لحم ثم معكرونة، وصبّي البشاميل وفوقه الجبنة المبشورة.",
+    "ادخليها الفرن حتى تحمرّ (25 دقيقة)."
+   ]
+  },
+  "sayadiya": {
+   "title": "الصيادية",
+   "icon": "🍳",
+   "steps": [
+    "تبّلي السمك بملح وكمون وليمون وقلّيه أو اشويه.",
+    "حمّري البصل بالزيت حتى يصير بنياً غامقاً، وأضيفي ماء ليصير مرقاً.",
+    "أضيفي الأرز للمرق المصفّى واتركيه على نار هادئة حتى ينضج بلون ذهبي.",
+    "قدّمي الأرز بالسمك فوقه وعصير الليمون."
+   ]
+  },
+  "shakshuka": {
+   "title": "الشكشوكة",
+   "icon": "🍳",
+   "steps": [
+    "قلّي البصل والفلفل بقليل زيت، وأضيفي الطماطم المقطعة والملح والبهار.",
+    "اتركيها حتى تتماسك كصلصة، ثم اكسري البيض فوقها.",
+    "غطّيها حتى ينضج البيض وقدّميها ساخنة بالخبز."
+   ]
+  },
+  "asida": {
+   "title": "العصيدة",
+   "icon": "🍳",
+   "steps": [
+    "اغلي ماءً مع ملح، وأضيفي الدقيق وحرّكي بقوة بالملعقة حتى يتماسك.",
+    "أضيفي قليلاً من الماء الساخن إن لزم واستمري بالتحريك حتى تنعم.",
+    "ضعيها في صحن واصنعي في وسطها حفرة، واملئيها بالسمن والعسل أو التمر."
+   ]
+  },
+  "luqaimat": {
+   "title": "اللقيمات",
+   "icon": "🍳",
+   "steps": [
+    "اخلطي الدقيق مع الخميرة والملح وماء دافئ حتى تصير عجينة سائلة، واتركيها ساعة لتتخمّر.",
+    "سخّني الزيت واسكبي العجينة كرات صغيرة بالملعقة حتى تحمرّ.",
+    "اغمسيها في شيرة السكر (سكر وماء وليمون) وقدّميها دافئة."
+   ]
+  },
+  "umali": {
+   "title": "أم علي",
+   "icon": "🍳",
+   "steps": [
+    "سخّني الحليب مع السكر.",
+    "فتّتي عجين الفطير المخبوز في صينية وأضيفي المكسرات.",
+    "صبّي الحليب فوقه وأضيفي القشطة، وادخليه الفرن حتى يحمرّ وجهه."
+   ]
+  }
+ },
+ "WEEKLY_LIMITS": {
+  "kabsa": {
+   "max_meals": 3
+  },
+  "fish": {
+   "min_meals": 1
+  },
+  "red_meat": {
+   "max_meals": 3
+  },
+  "sweet": {
+   "max_meals": 3
+  }
+ },
+ "DAY_TYPE_PATTERN": null,
+ "MEAL_LINKS": {
+  "meal3": {
+   "prayer": "Maghrib",
+   "offset": 20
+  },
+  "meal4": {
+   "prayer": "Isha",
+   "offset": 30
+  }
+ },
+ "COOK_INSTRUCTIONS": [
+  {
+   "icon": "❄️",
+   "text": "أخرجي الدجاج أو اللحم من الفريزر قبل الوجبة بيوم — سيصلك تذكير تلقائي"
+  },
+  {
+   "icon": "🍚",
+   "text": "انقعي الأرز البسمتي نصف ساعة قبل الطبخ لتحصلي على حبة طويلة ناشفة"
+  },
+  {
+   "icon": "🥘",
+   "text": "اطبخي كمية مضاعفة من الدجاج المتبّل واحفظي نصفها مجمّدة لوجبة ثانية"
+  },
+  {
+   "icon": "🧂",
+   "text": "تذوّقي المرق قبل إضافة الأرز لتضبطي الملح"
+  },
+  {
+   "icon": "🍽️",
+   "text": "قدّمي الوجبات العائلية في صحن كبير واحد"
+  }
+ ],
+ "USER_TIPS": [
+  {
+   "icon": "🧾",
+   "text": "قائمة مشتريات الأسبوع جاهزة: شاركيها مع الزوج أو السائق قبل يوم التسوق"
+  },
+  {
+   "icon": "🔄",
+   "text": "لا تعجبك وجبة اليوم؟ غيّريها من تبويب «الأسبوع» والمشتريات تتحدّث وحدها"
+  },
+  {
+   "icon": "🎬",
+   "text": "اضغطي «شاهدي طريقة الطبخة» لترين الوصفة بالفيديو قبل أن تبدئي"
+  },
+  {
+   "icon": "👨‍👩‍👧‍👦",
+   "text": "غيّري عدد أفراد الأسرة من «بيتي» والكميات تتغير فوراً"
+  }
+ ],
+ "COOK_TIPS": [
+  {
+   "icon": "⏰",
+   "text": "التذكيرات تصلك قبل كل وجبة وقبل خطوات التحضير المهمة (فك الدجاج، نقع الأرز)"
+  },
+  {
+   "icon": "🧼",
+   "text": "اغسلي يديك قبل تحضير كل وجبة"
+  }
+ ]
+}
