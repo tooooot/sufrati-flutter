@@ -85,6 +85,11 @@ class _LandingScreenState extends State<LandingScreen> {
                     ),
                     OutlinedButton(
                       style: OutlinedButton.styleFrom(side: const BorderSide(color: Brand.green, width: 2), padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 16)),
+                      onPressed: () => context.go('/intro'),
+                      child: const Text('شاهد الفكرة (عرض حركي)', style: TextStyle(fontWeight: black, fontSize: 16, color: Brand.green)),
+                    ),
+                    OutlinedButton(
+                      style: OutlinedButton.styleFrom(side: const BorderSide(color: Brand.green, width: 2), padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 16)),
                       onPressed: () => context.go('/browse'),
                       child: const Text('تصفّح الأنظمة بلا تسجيل', style: TextStyle(fontWeight: black, fontSize: 16, color: Brand.green)),
                     ),

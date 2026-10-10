@@ -3,7 +3,7 @@ import 'auth/roles.dart';
 import 'auth/session.dart';
 
 bool isPublicPath(String p) =>
-    p == '/login' || p == '/browse' || p.startsWith('/programs/');
+    p == '/login' || p == '/browse' || p == '/intro' || p.startsWith('/programs/');
 
 /// الشاشة الرئيسية لكل دور بعد الدخول.
 String landing(Session s) => switch (s.role) {

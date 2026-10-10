@@ -92,6 +92,7 @@ class SufratiApp extends StatelessWidget {
       GoRoute(path: '/doctor-pending', builder: (_, _) => DoctorPendingScreen(session: _session)),
       GoRoute(path: '/admin', builder: (_, _) => AdminScreen(db: db)),
       GoRoute(path: '/browse', builder: (_, _) => StartScreen(library: library)),
+      GoRoute(path: '/intro', builder: (_, _) => const IntroScreen()),
       GoRoute(path: '/new-house', builder: (_, _) => NewHouseScreen(library: library, links: links, session: _session)),
       GoRoute(path: '/household', builder: (_, _) => HouseholdScreen(links: links, library: library)),
       GoRoute(path: '/profile', builder: (_, _) => ProfileScreen(session: _session, links: links)),
