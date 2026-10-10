@@ -43,10 +43,13 @@ import 'widgets/store_loader.dart';
 Future<void> main() async {
   usePathUrlStrategy(); // روابط نظيفة على الويب (/programs/keto_general) بدل #/
   WidgetsFlutterBinding.ensureInitialized();
-  final library = await Library.load();
-  final i18n = await CookI18n.load();
+  // تحميل البيانات وتهيئة Firebase معاً (لا تتتابعان) لتقصير الوقت حتى أول شاشة.
+  final libraryF = Library.load();
+  final i18nF = CookI18n.load();
   // Firebase حقيقي على الجوال والويب. على الويب: لا Crashlytics ولا App Check ولا إشعارات محلية ولا دخول Apple.
   await Firebase.initializeApp(options: SufratiFirebase.current);
+  final library = await libraryF;
+  final i18n = await i18nF;
   if (!kIsWeb) {
     // App Check: يثبت أن الطلبات من تطبيقنا الحقيقي (Play Integrity / App Attest) لا من سكربت بمفتاحنا.
     // الإنفاذ على Firestore معطّل عمداً حتى نتأكد من الأجهزة؛ وفشل التفعيل لا يوقف التطبيق.

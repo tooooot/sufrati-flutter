@@ -33,11 +33,39 @@
   <link rel="manifest" href="manifest.json">
 </head>
 <body style="margin:0;background:#FAF4E6">
-  <div id="splash" style="position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#FAF4E6;color:#1F5A44;font-family:sans-serif;z-index:9999">
-    <div style="font-size:56px">🍽️</div><div style="font-size:28px;font-weight:900;margin-top:6px">سفرتي</div>
-    <div style="margin-top:14px;width:34px;height:34px;border:4px solid #1F5A4433;border-top-color:#1F5A44;border-radius:50%;animation:s 1s linear infinite"></div>
+  <div id="splash" dir="rtl" style="position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#1F5A44;color:#FAF4E6;font-family:Tahoma,Arial,sans-serif;z-index:9999;padding:24px;text-align:center">
+    <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#FAF4E6" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="6"></circle><path d="M3 4v6M5 4v6M4 10v10M20 4c-1.5 1.5-2 3.5-2 6h2v10"></path></svg>
+    <div style="font-size:34px;font-weight:900;margin-top:10px">سفرتي</div>
+    <div style="width:min(300px,78vw);height:10px;border-radius:6px;background:rgba(250,244,230,.22);margin-top:26px;overflow:hidden"><div id="sbar" style="height:100%;width:3%;background:#E3B05A;border-radius:6px;transition:width .35s ease-out"></div></div>
+    <div id="spct" style="margin-top:12px;font-size:15px;font-weight:700">جارٍ التحميل… ٣٪</div>
+    <div id="sslow" style="margin-top:8px;font-size:13px;opacity:0;transition:opacity .4s">أول مرة يستغرق التحميل وقتاً أطول، وسيكون أسرع في المرات القادمة.</div>
   </div>
-  <style>@keyframes s{to{transform:rotate(360deg)}}</style>
+  <script>
+    // شريط تقدّم: مراحل حقيقية (المحرّك ← التطبيق ← الخطوط ← أول شاشة) + زحف بين المراحل كي لا يبدو متوقفاً
+    (function(){
+      var bar=document.getElementById('sbar'),pct=document.getElementById('spct'),slow=document.getElementById('sslow');
+      var cur=3,floor=3,t0=Date.now();
+      function ar(n){return String(n).replace(/[0-9]/g,function(d){return '٠١٢٣٤٥٦٧٨٩'[d];});}
+      function show(){var v=Math.min(99,Math.round(cur));bar.style.width=v+'%';pct.textContent='جارٍ التحميل… '+ar(v)+'٪';}
+      function bump(to){if(to>floor)floor=to;}
+      try{
+        new PerformanceObserver(function(l){l.getEntries().forEach(function(e){
+          var n=e.name;
+          if(n.indexOf('flutter_bootstrap')>-1)bump(12);
+          else if(n.indexOf('.wasm')>-1)bump(55);
+          else if(n.indexOf('main.dart.js')>-1)bump(80);
+          else if(n.indexOf('.ttf')>-1||n.indexOf('fonts')>-1)bump(92);
+        });}).observe({type:'resource',buffered:true});
+      }catch(e){}
+      var iv=setInterval(function(){
+        if(cur<floor)cur+=(floor-cur)*.35+.5;
+        else{var cap=floor<12?12:floor<55?55:floor<80?80:floor<92?92:97;cur+=Math.max(0,(cap-cur-2))*.015;}
+        show();
+        if(Date.now()-t0>14000)slow.style.opacity=1;
+      },200);
+      window.addEventListener('flutter-first-frame',function(){clearInterval(iv);cur=100;bar.style.width='100%';pct.textContent='جاهز';});
+    })();
+  </script>
   <script>
     // نسخ قديمة مخزّنة بالخدمة المؤقتة تبقى تعرض الواجهة السابقة: نلغيها ونمسح المخزّن ثم نعيد التحميل مرة واحدة
     (function(){
