@@ -51,6 +51,7 @@ import 'widgets/nav.dart';
 import 'widgets/store_loader.dart';
 
 Future<void> main() async {
+  GoRouter.optionURLReflectsImperativeAPIs = true; // push يظهر في عنوان الصفحة وسجل المتصفح فيعمل زر الرجوع على الويب
   usePathUrlStrategy(); // روابط نظيفة على الويب (/programs/keto_general) بدل #/
   WidgetsFlutterBinding.ensureInitialized();
   // تحميل البيانات وتهيئة Firebase معاً (لا تتتابعان) لتقصير الوقت حتى أول شاشة.
@@ -87,6 +88,20 @@ Future<void> main() async {
   final push = PushService(db, auth);
   fbAuth.beforeSignOut = push.unregister;
   runApp(SufratiApp(library: library, i18n: i18n, auth: auth, links: links, db: db, growth: growth));
+}
+
+/// شاشة عبور: تنقل المستخدم المسجَّل إلى وجهته (تحميل أو شاشة دوره) بعد أول إطار.
+class _GoHome extends StatelessWidget {
+  final Session session;
+  const _GoHome(this.session);
+
+  @override
+  Widget build(BuildContext context) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (context.mounted) context.go(session.ready ? landing(session) : '/loading');
+    });
+    return const Scaffold(body: Center(child: CircularProgressIndicator(color: Brand.green)));
+  }
 }
 
 class SufratiApp extends StatelessWidget {
@@ -132,7 +147,11 @@ class SufratiApp extends StatelessWidget {
           builder: (_, st) => JoinScreen(links: links, session: _session,
               role: st.pathParameters['role'] == 'doctor' ? Role.doctor : Role.cook)),
       GoRoute(path: '/login', builder: (_, s) => ExitGuard(child: LoginScreen(auth: auth, next: s.uri.queryParameters['next'] ?? '/'))),
-      GoRoute(path: '/', builder: (_, _) => IntroScreen()),
+      // المسجَّل الذي يصل إلى «/» (بعد الدخول مثلاً) يُوجَّه لشاشته فوراً؛ والزائر يرى العرض الحركي
+      GoRoute(path: '/', builder: (_, _) => ListenableBuilder(
+            listenable: _session,
+            builder: (c, _) => _session.signedIn ? _GoHome(_session) : ExitGuard(child: IntroScreen()),
+          )),
       GoRoute(path: '/programs/:id',
           builder: (_, s) => ProgramPreviewScreen(library: library, programId: s.pathParameters['id']!)),
       GoRoute(path: '/me',
