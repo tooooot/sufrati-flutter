@@ -9,6 +9,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../auth/session.dart';
 import '../data/growth.dart';
 import '../data/marketing.dart';
+import '../data/role_videos.dart';
 import '../routing.dart';
 import '../theme.dart';
 import '../widgets/common.dart';
@@ -215,7 +216,9 @@ class _MarketingScreenState extends State<MarketingScreen> {
   }
 
   Future<void> _send(FirebaseFirestore db, _T t, int today) async {
-    final msg = TextEditingController(text: buildMessage(t.kind, t.name, t.link));
+    // يُرفق رابط فيديو الأخصائي إن نُشر (الرسالة تُرسل لرقم محدد فلا مجال لإرفاق الملف نفسه)
+    final msg = TextEditingController(text: await RoleVideos.withLink(buildMessage(t.kind, t.name, t.link), 'specialist'));
+    if (!mounted) return;
     final phone = normalizePhone(t.phone);
     final blocked = today >= dailySendLimit;
     final go = await showDialog<bool>(

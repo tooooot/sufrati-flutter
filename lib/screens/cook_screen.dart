@@ -1,8 +1,10 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart' show defaultTargetPlatform, TargetPlatform;
 import 'package:flutter/material.dart';
 
 import '../data/i18n.dart';
+import '../data/links.dart';
 import '../data/models.dart';
 import '../data/repository.dart';
 import '../data/store.dart';
@@ -22,7 +24,8 @@ class CookScreen extends StatefulWidget {
   final HouseholdStore store;
   final Library library;
   final CookI18n i18n;
-  const CookScreen({super.key, required this.store, required this.library, required this.i18n});
+  final LinkService links;
+  const CookScreen({super.key, required this.store, required this.library, required this.i18n, required this.links});
 
   @override
   State<CookScreen> createState() => _CookScreenState();
@@ -39,6 +42,7 @@ class _CookScreenState extends State<CookScreen> {
     // الوجبة القادمة تتحدّث كل 30 ثانية، واليوم يتغيّر تلقائياً بعد منتصف الليل
     _tick = Timer.periodic(const Duration(seconds: 30), (_) => setState(() {}));
     _syncAlerts(ask: false);
+    widget.links.touchCookOpen(); // الخادم يذكّر الطاهي إن غاب أياماً فلا تصمت تنبيهاته
   }
 
   /// يجدول تنبيهات 7 أيام (تعمل والتطبيق مغلق). عند كل فتح يُعاد الجدول فتتجدد الأيام.
@@ -52,7 +56,9 @@ class _CookScreenState extends State<CookScreen> {
       setState(() { _alertsOn = false; _alertsDenied = ask; });
       return;
     }
-    final alerts = await buildCookAlerts(widget.store, widget.i18n, nowSaudi: saudiNow(), lang: lang);
+    // أندرويد بلا سقف قريب (نجدول 14 يوماً)، وآيفون حدّه 64 تنبيهاً معلّقاً (7 أيام)
+    final alerts = await buildCookAlerts(widget.store, widget.i18n, nowSaudi: saudiNow(), lang: lang,
+        days: defaultTargetPlatform == TargetPlatform.android ? 14 : alertDays);
     await svc.schedule(alerts);
     if (mounted) setState(() { _alertsOn = true; _alertsDenied = false; });
   }

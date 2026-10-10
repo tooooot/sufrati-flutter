@@ -4,6 +4,8 @@ import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import 'events.dart';
+
 import '../logic/planner.dart';
 import '../logic/prayer.dart';
 import '../logic/shopping.dart';
@@ -125,6 +127,8 @@ class FirestoreStore extends HouseholdStore {
     await db.doc('households/$hid/weeks/${weekId(weekStart)}').update({'days': plan.days});
     await _saveShopping(weekStart, await _build(weekStart, previous: _prevLines[weekId(weekStart)]));
     notifyListeners();
+    // تعديلات متتابعة ← إشعار واحد للطاهي والطرف الآخر كل 30 ثانية على الأكثر
+    EventQueue.instance.emit('planChanged', hid: hid, throttleKey: 'plan:$hid', every: const Duration(seconds: 30));
   }
 
   @override
@@ -136,6 +140,11 @@ class FirestoreStore extends HouseholdStore {
     await db.doc('households/$hid/weeks/${weekId(weekStart)}').update({
       'prepared': value ? FieldValue.arrayUnion([k]) : FieldValue.arrayRemove([k]),
     });
+    if (value) {
+      // يُخبَر صاحب الخطة والطبيب أن الوجبة حُضّرت (اسم الوجبة بالعربية كما في البرنامج)
+      final name = (await program()).slots.where((x) => x.id == slot).firstOrNull?.name;
+      EventQueue.instance.emit('prepared', hid: hid, meal: name, throttleKey: 'prep:$hid:${weekId(weekStart)}:$k', every: const Duration(minutes: 5));
+    }
   }
 
   final _prevLines = <String, List<ShoppingLine>>{};

@@ -86,6 +86,9 @@ abstract class LinkService extends ChangeNotifier {
     return (role: err == null ? r : null, error: err);
   }
 
+  /// الطاهي فتح التطبيق الآن: يحدّث users/{uid}.lastCookOpenAt فيذكّره الخادم إن غاب أياماً (تنبيهاته تُجدوَل أياماً قليلة).
+  Future<void> touchCookOpen() async {}
+
   /// حذف كل بيانات المستخدم (بيوته وخططه ودعواته وخروجه من بيوت الآخرين) — شرط المتاجر.
   Future<void> deleteMyData();
 }

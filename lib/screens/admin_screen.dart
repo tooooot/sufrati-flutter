@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../data/events.dart';
 import '../data/growth.dart';
 import '../theme.dart';
 import '../widgets/common.dart';
@@ -149,6 +150,7 @@ Future<void> _approve(BuildContext context, QueryDocumentSnapshot<Map<String, dy
   }
   b.update(d.reference, user);
   await b.commit();
+  EventQueue.instance.emit('doctorApproved', toUid: d.id);
 }
 
 class _Reports extends StatelessWidget {

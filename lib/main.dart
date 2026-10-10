@@ -14,7 +14,9 @@ import 'auth/firebase_auth_service.dart';
 import 'auth/session.dart';
 import 'auth/roles.dart';
 import 'data/firestore_links.dart';
+import 'data/events.dart';
 import 'data/growth.dart';
+import 'notify/push_service.dart';
 import 'data/links.dart';
 import 'screens/admin_screen.dart';
 import 'screens/doctor_apply_screen.dart';
@@ -72,12 +74,16 @@ Future<void> main() async {
       return true;
     };
   }
-  final AuthService auth = FirebaseAuthService();
+  final fbAuth = FirebaseAuthService();
+  final AuthService auth = fbAuth;
   final FirebaseFirestore db = FirebaseFirestore.instance;
   final LinkService links = FirestoreLinkService(db, auth);
   // نستعيد الجلسة المحفوظة قبل رسم أي شاشة: لا وميض لشاشة الدخول، ولا تضيع الروابط العميقة.
   await auth.initialized.timeout(const Duration(seconds: 6), onTimeout: () {});
   final GrowthService growth = FirestoreGrowthService(db, auth, links);
+  EventQueue.instance.configure(db, auth);
+  final push = PushService(db, auth);
+  fbAuth.beforeSignOut = push.unregister;
   runApp(SufratiApp(library: library, i18n: i18n, auth: auth, links: links, db: db, growth: growth));
 }
 
@@ -136,7 +142,7 @@ class SufratiApp extends StatelessWidget {
       GoRoute(path: '/cook',
           builder: (_, _) => StoreLoader(
                 db: db, links: links, library: library, role: Role.cook,
-                builder: (store) => CookScreen(store: store, library: library, i18n: i18n),
+                builder: (store) => CookScreen(store: store, library: library, i18n: i18n, links: links),
               )),
       GoRoute(path: '/signup/custom', builder: (_, _) => const ComingNextScreen(title: 'نظامك الخاص')),
       GoRoute(path: '/signup/:id',

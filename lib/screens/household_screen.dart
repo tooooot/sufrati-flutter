@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import '../auth/roles.dart';
 import '../data/links.dart';
+import '../data/role_videos.dart';
 import '../data/repository.dart';
 import '../theme.dart';
 import '../widgets/common.dart';
@@ -169,8 +169,8 @@ Future<void> inviteFlow(BuildContext context, LinkService links, Role role) asyn
           style: FilledButton.styleFrom(backgroundColor: const Color(0xFF25D366), minimumSize: const Size.fromHeight(50)),
           icon: const Icon(Icons.send),
           label: const Text('إرسال بواتساب', style: TextStyle(fontWeight: black)),
-          onPressed: () => launchUrl(Uri.parse('https://wa.me/?text=${Uri.encodeComponent(msg)}'),
-              mode: LaunchMode.externalApplication),
+          // الفيديو الخاص بدور المستلم يُرفق مع الدعوة: الطاهي ← فيديو الطاهي، والطبيب ← فيديو الأخصائي
+          onPressed: () => RoleVideos.share(msg, role == Role.cook ? 'cook' : 'specialist'),
         ),
         if (role == Role.cook) ...[
           const SizedBox(height: 16),
@@ -183,9 +183,7 @@ Future<void> inviteFlow(BuildContext context, LinkService links, Role role) asyn
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 3),
                   child: OutlinedButton(
-                    onPressed: () => launchUrl(
-                        Uri.parse('https://wa.me/?text=${Uri.encodeComponent(_cookPitchMessage(e.key))}'),
-                        mode: LaunchMode.externalApplication),
+                    onPressed: () => RoleVideos.share(_cookPitchMessage(e.key), 'cook'),
                     child: Text(e.value, style: const TextStyle(fontWeight: black)),
                   ),
                 ),

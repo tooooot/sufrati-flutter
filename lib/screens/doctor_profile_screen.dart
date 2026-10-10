@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import '../auth/roles.dart';
 import '../data/growth.dart';
 import '../data/links.dart';
+import '../data/role_videos.dart';
 import '../theme.dart';
 import '../widgets/common.dart';
 
@@ -157,9 +157,8 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
                                   style: FilledButton.styleFrom(backgroundColor: const Color(0xFF25D366)),
                                   icon: const Icon(Icons.share),
                                   label: const Text('واتساب'),
-                                  onPressed: () => launchUrl(
-                                      Uri.parse('https://wa.me/?text=${Uri.encodeComponent('جرّب نظامي الغذائي في تطبيق سفرتي:\n${p.link}')}'),
-                                      mode: LaunchMode.externalApplication),
+                                  // المستلم متابع/مريض ← يُرفق فيديو «صاحب الخطة»
+                                  onPressed: () => RoleVideos.share('جرّب نظامي الغذائي في تطبيق سفرتي:\n${p.link}', 'owner'),
                                 ),
                               ),
                             ]),

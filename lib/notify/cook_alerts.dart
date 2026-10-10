@@ -17,10 +17,10 @@ class CookAlert {
 
 /// [nowSaudi] بتوقيت السعودية. الأيام التي لم تُجهَّز خطتها بعد تُتخطّى بصمت.
 Future<List<CookAlert>> buildCookAlerts(HouseholdStore store, CookI18n i18n,
-    {required DateTime nowSaudi, String lang = 'ar'}) async {
+    {required DateTime nowSaudi, String lang = 'ar', int days = alertDays}) async {
   final program = await store.program();
   final out = <CookAlert>[];
-  for (var d = 0; d < alertDays; d++) {
+  for (var d = 0; d < days; d++) {
     final date = DateTime(nowSaudi.year, nowSaudi.month, nowSaudi.day).add(Duration(days: d));
     final DayView day;
     try {

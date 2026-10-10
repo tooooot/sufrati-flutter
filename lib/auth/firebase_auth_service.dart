@@ -179,8 +179,14 @@ class FirebaseAuthService extends AuthService {
     return List.generate(n, (_) => chars[r.nextInt(chars.length)]).join();
   }
 
+  /// يُستدعى قبل الخروج (مثلاً لإزالة رمز الإشعارات من الحساب).
+  Future<void> Function()? beforeSignOut;
+
   @override
   Future<void> signOut() async {
+    try {
+      await beforeSignOut?.call();
+    } catch (_) {}
     try {
       await GoogleSignIn.instance.signOut();
     } catch (_) {}

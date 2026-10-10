@@ -6,6 +6,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../auth/auth_service.dart';
 import '../auth/roles.dart';
+import 'events.dart';
 import 'links.dart';
 
 class DoctorProfile {
@@ -119,6 +120,7 @@ class FirestoreGrowthService implements GrowthService {
         'from': _me, 'fromName': auth.user?.name ?? '', 'hid': m.householdId, 'inviteCode': inv.code,
         'createdAt': FieldValue.serverTimestamp(),
       });
+      EventQueue.instance.emit('doctorRequest', code: c, throttleKey: 'dr:$c:$_me', every: const Duration(hours: 1));
       return null;
     } on FirebaseException {
       return 'تعذّر إرسال الطلب. حاول مرة أخرى.';

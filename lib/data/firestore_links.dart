@@ -221,6 +221,13 @@ class FirestoreLinkService extends LinkService {
   }
 
   @override
+  Future<void> touchCookOpen() async {
+    try {
+      await db.doc('users/$_me').set({'lastCookOpenAt': FieldValue.serverTimestamp()}, SetOptions(merge: true));
+    } catch (_) {}
+  }
+
+  @override
   Future<Role?> inviteRoleOf(String raw) async {
     final code = normalizeCode(raw);
     if (code.isEmpty) return null;

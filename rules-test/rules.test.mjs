@@ -215,3 +215,28 @@ test('موافقة واحدة: المدير ينشئ البروفايل المع
   await assertFails(updateDoc(doc(as('doc'), 'doctors/ADM1'), { verified: true }));
   await assertSucceeds(updateDoc(doc(as('adm', { admin: true }), 'doctors/ADM1'), { verified: true }));
 });
+
+test('طابور الإشعارات: كل نوع لكاتبه الصحيح فقط، وبلا قراءة لغير المدير', async () => {
+  const ev = (type, extra) => ({ type, from: 'x', createdAt: Timestamp.now(), ...extra });
+  const q = (ctx) => collection(ctx, 'notifyQueue');
+  // الطاهي يبلّغ حُضّرت لبيته فقط
+  await assertSucceeds(setDoc(doc(q(as('cok')), 'a1'), ev('prepared', { from: 'cok', hid: 'h1', meal: 'العشاء' })));
+  await assertFails(setDoc(doc(q(as('cok')), 'a2'), ev('prepared', { from: 'own', hid: 'h1' })), 'باسم غيره');
+  await assertFails(setDoc(doc(q(as('own')), 'a3'), ev('prepared', { from: 'own', hid: 'h1' })), 'الصاحب ليس طاهياً');
+  await assertFails(setDoc(doc(q(as('cok')), 'a4'), ev('prepared', { from: 'cok', hid: 'h2' })), 'بيت غيره');
+  // الصاحب والطبيب يبلّغان تغيّر الخطة، والطاهي لا
+  await assertSucceeds(setDoc(doc(q(as('own')), 'b1'), ev('planChanged', { from: 'own', hid: 'h1' })));
+  await assertSucceeds(setDoc(doc(q(as('doc')), 'b2'), ev('planChanged', { from: 'doc', hid: 'h1' })));
+  await assertFails(setDoc(doc(q(as('cok')), 'b3'), ev('planChanged', { from: 'cok', hid: 'h1' })));
+  // طلب ربط بطبيب: أي مسجَّل بكود، ولا حدث مجهول الكود
+  await assertSucceeds(setDoc(doc(q(as('own')), 'c1'), ev('doctorRequest', { from: 'own', code: 'AB12CD34', fromName: 'س' })));
+  await assertFails(setDoc(doc(q(as('own')), 'c2'), ev('doctorRequest', { from: 'own' })));
+  await assertFails(setDoc(doc(q(anon()), 'c3'), ev('doctorRequest', { code: 'AB12CD34' })));
+  // «اعتُمد» للمدير وحده
+  await assertSucceeds(setDoc(doc(q(as('adm', { admin: true })), 'd1'), ev('doctorApproved', { from: 'adm', toUid: 'doc' })));
+  await assertFails(setDoc(doc(q(as('own')), 'd2'), ev('doctorApproved', { from: 'own', toUid: 'doc' })));
+  // حقول غريبة مرفوضة، والقراءة للمدير
+  await assertFails(setDoc(doc(q(as('own')), 'e1'), ev('planChanged', { from: 'own', hid: 'h1', body: 'نص مزوّر' })));
+  await assertFails(getDocs(q(as('own'))));
+  await assertSucceeds(getDocs(q(as('adm', { admin: true }))));
+});

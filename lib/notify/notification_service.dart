@@ -34,6 +34,29 @@ class NotificationService {
     audioAttributesUsage: AudioAttributesUsage.alarm,
   );
 
+  // تحديثات الحساب (حُضّرت الوجبة، طلب ربط…): قناة هادئة أقل ضجيجاً من تنبيهات الوجبات. الخادم يرسل إليها (channel_id=updates_v1).
+  static const updatesChannelId = 'updates_v1';
+  static const _updatesChannel = AndroidNotificationChannel(
+    updatesChannelId, 'تحديثات سفرتي',
+    description: 'تحضير الوجبات، طلبات الربط، وتغيّر الخطة',
+    importance: Importance.high,
+  );
+
+  /// يعرض إشعار تحديث والتطبيق مفتوح (FCM لا يعرضه بنفسه في المقدمة).
+  Future<void> showUpdate(String title, String body) async {
+    if (!supported) return;
+    await _ensureInit();
+    await _plugin.show(
+      id: DateTime.now().millisecondsSinceEpoch ~/ 1000 % 100000,
+      title: title,
+      body: body,
+      notificationDetails: const NotificationDetails(
+        android: AndroidNotificationDetails(updatesChannelId, 'تحديثات سفرتي', importance: Importance.high, priority: Priority.high, icon: 'ic_stat_sufrati'),
+        iOS: DarwinNotificationDetails(),
+      ),
+    );
+  }
+
   Future<void> _ensureInit() async {
     if (_init) return;
     tzdata.initializeTimeZones();
@@ -46,6 +69,7 @@ class NotificationService {
       await android?.deleteNotificationChannel(channelId: old);
     }
     await android?.createNotificationChannel(_channel);
+    await android?.createNotificationChannel(_updatesChannel);
     _init = true;
   }
 

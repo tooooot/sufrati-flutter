@@ -76,6 +76,10 @@ android {
             </intent-filter>
         </receiver>
     </application>''', 1)
+        if 'default_notification_channel_id' not in s:
+            s = s.replace('</application>', '''    <meta-data android:name="com.google.firebase.messaging.default_notification_channel_id" android:value="updates_v1" />
+        <meta-data android:name="com.google.firebase.messaging.default_notification_icon" android:resource="@drawable/ic_stat_sufrati" />
+    </application>''', 1)
         if 'pathPrefix="/i/"' not in s:
             s = s.replace('</activity>', '''<intent-filter android:autoVerify="true">
                 <action android:name="android.intent.action.VIEW"/>
@@ -106,11 +110,12 @@ def ios():
     with open(r / 'Info.plist', 'rb') as f: info = plistlib.load(f)
     info['CFBundleDisplayName'] = 'سفرتي'
     info['ITSAppUsesNonExemptEncryption'] = False  # تشفير HTTPS القياسي فقط: يتخطى سؤال التصدير في TestFlight
+    info['UIBackgroundModes'] = sorted(set(info.get('UIBackgroundModes', [])) | {'remote-notification'})  # إشعارات FCM
     schemes = info.setdefault('CFBundleURLTypes', [])
     if not any(reversed_id in t.get('CFBundleURLSchemes', []) for t in schemes):
         schemes.append({'CFBundleURLSchemes': [reversed_id]})
     with open(r / 'Info.plist', 'wb') as f: plistlib.dump(info, f)
-    with open(r / 'Runner.entitlements', 'wb') as f: plistlib.dump({'com.apple.developer.applesignin': ['Default'], 'com.apple.developer.associated-domains': ['applinks:maeda.wardyat.net']}, f)
+    with open(r / 'Runner.entitlements', 'wb') as f: plistlib.dump({'com.apple.developer.applesignin': ['Default'], 'com.apple.developer.associated-domains': ['applinks:maeda.wardyat.net'], 'aps-environment': 'production'}, f)
     proj = ROOT / 'ios' / 'Runner.xcodeproj' / 'project.pbxproj'
     patch(proj, lambda t: re.sub(r'IPHONEOS_DEPLOYMENT_TARGET = [\d.]+;', 'IPHONEOS_DEPLOYMENT_TARGET = 15.0;', t))
     pod = ROOT / 'ios' / 'Podfile'

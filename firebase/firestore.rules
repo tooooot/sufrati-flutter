@@ -177,6 +177,20 @@ service cloud.firestore {
       allow read, write: if isAdmin();
     }
 
+    // ---- طابور الإشعارات (يفرّغه عامل الخادم بحساب الخدمة) ----
+    // الكاتب يُتحقَّق من صلاحيته بحسب نوع الحدث: الطاهي يبلّغ «حُضّرت» لبيته، والصاحب/الطبيب «تغيّرت الخطة»،
+    // وأي مسجَّل يطلب الربط بطبيب، والمدير وحده «اعتُمد حسابك».
+    match /notifyQueue/{id} {
+      allow create: if signedIn() && request.resource.data.from == request.auth.uid
+        && request.resource.data.keys().hasOnly(['type', 'from', 'fromName', 'hid', 'meal', 'code', 'toUid', 'createdAt'])
+        && (
+          (request.resource.data.type == 'prepared' && hasRole(request.resource.data.hid, ['cook']))
+          || (request.resource.data.type == 'planChanged' && hasRole(request.resource.data.hid, ['owner', 'doctor']))
+          || (request.resource.data.type == 'doctorRequest' && request.resource.data.get('code', '') != '')
+          || (request.resource.data.type == 'doctorApproved' && isAdmin() && request.resource.data.get('toUid', '') != ''));
+      allow read, update, delete: if isAdmin();
+    }
+
     match /{other=**} { allow read, write: if false; }
   }
 }
