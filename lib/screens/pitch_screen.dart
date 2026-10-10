@@ -52,14 +52,13 @@ class _PitchScreenState extends State<PitchScreen> {
       header: cook
           ? Wrap(spacing: 8, children: [
               for (final e in pitchLangs.entries)
-                ChoiceChip(
-                  label: Text(e.value, style: TextStyle(fontWeight: black, color: _lang == e.key ? Brand.green : Colors.white)),
-                  selected: _lang == e.key,
-                  showCheckmark: false,
-                  // لون صريح للحالتين: بلا تلوين افتراضي يجعل الخلفية بيضاء والنص الأبيض غير مقروء
-                  color: WidgetStateProperty.resolveWith((st) => st.contains(WidgetState.selected) ? Brand.cream : const Color(0x33FFFFFF)),
-                  side: BorderSide.none,
-                  onSelected: (_) => setState(() => _lang = e.key),
+                GestureDetector(
+                  onTap: () => setState(() => _lang = e.key),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 9),
+                    decoration: BoxDecoration(color: _lang == e.key ? Brand.cream : const Color(0x33FFFFFF), borderRadius: BorderRadius.circular(20)),
+                    child: Text(e.value, style: TextStyle(fontWeight: black, fontSize: 15, color: _lang == e.key ? Brand.green : Colors.white)),
+                  ),
                 ),
             ])
           : null,
