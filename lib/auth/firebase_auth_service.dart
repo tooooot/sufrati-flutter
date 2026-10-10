@@ -13,6 +13,9 @@ import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import '../firebase_options.dart';
 import 'auth_service.dart';
 
+/// يُفعَّل بـ --dart-define=APPLE_WEB_FLOW=true بعد إنشاء Services ID ومفتاح Apple وضبطهما في Firebase.
+const kAppleWebFlow = bool.fromEnvironment('APPLE_WEB_FLOW');
+
 class FirebaseAuthService extends AuthService {
   final fb.FirebaseAuth _auth;
   final FirebaseFirestore _db;
@@ -43,7 +46,8 @@ class FirebaseAuthService extends AuthService {
   @override
   bool isAvailable(SignInMethod m) => switch (m) {
         SignInMethod.google => true,
-        SignInMethod.apple => !kIsWeb && defaultTargetPlatform == TargetPlatform.iOS,
+        // آيفون: أصلي بمعرّف الحزمة. أندرويد والويب: عبر Firebase بمعرّف خدمة (Services ID) — يُفعَّل بعد إعداده في Apple/Firebase
+        SignInMethod.apple => (!kIsWeb && defaultTargetPlatform == TargetPlatform.iOS) || kAppleWebFlow,
       };
 
   /// المدير = claim باسم admin يضعه السيرفر لإيميل المدير فقط؛ الطبيب = users/{uid}.isDoctor يمنحه المدير.
@@ -138,6 +142,18 @@ class FirebaseAuthService extends AuthService {
   }
 
   Future<fb.UserCredential> _apple() async {
+    if (kIsWeb || defaultTargetPlatform != TargetPlatform.iOS) {
+      // تدفق الويب عبر Firebase (نافذة منبثقة على الويب، ومتصفح داخلي على أندرويد)
+      final provider = fb.OAuthProvider('apple.com')..addScope('email')..addScope('name');
+      try {
+        return kIsWeb ? await _auth.signInWithPopup(provider) : await _auth.signInWithProvider(provider);
+      } on fb.FirebaseAuthException catch (e) {
+        if (e.code == 'popup-closed-by-user' || e.code == 'cancelled-popup-request' || e.code == 'web-context-canceled') {
+          throw const SignInCancelled();
+        }
+        rethrow;
+      }
+    }
     // nonce عشوائي: نرسل hash له لـApple ونعطي Firebase الأصل ليتحقق أن الرمز لم يُعَد استخدامه
     final raw = _nonce();
     try {
