@@ -6,6 +6,7 @@ import '../auth/roles.dart';
 import '../auth/session.dart';
 import '../data/links.dart';
 import '../routing.dart';
+import '../widgets/nav.dart';
 import '../theme.dart';
 import '../widgets/common.dart';
 
@@ -18,7 +19,7 @@ class ProfileScreen extends StatelessWidget {
   Future<void> _switchTo(BuildContext context, Role r) async {
     if (r == Role.doctor && !links.isDoctor) {
       // الطبيب بموافقة المدير لا بالاختيار: بياناته المهنية تُراجَع مرة واحدة
-      if (context.mounted) context.go(links.doctorRequested ? '/doctor-pending' : '/doctor/apply');
+      if (context.mounted) context.push(links.doctorRequested ? '/doctor-pending' : '/doctor/apply');
       return;
     }
     session.chooseRole(r);
@@ -37,7 +38,7 @@ class ProfileScreen extends StatelessWidget {
             icon: '👤', title: name, subtitle: u?.email,
             leading: Row(children: [
               IconButton(icon: const Icon(Icons.arrow_back, color: Colors.white),
-                  onPressed: () => context.canPop() ? context.pop() : context.go(landing(session))),
+                  onPressed: () => context.back(landing(session))),
               const Spacer(),
               TextButton.icon(
                 icon: const Icon(Icons.logout, color: Colors.white, size: 20),
@@ -71,7 +72,7 @@ class ProfileScreen extends StatelessWidget {
                                   color: session.role == r ? Brand.green : Colors.transparent,
                                   borderRadius: BorderRadius.circular(12),
                                 ),
-                                child: Text(roleName(r), textAlign: TextAlign.center,
+                                child: Text(const {Role.owner: 'أدير بيتي', Role.cook: 'أنا طاهٍ', Role.doctor: 'أنا طبيب'}[r]!, textAlign: TextAlign.center,
                                     style: TextStyle(fontSize: 15, fontWeight: black,
                                         color: session.role == r ? Colors.white : Brand.green)),
                               ),
@@ -81,7 +82,7 @@ class ProfileScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 8),
                     Text(switch (session.role) {
-                      Role.owner => 'ترى وتعدّل كل شيء في بيتك وتدعو من تشاء.',
+                      Role.owner => 'ترى وتعدّل كل شيء في بيتك، وتدعو الطاهية والطبيب، وتطبخ بنفسك متى شئت.',
                       Role.cook => 'ترى وجبات اليوم ومكوّناتها فقط وتضغط «حُضّرت».',
                       Role.doctor => 'ترى خطط من ربطوك بهم فقط. يعتمد مدير سفرتي حسابك.',
                       _ => 'اختر دورك للبدء.',
@@ -116,7 +117,7 @@ class ProfileScreen extends StatelessWidget {
                   const SizedBox(height: 20),
                   if (links.isDoctor) ...[
                     const _GroupTitle('مهنتي'),
-                    CardBox(padding: EdgeInsets.zero, child: _Row(Icons.badge_outlined, 'ملفي المهني ورابط متابعيّ', () => context.go('/doctor/profile'))),
+                    CardBox(padding: EdgeInsets.zero, child: _Row(Icons.badge_outlined, 'ملفي المهني ورابط متابعيّ', () => context.push('/doctor/profile'))),
                     const SizedBox(height: 20),
                   ],
                   const _GroupTitle('الخصوصية والبيانات'),
@@ -132,7 +133,7 @@ class ProfileScreen extends StatelessWidget {
                   if (session.isAdmin) ...[
                     const SizedBox(height: 20),
                     const _GroupTitle('الإدارة'),
-                    CardBox(padding: EdgeInsets.zero, child: _Row(Icons.admin_panel_settings, 'لوحة المدير', () => context.go('/admin'))),
+                    CardBox(padding: EdgeInsets.zero, child: _Row(Icons.admin_panel_settings, 'لوحة المدير', () => context.push('/admin'))),
                   ],
                   const SizedBox(height: 20),
                   OutlinedButton.icon(

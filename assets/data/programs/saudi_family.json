@@ -97,7 +97,7 @@
      "items": [
       [
        "flour",
-       0.5
+       0.4
       ],
       [
        "ghee",
@@ -150,7 +150,7 @@
      "items": [
       [
        "liver",
-       1
+       100
       ],
       [
        "tomato",
@@ -238,11 +238,11 @@
      "items": [
       [
        "chicken",
-       1
+       0.25
       ],
       [
        "rice",
-       1.25
+       0.75
       ],
       [
        "tomato",
@@ -305,11 +305,11 @@
      "items": [
       [
        "lamb",
-       1
+       200
       ],
       [
        "rice",
-       1.25
+       0.75
       ],
       [
        "onion",
@@ -359,11 +359,11 @@
      "items": [
       [
        "chicken",
-       1
+       0.3
       ],
       [
        "rice",
-       1.25
+       0.75
       ],
       [
        "kabsa_spice",
@@ -405,11 +405,11 @@
      "items": [
       [
        "chicken",
-       1
+       0.25
       ],
       [
        "rice",
-       1
+       0.7
       ],
       [
        "eggplant",
@@ -463,11 +463,11 @@
      "items": [
       [
        "chicken",
-       1
+       0.25
       ],
       [
        "rice",
-       1.25
+       0.75
       ],
       [
        "onion",
@@ -513,11 +513,11 @@
      "items": [
       [
        "jareesh",
-       1.25
+       0.5
       ],
       [
        "lamb",
-       0.5
+       100
       ],
       [
        "milk",
@@ -559,7 +559,7 @@
       ],
       [
        "lamb",
-       0.5
+       100
       ],
       [
        "potato",
@@ -599,11 +599,11 @@
      "items": [
       [
        "flour",
-       0.75
+       0.5
       ],
       [
        "chicken",
-       0.75
+       0.2
       ],
       [
        "tomato",
@@ -637,11 +637,11 @@
      "items": [
       [
        "chicken",
-       1
+       0.25
       ],
       [
        "rice",
-       1.25
+       0.6
       ],
       [
        "milk",
@@ -675,11 +675,11 @@
      "items": [
       [
        "pasta",
-       1.25
+       0.6
       ],
       [
        "beef_mince",
-       0.75
+       120
       ],
       [
        "milk",
@@ -721,11 +721,11 @@
      "items": [
       [
        "fish",
-       1
+       200
       ],
       [
        "rice",
-       1
+       0.6
       ],
       [
        "onion",
@@ -759,11 +759,11 @@
      "items": [
       [
        "fish",
-       1
+       200
       ],
       [
        "rice",
-       1
+       0.5
       ],
       [
        "tomato",
@@ -800,11 +800,11 @@
      "items": [
       [
        "shrimp",
-       1.5
+       150
       ],
       [
        "rice",
-       1.25
+       0.75
       ],
       [
        "onion",
@@ -848,11 +848,11 @@
       ],
       [
        "chicken",
-       1
+       0.25
       ],
       [
        "rice",
-       1
+       0.5
       ],
       [
        "garlic",
@@ -885,11 +885,11 @@
       ],
       [
        "lamb",
-       0.5
+       100
       ],
       [
        "rice",
-       1
+       0.5
       ],
       [
        "tomato",
@@ -922,7 +922,7 @@
       ],
       [
        "rice",
-       0.75
+       0.35
       ],
       [
        "onion",
@@ -1180,7 +1180,7 @@
       ],
       [
        "beef_mince",
-       0.25
+       40
       ],
       [
        "white_cheese",
@@ -1364,11 +1364,11 @@
  ],
  "INGREDIENTS": {
   "chicken": {
-   "label": "دجاج (ربع دجاجة)",
+   "label": "دجاجة",
    "icon": "🍗",
-   "unit": "ربع دجاجة",
+   "unit": "دجاجة",
    "buy_unit": "دجاجة كاملة (≈1.2 كيلو)",
-   "buy_qty": 4,
+   "buy_qty": 1,
    "buy_price": 22,
    "category": "meat"
   },
@@ -1382,47 +1382,47 @@
    "category": "meat"
   },
   "lamb": {
-   "label": "لحم غنم",
+   "label": "غرام لحم غنم",
    "icon": "🥩",
-   "unit": "حصة (150غ)",
-   "buy_unit": "كيلو لحم غنم (≈6 حصص)",
-   "buy_qty": 6,
+   "unit": "غرام",
+   "buy_unit": "كيلو لحم غنم",
+   "buy_qty": 1000,
    "buy_price": 65,
    "category": "meat"
   },
   "beef_mince": {
-   "label": "لحم مفروم",
+   "label": "غرام لحم مفروم",
    "icon": "🥩",
-   "unit": "حصة (100غ)",
-   "buy_unit": "كيلو لحم مفروم (≈10 حصص)",
-   "buy_qty": 10,
+   "unit": "غرام",
+   "buy_unit": "كيلو لحم مفروم",
+   "buy_qty": 1000,
    "buy_price": 42,
    "category": "meat"
   },
   "liver": {
-   "label": "كبدة غنم",
+   "label": "غرام كبدة غنم",
    "icon": "🥩",
-   "unit": "حصة (80غ)",
-   "buy_unit": "كيلو كبدة (≈12 حصة)",
-   "buy_qty": 12,
+   "unit": "غرام",
+   "buy_unit": "كيلو كبدة",
+   "buy_qty": 1000,
    "buy_price": 35,
    "category": "meat"
   },
   "fish": {
-   "label": "سمك فيليه",
+   "label": "غرام سمك",
    "icon": "🐟",
-   "unit": "حصة (150غ)",
-   "buy_unit": "كيلو سمك (≈6 حصص)",
-   "buy_qty": 6,
+   "unit": "غرام",
+   "buy_unit": "كيلو سمك",
+   "buy_qty": 1000,
    "buy_price": 38,
    "category": "meat"
   },
   "shrimp": {
-   "label": "روبيان",
+   "label": "غرام روبيان",
    "icon": "🍤",
-   "unit": "حصة (100غ)",
-   "buy_unit": "كيلو روبيان (≈10 حصص)",
-   "buy_qty": 10,
+   "unit": "غرام",
+   "buy_unit": "كيلو روبيان",
+   "buy_qty": 1000,
    "buy_price": 55,
    "category": "meat"
   },
@@ -1688,28 +1688,28 @@
    "category": "fruit"
   },
   "rice": {
-   "label": "أرز بسمتي مطبوخ",
+   "label": "كوب أرز بسمتي (نيّء)",
    "icon": "🍚",
-   "unit": "كوب مطبوخ",
-   "buy_unit": "كيس أرز بسمتي (كيلو ≈ 6 أكواب مطبوخة)",
-   "buy_qty": 6,
+   "unit": "كوب نيّء",
+   "buy_unit": "كيس أرز بسمتي كيلو (≈5 أكواب نيّئة)",
+   "buy_qty": 5,
    "buy_price": 12,
    "category": "grain"
   },
   "jareesh": {
-   "label": "جريش",
+   "label": "كوب جريش",
    "icon": "🌾",
-   "unit": "كوب مطبوخ",
-   "buy_unit": "كيس جريش (كيلو ≈ 6 أكواب)",
-   "buy_qty": 6,
+   "unit": "كوب نيّء",
+   "buy_unit": "كيس جريش كيلو (≈5 أكواب)",
+   "buy_qty": 5,
    "buy_price": 10,
    "category": "grain"
   },
   "flour": {
-   "label": "دقيق قمح",
+   "label": "كوب دقيق",
    "icon": "🌾",
    "unit": "كوب",
-   "buy_unit": "كيس دقيق (كيلو ≈ 8 أكواب)",
+   "buy_unit": "كيس دقيق كيلو (≈8 أكواب)",
    "buy_qty": 8,
    "buy_price": 5,
    "category": "grain"
@@ -1724,10 +1724,10 @@
    "category": "grain"
   },
   "pasta": {
-   "label": "معكرونة",
+   "label": "كوب معكرونة (نيّئة)",
    "icon": "🍝",
-   "unit": "كوب",
-   "buy_unit": "كيس معكرونة (≈5 أكواب)",
+   "unit": "كوب نيّء",
+   "buy_unit": "كيس معكرونة 500غ (≈5 أكواب)",
    "buy_qty": 5,
    "buy_price": 5,
    "category": "grain"
@@ -2041,6 +2041,20 @@
   }
  },
  "DAY_TYPE_PATTERN": null,
+ "PANTRY_DEFAULT": [
+  "oil",
+  "ghee",
+  "butter",
+  "sugar",
+  "tea",
+  "qahwa",
+  "kabsa_spice",
+  "tomato_paste",
+  "zaatar",
+  "honey",
+  "flour",
+  "garlic"
+ ],
  "MEAL_LINKS": {
   "meal3": {
    "prayer": "Maghrib",

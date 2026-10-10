@@ -59,10 +59,10 @@ class DoctorPublicScreen extends StatelessWidget {
                       FilledButton(
                         style: FilledButton.styleFrom(backgroundColor: Brand.honey, minimumSize: const Size.fromHeight(56),
                             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16))),
-                        onPressed: () => context.go('/dr/${d.code}/join'),
+                        onPressed: () => context.push('/dr/${d.code}/join'),
                         child: Text('ابدأ مع ${d.name}', style: const TextStyle(fontSize: 18, fontWeight: black)),
                       ),
-                      TextButton(onPressed: () => context.go('/pitch/user'), child: const Text('شاهد فكرة التطبيق أولًا')),
+                      TextButton(onPressed: () => context.push('/pitch/user'), child: const Text('شاهد فكرة التطبيق أولًا')),
                       const MedicalNote(),
                     ]),
                   ),

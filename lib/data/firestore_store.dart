@@ -1,14 +1,17 @@
 // مخزن البيت الحقيقي: households/{hid}/weeks/{yyyy-MM-dd} و shopping/{yyyy-MM-dd}.
 // من يملك صلاحية الإدارة (صاحب الخطة/الطبيب) يولّد خطة الأسبوع عند أول فتح؛ الطاهي يقرأ فقط ويعلّم «جاهز».
 import 'dart:async';
+import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 import 'events.dart';
 
 import '../logic/planner.dart';
 import '../logic/prayer.dart';
 import '../logic/shopping.dart';
+import '../logic/shopping_text.dart';
 import 'household.dart';
 import 'models.dart';
 import 'repository.dart';
@@ -51,6 +54,12 @@ class FirestoreStore extends HouseholdStore {
       cookName: d['cookName'] as String? ?? '',
       city: d['city'] as String? ?? 'Jeddah',
       eaters: (d['eaters'] as num?)?.toInt() ?? 1,
+      kids: (d['kids'] as num?)?.toInt() ?? 0,
+      portion: (d['portion'] as num?)?.toDouble() ?? 1.0,
+      pantry: (d['pantry'] as List?)?.cast<String>().toSet(),
+      hidden: ((d['hidden'] as List?)?.cast<String>() ?? const <String>[]).toSet(),
+      favorites: ((d['favorites'] as List?)?.cast<String>() ?? const <String>[]).toSet(),
+      custom: [for (final c in (d['custom'] as List? ?? const [])) Map<String, dynamic>.from(c as Map)],
       cutoffDay: (d['cutoffDay'] as num?)?.toInt() ?? 5,
       cutoffTime: d['cutoffTime'] as String? ?? '20:00',
       mealLinks: (d['mealLinks'] as Map?)?.map((k, v) =>
@@ -74,6 +83,8 @@ class FirestoreStore extends HouseholdStore {
     _subs.add(db.collection('households/$hid/shopping').snapshots().listen((s) {
       for (final d in s.docs) {
         _shopping[d.id] = _linesFrom(d.data());
+        final t = d.data()['shopToken'] as String?;
+        if (t != null) _shopTokens[d.id] = t;
       }
       if (!shop.isCompleted) shop.complete();
       notifyListeners();
@@ -94,12 +105,52 @@ class FirestoreStore extends HouseholdStore {
     return [
       for (final e in lines.entries)
         ShoppingLine(e.key as String, ((e.value as Map)['packs'] as num).toInt(), ((e.value as Map)['unitPrice'] as num).toDouble(),
-            (e.value as Map)['bought'] == true),
+            (e.value as Map)['bought'] == true, ((e.value as Map)['auto'] as num?)?.toInt()),
     ]..sort((a, b) => a.key.compareTo(b.key));
   }
 
   @override
-  Future<Program> program() => library.program(household.programId);
+  Future<Program> baseProgram() => library.program(household.programId);
+
+  @override
+  Future<void> persistHousehold(Map<String, Object?> fields) async {
+    if (!canManage) return;
+    await db.doc('households/$hid').update(fields);
+  }
+
+  @override
+  Future<void> reflowShopping() async {
+    // الكميات تتبع العدد/الحصة/المخزن: نعيد حساب مشتريات هذا الأسبوع والقادم مع إبقاء ما اشتُري
+    final now = DateTime.now().toUtc().add(const Duration(hours: 3));
+    final ws = weekStartFor(DateTime(now.year, now.month, now.day));
+    for (final w in [ws, ws.add(const Duration(days: 7))]) {
+      if (_weeks.containsKey(weekId(w))) {
+        _shopping.remove(weekId(w));
+        await _saveShopping(w, await _build(w, previous: _prevLines[weekId(w)]));
+      }
+    }
+  }
+
+  @override
+  Future<void> regenerateWeek(DateTime weekStart) async {
+    if (!canManage) return;
+    final id = weekId(weekStart);
+    final old = _weeks[id];
+    final avoid = <String, Set<String>>{};
+    for (final d in old?.days ?? const <Map<String, String>>[]) {
+      d.forEach((slot, opt) => (avoid[slot] ??= {}).add(opt));
+    }
+    final p = await program();
+    final days = List.generate(7, (_) => <String, String>{});
+    for (final pick in pickWeekOptions(p, avoid: avoid, hidden: household.hidden, favorites: household.favorites)) {
+      days[pick.day][pick.slotId] = pick.option.id;
+    }
+    _weeks[id] = WeekPlan(weekStart, days);
+    await db.doc('households/$hid/weeks/$id').set({'days': days, 'prepared': <String>[], 'createdAt': FieldValue.serverTimestamp()});
+    _shopping.remove(id);
+    await _saveShopping(weekStart, await _build(weekStart, previous: _prevLines[id]));
+    notifyListeners();
+  }
 
   @override
   Future<WeekPlan> week(DateTime weekStart) async {
@@ -116,31 +167,13 @@ class FirestoreStore extends HouseholdStore {
     for (final d in prev?.days ?? const <Map<String, String>>[]) {
       d.forEach((slot, opt) => (avoid[slot] ??= {}).add(opt));
     }
-    for (final pick in pickWeekOptions(p, avoid: avoid)) {
+    for (final pick in pickWeekOptions(p, avoid: avoid, hidden: household.hidden, favorites: household.favorites)) {
       days[pick.day][pick.slotId] = pick.option.id;
     }
     final plan = WeekPlan(weekStart, days);
     _weeks[id] = plan;
     await db.doc('households/$hid/weeks/$id').set({'days': days, 'prepared': <String>[], 'createdAt': FieldValue.serverTimestamp()});
     return plan;
-  }
-
-  @override
-  Future<void> setEaters(int n) async {
-    final v = n.clamp(1, 20);
-    if (!canManage || v == household.eaters) return;
-    household.eaters = v;
-    await db.doc('households/$hid').update({'eaters': v});
-    // الكميات تتبع العدد: نعيد حساب مشتريات هذا الأسبوع والقادم مع إبقاء ما اشتُري
-    final now = DateTime.now().toUtc().add(const Duration(hours: 3));
-    final ws = weekStartFor(DateTime(now.year, now.month, now.day));
-    for (final w in [ws, ws.add(const Duration(days: 7))]) {
-      if (_weeks.containsKey(weekId(w))) {
-        _shopping.remove(weekId(w));
-        await _saveShopping(w, await _build(w, previous: _prevLines[weekId(w)]));
-      }
-    }
-    notifyListeners();
   }
 
   @override
@@ -174,15 +207,54 @@ class FirestoreStore extends HouseholdStore {
   final _prevLines = <String, List<ShoppingLine>>{};
 
   Future<List<ShoppingLine>> _build(DateTime ws, {List<ShoppingLine>? previous}) async =>
-      buildShopping(await program(), await week(ws), household.eaters, previous: previous);
+      _buildLines(await program(), await week(ws), previous);
+
+  List<ShoppingLine> _buildLines(Program p, WeekPlan w, List<ShoppingLine>? previous) =>
+      buildShopping(p, w, household.servings, previous: previous, pantry: pantryOf(p));
 
   Future<void> _saveShopping(DateTime ws, List<ShoppingLine> lines) async {
     final id = weekId(ws);
     _shopping[id] = lines;
     _prevLines[id] = lines;
     await db.doc('households/$hid/shopping/$id').set({
-      'lines': {for (final l in lines) l.key: {'packs': l.packs, 'unitPrice': l.unitPrice, 'bought': l.bought}},
+      'lines': {for (final l in lines) l.key: {'packs': l.packs, 'unitPrice': l.unitPrice, 'bought': l.bought, 'auto': l.auto ?? l.packs}},
     });
+  }
+
+  final _shopTokens = <String, String>{};
+
+  @override
+  Future<String?> createShopLink(DateTime weekStart) async {
+    if (!canManage) return null;
+    final id = weekId(weekStart);
+    final prog = await program();
+    final lines = await shopping(weekStart);
+    final r = Random.secure();
+    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789abcdefghijkmnpqrstuvwxyz';
+    final token = List.generate(14, (_) => chars[r.nextInt(chars.length)]).join();
+    await db.doc('shopLinks/$token').set({
+      'hid': hid, 'createdBy': FirebaseAuth.instance.currentUser?.uid ?? '', 'title': household.label, 'week': id,
+      ...shopLinkLines(prog, lines, pantry: pantryOf(prog)), 'createdAt': FieldValue.serverTimestamp(),
+    });
+    _shopTokens[id] = token;
+    await db.doc('households/$hid/shopping/$id').set({'shopToken': token}, SetOptions(merge: true));
+    return token;
+  }
+
+  @override
+  Future<void> syncShopLink(DateTime weekStart) async {
+    final id = weekId(weekStart);
+    final token = _shopTokens[id];
+    if (token == null) return;
+    try {
+      final d = (await db.doc('shopLinks/$token').get()).data();
+      final bought = (d?['bought'] as Map?)?.cast<String, dynamic>() ?? const {};
+      final lines = await shopping(weekStart);
+      for (final l in lines) {
+        final v = bought[l.key] == true;
+        if (v != l.bought) await updateShopping(weekStart, l.key, bought: v);
+      }
+    } catch (_) {}
   }
 
   @override
@@ -208,7 +280,7 @@ class FirestoreStore extends HouseholdStore {
     if (bought != null) line.bought = bought;
     notifyListeners();
     await db.doc('households/$hid/shopping/${weekId(weekStart)}').set({
-      'lines': {key: {'packs': line.packs, 'unitPrice': line.unitPrice, 'bought': line.bought}},
+      'lines': {key: {'packs': line.packs, 'unitPrice': line.unitPrice, 'bought': line.bought, 'auto': line.auto ?? line.packs}},
     }, SetOptions(merge: true));
   }
 

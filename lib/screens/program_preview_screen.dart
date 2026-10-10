@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../data/models.dart';
 import '../data/repository.dart';
 import '../logic/planner.dart';
+import '../widgets/nav.dart';
 import '../theme.dart';
 import '../widgets/common.dart';
 import '../widgets/medical_note.dart';
@@ -47,7 +48,7 @@ class _ProgramPreviewScreenState extends State<ProgramPreviewScreen> {
               title: meta.label,
               subtitle: meta.blurb,
               leading: TextButton(
-                onPressed: () => context.go('/browse'),
+                onPressed: () => context.back('/browse'),
                 child: Text('‹ كل الأنظمة',
                     style: TextStyle(color: Colors.white.withValues(alpha: .85), decoration: TextDecoration.underline)),
               ),
@@ -117,7 +118,7 @@ class _ProgramPreviewScreenState extends State<ProgramPreviewScreen> {
               padding: const EdgeInsets.symmetric(vertical: 16),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
             ),
-            onPressed: () => context.go('/signup/${widget.programId}'),
+            onPressed: () => context.push('/signup/${widget.programId}'),
             child: const Text('🚀 اقتنعت — ابدأ بهذا النظام',
                 style: TextStyle(fontSize: 20, fontWeight: black, fontFamily: 'Tajawal')),
           ),

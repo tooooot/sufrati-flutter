@@ -86,9 +86,14 @@ class Program {
   final List<Map<String, dynamic>> cookInstructions, userTips, cookTips;
   /// ربط وجبات هذا النظام بالصلوات (يغلب الافتراضي العام): {'meal3': PrayerLink('Maghrib', 20)}.
   final Map<String, PrayerLink> mealLinks;
+  /// مكوّنات يُفترض أنها في البيت (زيت، سكر، شاهي، بهارات…): لا تدخل المشتريات حتى تُلغي ربّة البيت ذلك.
+  final Set<String> pantryDefaults;
+  final Map<String, dynamic> raw;
 
   Program(this.meta, Map<String, dynamic> j)
-      : slots = [for (final s in j['MEAL_SLOTS'] as List) MealSlot(s)],
+      : raw = j,
+        pantryDefaults = {...List<String>.from(j['PANTRY_DEFAULT'] ?? const [])},
+        slots = [for (final s in j['MEAL_SLOTS'] as List) MealSlot(s)],
         ingredients = {
           for (final e in (j['INGREDIENTS'] as Map<String, dynamic>).entries) e.key: Ingredient(e.key, e.value)
         },
@@ -105,6 +110,31 @@ class Program {
           for (final e in (j['MEAL_LINKS'] as Map<String, dynamic>? ?? const {}).entries)
             e.key: PrayerLink(e.value['prayer'] as String, (e.value['offset'] as num).toInt())
         };
+
+  /// نسخة من النظام بوجبات البيت الخاصة (custom: [{id, slot, label, items:[[key,qty]]}]) مضافة إلى وجبات النظام.
+  Program withCustom(List<Map<String, dynamic>> custom) {
+    if (custom.isEmpty) return this;
+    final j = Map<String, dynamic>.from(raw);
+    j['MEAL_SLOTS'] = [
+      for (final s in raw['MEAL_SLOTS'] as List)
+        {
+          ...Map<String, dynamic>.from(s as Map),
+          'options': [
+            ...(s['options'] as List),
+            for (final c in custom.where((c) => c['slot'] == s['id']))
+              {
+                'id': c['id'], 'label': c['label'], 'tags': const <String>[],
+                // Firestore يخزّن المكوّنات خرائط {k,q}؛ نحوّلها لأزواج [مفتاح، كمية] كبقية الوجبات (والمجهول يُهمَل)
+                'items': [
+                  for (final it in (c['items'] as List? ?? const []))
+                    if (it is Map && (raw['INGREDIENTS'] as Map).containsKey(it['k'])) [it['k'], it['q']] else if (it is List) it,
+                ],
+              },
+          ],
+        }
+    ];
+    return Program(meta, j);
+  }
 
   static List<Map<String, dynamic>> _maps(Object? v) =>
       v is List ? [for (final x in v) Map<String, dynamic>.from(x)] : const [];

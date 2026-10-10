@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../theme.dart';
 import 'medical_note.dart';
+import 'nav.dart';
 
 class TabItem {
   final IconData icon;
@@ -54,7 +55,16 @@ class _TabsScaffoldState extends State<TabsScaffold> {
   @override
   Widget build(BuildContext context) {
     final i = _c.index.clamp(0, widget.tabs.length - 1);
-    return Scaffold(
+    // الرجوع: من أي تبويب غير الأول ← للأول، ثم ضغطتان للخروج
+    return ExitGuard(
+      onBack: () {
+        if (_c.index != 0) {
+          _c.select(0);
+          return true;
+        }
+        return false;
+      },
+      child: Scaffold(
       body: ListView(padding: EdgeInsets.zero, children: [
         widget.header,
         Center(
@@ -98,6 +108,7 @@ class _TabsScaffoldState extends State<TabsScaffold> {
               ),
           ]),
         ),
+      ),
       ),
     );
   }

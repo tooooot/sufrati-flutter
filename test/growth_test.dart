@@ -46,7 +46,7 @@ void main() {
   });
 
   test('لقطات العرض: 4–5 لكل دور (الطبيب/الجروب دور واحد)، وكلها ببنية سليمة', () {
-    for (final k in ['user', 'doctor', 'group', 'cook', 'غير معروف']) {
+    for (final k in ['user', 'home', 'doctor', 'group', 'cook', 'غير معروف']) {
       final b = beatsFor(k, name: 'د. خالد');
       expect(b.length, anyOf(4, 5), reason: k);
       for (final x in b) {

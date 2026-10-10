@@ -69,7 +69,10 @@ class _NewHouseScreenState extends State<NewHouseScreen> {
                   const SizedBox(height: 10),
                   for (final p in widget.library.active) ...[
                     CardBox(
-                      onTap: () => setState(() => _program = p.id),
+                      onTap: () => setState(() {
+                        _program = p.id;
+                        if (p.id == 'saudi_family' && _eaters == 1) _eaters = 5; // أسرة سعودية نموذجية
+                      }),
                       border: Border.all(color: _program == p.id ? Brand.honey : Colors.transparent, width: 2.5),
                       child: Row(children: [
                         Text(p.icon, style: const TextStyle(fontSize: 32)),
@@ -84,7 +87,7 @@ class _NewHouseScreenState extends State<NewHouseScreen> {
                           Icon(_program == p.id ? Icons.radio_button_checked : Icons.radio_button_off,
                               color: _program == p.id ? Brand.honey : Colors.grey),
                           GestureDetector(
-                            onTap: () => context.go('/programs/${p.id}'),
+                            onTap: () => context.push('/programs/${p.id}'),
                             child: const Padding(padding: EdgeInsets.only(top: 4),
                                 child: Text('معاينة', style: TextStyle(fontSize: 12, color: Brand.green, decoration: TextDecoration.underline))),
                           ),

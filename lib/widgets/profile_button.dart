@@ -12,7 +12,7 @@ class ProfileButton extends StatelessWidget {
         child: IconButton(
           tooltip: 'ملفي الشخصي',
           icon: const Icon(Icons.account_circle, color: Colors.white, size: 30),
-          onPressed: () => context.go('/profile'),
+          onPressed: () => context.push('/profile'),
         ),
       );
 }

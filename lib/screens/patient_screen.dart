@@ -13,12 +13,12 @@ import '../theme.dart';
 import '../logic/dates.dart';
 import '../widgets/common.dart';
 import '../widgets/meal_extras.dart';
+import 'home_controls.dart';
 import '../widgets/profile_button.dart';
 import '../widgets/tabs_scaffold.dart';
 import '../auth/roles.dart';
 import '../data/links.dart';
 import 'household_screen.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 /// لوحة المريض/صاحب الخطة — نقل لـ user.html: الوجبات (اليوم/غداً) · المشتريات · الأسبوع القادم.
 class PatientScreen extends StatefulWidget {
@@ -77,7 +77,7 @@ class _PatientScreenState extends State<PatientScreen> {
               (_) => _TodayTab(store: store, library: widget.library, links: widget.links, tabs: _tabs, canInvite: widget.showHome)),
           TabItem(Icons.shopping_cart_outlined, 'المشتريات', (_) => _ShoppingTab(store: store)),
           TabItem(Icons.calendar_month_outlined, 'الأسبوع', (_) => _NextWeekTab(store: store, library: widget.library)),
-          if (widget.showHome) TabItem(Icons.home_outlined, 'بيتي', (_) => Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [_EatersCard(store: store), const SizedBox(height: 14), HouseholdBody(links: widget.links)])),
+          if (widget.showHome) TabItem(Icons.home_outlined, 'بيتي', (_) => Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [HouseSettingsCard(store: store), const SizedBox(height: 14), HouseholdBody(links: widget.links)])),
         ],
       ),
     );
@@ -93,29 +93,6 @@ class _TodayTab extends StatefulWidget {
   const _TodayTab({required this.store, required this.library, required this.links, required this.tabs, required this.canInvite});
   @override
   State<_TodayTab> createState() => _TodayTabState();
-}
-
-/// عدد من يأكل: ± والكميات والمشتريات تتغير فوراً (صاحب الخطة أو الطبيب فقط).
-class _EatersCard extends StatelessWidget {
-  final HouseholdStore store;
-  const _EatersCard({required this.store});
-  @override
-  Widget build(BuildContext context) => ListenableBuilder(
-        listenable: store,
-        builder: (context, _) {
-          final n = store.household.eaters;
-          return CardBox(
-            child: Row(children: [
-              const Icon(Icons.groups, color: Brand.green, size: 30),
-              const SizedBox(width: 10),
-              const Expanded(child: Text('عدد من يأكل في بيتك', style: TextStyle(fontWeight: black, fontSize: 16))),
-              IconButton(onPressed: n > 1 ? () => store.setEaters(n - 1) : null, icon: const Icon(Icons.remove_circle_outline, color: Brand.green)),
-              Text('$n', style: const TextStyle(fontSize: 22, fontWeight: black)),
-              IconButton(onPressed: n < 20 ? () => store.setEaters(n + 1) : null, icon: const Icon(Icons.add_circle_outline, color: Brand.green)),
-            ]),
-          );
-        },
-      );
 }
 
 /// «ابدأ بهذه الخطوات»: بيتك جاهز ← ادعُ طاهيك ← راجع مشترياتك. تُغلق بنقرة وتختفي نهائياً حين ينضم الطاهي.
@@ -181,6 +158,7 @@ class _TodayTabState extends State<_TodayTab> {
         final next = tomorrow ? null : _nextSlot(day, now);
         final doneCount = day.slots.where((x) => x.prepared).length;
         final eaters = widget.store.household.eaters;
+        final servings = widget.store.household.servings;
         final tip = program.userTips.isEmpty ? null : program.userTips[_ordinal(now) % program.userTips.length];
         return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
           // خطوات البداية لصاحب الخطة الجديد: تختفي حين ينضم الطاهي
@@ -203,7 +181,7 @@ class _TodayTabState extends State<_TodayTab> {
           if (widget.canInvite) ...[
             const SizedBox(height: 10),
             CardBox(
-              onTap: () => context.go('/cook/me'),
+              onTap: () => context.push('/cook/me'),
               child: const Row(children: [
                 Icon(Icons.alarm, color: Brand.honey, size: 28),
                 SizedBox(width: 10),
@@ -229,7 +207,7 @@ class _TodayTabState extends State<_TodayTab> {
           ]),
           const SizedBox(height: 12),
           for (final s in day.slots) ...[
-            _MealRow(s: s, isNext: identical(s, next), onTap: () => _showMeal(context, s, program, eaters)),
+            _MealRow(s: s, isNext: identical(s, next), onTap: () => _showMeal(context, s, program, servings, day)),
             const SizedBox(height: 8),
           ],
           const SizedBox(height: 10),
@@ -252,25 +230,22 @@ class _TodayTabState extends State<_TodayTab> {
     );
   }
 
-  void _showMeal(BuildContext context, SlotView s, Program program, int eaters) => showModalBottomSheet<void>(
+  void _showMeal(BuildContext context, SlotView s, Program program, double servings, DayView day) => showModalBottomSheet<void>(
         context: context,
         isScrollControlled: true,
         showDragHandle: true,
         backgroundColor: Brand.cream,
         builder: (_) => SingleChildScrollView(
           padding: const EdgeInsets.fromLTRB(16, 0, 16, 28),
-          child: _MealCard(s: s, program: program, library: widget.library, eaters: eaters),
+          child: _MealCard(s: s, program: program, library: widget.library, servings: servings,
+              actions: widget.canInvite && s.option != null
+                  ? MealActions(store: widget.store, weekStart: day.weekStart, day: day.dayIndex, slotId: s.slot.id, option: s.option!)
+                  : null),
         ),
       );
 
-  Future<void> _shareShopping(Program program, List<ShoppingLine> lines) async {
-    final todo = lines.where((l) => !l.bought).map((l) {
-      final ing = program.ingredients[l.key]!;
-      return '• ${ing.label} × ${l.packs} (${ing.buyUnit})';
-    }).join('\n');
-    final text = 'مشتريات هذا الأسبوع من سفرتي:\n$todo';
-    await launchUrl(Uri.parse('https://wa.me/?text=${Uri.encodeComponent(text)}'), mode: LaunchMode.externalApplication);
-  }
+  Future<void> _shareShopping(Program program, List<ShoppingLine> lines) async =>
+      showShopShare(context, widget.store, weekStartFor(saudiNow()), program, lines, widget.store.pantryOf(program));
 }
 
 /// الوجبة القادمة: البطاقة الكبيرة الوحيدة في أعلى «اليوم».
@@ -465,8 +440,9 @@ class _MealCard extends StatelessWidget {
   final SlotView s;
   final Program program;
   final Library library;
-  final int eaters;
-  const _MealCard({required this.s, required this.program, required this.library, required this.eaters});
+  final double servings;
+  final Widget? actions;
+  const _MealCard({required this.s, required this.program, required this.library, required this.servings, this.actions});
 
   @override
   Widget build(BuildContext context) {
@@ -488,7 +464,7 @@ class _MealCard extends StatelessWidget {
         Text(s.option?.label ?? '—', style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
         const SizedBox(height: 12),
         Wrap(spacing: 8, runSpacing: 8, children: [
-          for (final it in scaledItems(s.option, eaters, program.ingredients)) _Chip(it.icon, it.qtyLabel, it.label),
+          for (final it in scaledItems(s.option, servings, program.ingredients)) _Chip(it.icon, it.qtyLabel, it.label),
         ]),
         if (s.option != null) ...[
           MealReminders(option: s.option!),
@@ -501,6 +477,7 @@ class _MealCard extends StatelessWidget {
           ],
           MealVideoButton(option: s.option!),
         ],
+        ?actions,
       ]),
     );
   }
@@ -545,6 +522,7 @@ class _ShoppingTab extends StatelessWidget {
     final locked = isLocked(thisWeek, now, h.cutoffDay, h.cutoffTime);
     return FutureBuilder(
       future: () async {
+        await store.syncShopLink(thisWeek); // ما علّمه المتسوّق من الرابط
         return (await store.program(), await store.shopping(thisWeek), await store.shopping(nextWeek));
       }(),
       builder: (context, snap) {
@@ -560,6 +538,17 @@ class _ShoppingTab extends StatelessWidget {
           const SizedBox(height: 24),
           _ShoppingCard(title: '🛒 مشترياتك — الأسبوع القادم', week: nextWeek, lines: linesNext, locked: false,
               program: program, store: store),
+          const SizedBox(height: 14),
+          CardBox(
+            onTap: () => showPantrySheet(context, store),
+            child: Row(children: [
+              const Icon(Icons.kitchen, color: Brand.green),
+              const SizedBox(width: 10),
+              Expanded(child: Text('عندك في البيت ${store.pantryOf(program).length} صنفاً (لا تُشترى) — اضغطي للتعديل',
+                  style: const TextStyle(fontWeight: black, fontSize: 14))),
+              const Icon(Icons.chevron_left, color: Brand.grey),
+            ]),
+          ),
         ]);
       },
     );
@@ -663,6 +652,31 @@ class _NextWeekTab extends StatelessWidget {
                 style: TextStyle(fontSize: 22, fontWeight: black, color: Brand.green)),
             Text('اضغط على اليوم لتغيير أي وجبة. تُقفل المشتريات مساء ${const ['السبت', 'الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة'][store.household.cutoffDay]} الساعة ${ar12(store.household.cutoffTime)}.',
                 style: const TextStyle(fontSize: 13, color: Brand.grey, height: 1.6)),
+            const SizedBox(height: 10),
+            Row(children: [
+              Expanded(
+                child: OutlinedButton.icon(
+                  icon: const Icon(Icons.casino_outlined),
+                  label: const Text('أعيدي توليد الأسبوع'),
+                  onPressed: () async {
+                    final ok = await showDialog<bool>(
+                      context: context,
+                      builder: (c) => AlertDialog(
+                        title: const Text('إعادة توليد الأسبوع القادم؟'),
+                        content: const Text('تُستبدل كل وجبات الأسبوع القادم بوجبات جديدة تتجنب ما قُدّم هذا الأسبوع وتحترم ما أخفيتِه وما فضّلتِه. المشتريات تُحسب من جديد.'),
+                        actions: [
+                          TextButton(onPressed: () => Navigator.pop(c, false), child: const Text('إلغاء')),
+                          FilledButton(onPressed: () => Navigator.pop(c, true), child: const Text('أعيدي')),
+                        ],
+                      ),
+                    );
+                    if (ok == true) await store.regenerateWeek(nextWeek);
+                  },
+                ),
+              ),
+              const SizedBox(width: 8),
+              OutlinedButton.icon(icon: const Icon(Icons.restaurant_menu), label: const Text('وجباتي'), onPressed: () => showMealsManager(context, store)),
+            ]),
             const SizedBox(height: 12),
             for (var d = 0; d < 7; d++)
               Container(

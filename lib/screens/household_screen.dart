@@ -53,7 +53,7 @@ class HouseholdBody extends StatelessWidget {
         builder: (context, _) => Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
           if (!links.hasHousehold)
             CardBox(
-              onTap: () => context.go('/new-house'),
+              onTap: () => context.push('/new-house'),
               color: Brand.amber50,
               border: Border.all(color: Brand.honey, width: 2),
               child: const Row(children: [

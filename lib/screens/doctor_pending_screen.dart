@@ -33,7 +33,7 @@ class DoctorPendingScreen extends StatelessWidget {
                       style: FilledButton.styleFrom(backgroundColor: Brand.honey, minimumSize: const Size.fromHeight(50)),
                       onPressed: () {
                         session.chooseRole(Role.doctor);
-                        context.go('/doctor/profile');
+                        context.push('/doctor/profile');
                       },
                       child: const Text('ملفي المهني ورابطي', style: TextStyle(fontSize: 17, fontWeight: black)),
                     ),
@@ -41,7 +41,7 @@ class DoctorPendingScreen extends StatelessWidget {
                     TextButton(
                       onPressed: () {
                         session.chooseRole(Role.doctor);
-                        context.go('/join/doctor');
+                        context.push('/join/doctor');
                       },
                       child: const Text('عندي رمز دعوة من مريض'),
                     ),

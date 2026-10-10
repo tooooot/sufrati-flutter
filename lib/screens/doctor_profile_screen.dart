@@ -6,6 +6,7 @@ import '../auth/roles.dart';
 import '../data/growth.dart';
 import '../data/links.dart';
 import '../data/role_videos.dart';
+import '../widgets/nav.dart';
 import '../theme.dart';
 import '../widgets/common.dart';
 
@@ -91,7 +92,7 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
         GreenHeader(
           icon: '🩺', title: 'ملفي المهني', subtitle: 'يراه متابعوك قبل أن يبدؤوا معك',
           leading: IconButton(icon: const Icon(Icons.arrow_back, color: Colors.white),
-              onPressed: () => context.canPop() ? context.pop() : context.go('/me')),
+              onPressed: () => context.back('/me')),
         ),
         Center(
           child: ConstrainedBox(

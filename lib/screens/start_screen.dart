@@ -24,7 +24,7 @@ class StartScreen extends StatelessWidget {
               child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
                 for (final p in library.active) ...[
                   CardBox(
-                    onTap: () => context.go('/programs/${p.id}'),
+                    onTap: () => context.push('/programs/${p.id}'),
                     child: Row(children: [
                       Text(p.icon, style: const TextStyle(fontSize: 36)),
                       const SizedBox(width: 12),
@@ -42,7 +42,7 @@ class StartScreen extends StatelessWidget {
                 CardBox(
                   color: Brand.amber50,
                   border: Border.all(color: Brand.honey, width: 2),
-                  onTap: () => context.go('/signup/custom'),
+                  onTap: () => context.push('/signup/custom'),
                   child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                     const Row(children: [
                       Text('📄', style: TextStyle(fontSize: 36)),

@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart' show defaultTargetPlatform, TargetPlatform;
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 
 import '../data/i18n.dart';
 import '../data/links.dart';
@@ -15,6 +14,7 @@ import '../notify/notification_service.dart';
 import '../logic/day_view.dart';
 import '../logic/planner.dart';
 import '../logic/prayer.dart';
+import '../widgets/nav.dart';
 import '../theme.dart';
 import '../widgets/common.dart';
 import '../widgets/meal_extras.dart';
@@ -151,7 +151,7 @@ class _CookScreenState extends State<CookScreen> {
         subtitle: '$dayName — ${ui('cooking_for')} $eaters 👤',
         leading: Row(children: [
           if (widget.ownerMode)
-            IconButton(icon: const Icon(Icons.arrow_back, color: Colors.white), onPressed: () => context.go('/me'))
+            IconButton(icon: const Icon(Icons.arrow_back, color: Colors.white), onPressed: () => context.back('/me'))
           else
             const ProfileButton(),
           const Spacer(),
@@ -244,7 +244,7 @@ class _CookScreenState extends State<CookScreen> {
             style: const TextStyle(fontSize: 22, fontWeight: black)),
         const SizedBox(height: 12),
         Wrap(spacing: 8, runSpacing: 8, children: [
-          for (final it in scaledItems(s.option, widget.store.household.eaters, program.ingredients))
+          for (final it in scaledItems(s.option, widget.store.household.servings, program.ingredients))
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               decoration: BoxDecoration(color: Brand.cream, borderRadius: BorderRadius.circular(12)),

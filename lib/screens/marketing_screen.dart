@@ -11,6 +11,7 @@ import '../data/growth.dart';
 import '../data/marketing.dart';
 import '../data/role_videos.dart';
 import '../routing.dart';
+import '../widgets/nav.dart';
 import '../theme.dart';
 import '../widgets/common.dart';
 
@@ -59,7 +60,7 @@ class _MarketingScreenState extends State<MarketingScreen> {
         GreenHeader(
           icon: '📣', title: 'التسويق', subtitle: 'أطباء وأخصائيون وأصحاب جروبات',
           leading: IconButton(icon: const Icon(Icons.arrow_back, color: Colors.white),
-              onPressed: () => context.canPop() ? context.pop() : context.go('/admin')),
+              onPressed: () => context.back('/admin')),
         ),
         if (db == null)
           const Padding(padding: EdgeInsets.all(24), child: Text('متاح في تطبيق الجوال.'))
@@ -116,7 +117,7 @@ class _MarketingScreenState extends State<MarketingScreen> {
       const Text('معاينة العروض (كما يراها المستلم)', style: TextStyle(fontWeight: black, fontSize: 15)),
       const SizedBox(height: 6),
       Wrap(spacing: 8, children: [
-        for (final e in const {'doctor': 'طبيب/أخصائي/صاحب جروب', 'cook': 'الطاهي', 'user': 'صاحب الخطة'}.entries)
+        for (final e in const {'doctor': 'طبيب/أخصائي/صاحب جروب', 'cook': 'الطاهي', 'home': 'ربّة البيت', 'user': 'صاحب الخطة'}.entries)
           ActionChip(label: Text(e.value), onPressed: () => context.push('/pitch/${e.key}')),
       ]),
       const SizedBox(height: 14),

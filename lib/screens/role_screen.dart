@@ -9,7 +9,7 @@ import '../widgets/profile_button.dart';
 import '../theme.dart';
 import '../widgets/common.dart';
 
-/// بعد الدخول: «كيف ستستخدم سفرتي؟» — صاحب بيت، أو الطاهي، أو الطبيب.
+/// بعد الدخول: «من أنت؟» — بطاقتان (أدير بيتي / أنا طاهٍ) ورابط صغير للطبيب والأخصائي.
 class RoleScreen extends StatelessWidget {
   final Session session;
   const RoleScreen({super.key, required this.session});
@@ -19,7 +19,7 @@ class RoleScreen extends StatelessWidget {
     final name = session.user?.name ?? '';
     return Scaffold(
       body: ListView(padding: EdgeInsets.zero, children: [
-        GreenHeader(leading: const ProfileButton(), icon: '👋', title: name.isEmpty ? 'أهلاً بك' : 'أهلاً $name', subtitle: 'كيف ستستخدم سفرتي؟'),
+        GreenHeader(leading: const ProfileButton(), icon: '👋', title: name.isEmpty ? 'أهلاً بك' : 'أهلاً $name', subtitle: 'من أنت في سفرتي؟'),
         Center(
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 480),
@@ -27,28 +27,22 @@ class RoleScreen extends StatelessWidget {
               padding: const EdgeInsets.fromLTRB(16, 24, 16, 32),
               child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
                 for (final (role, icon, title, sub) in const [
-                  (Role.owner, '🏠', 'صاحب الخطة', 'أتابع نظامي الغذائي أو نظام أحد أفراد بيتي'),
-                  (Role.cook, '👨‍🍳', 'الطاهي', 'دعاني صاحب الخطة وعندي رمز الدعوة'),
-                  (Role.doctor, '🩺', 'الطبيب', 'طبيب أو أخصائي: أتابع مرضاي وأنشر أنظمتي — مراجعة واحدة من الإدارة'),
+                  (Role.owner, '🏠', 'أدير بيتي وأطبخ لأسرتي', 'أرتّب وجباتنا ومشترياتنا، وأطبخ بنفسي أو أدعو طاهيتي'),
+                  (Role.cook, '👩‍🍳', 'أنا طاهٍ دعاني أحد', 'عندي رابط أو رمز دعوة من صاحب البيت'),
                 ]) ...[
                   CardBox(
-                    onTap: () async {
-                      if (role == Role.doctor && !session.links.isDoctor) {
-                        // الطبيب لا يُفعَّل بالاختيار: يقدّم بياناته المهنية مرة واحدة ويراجعها المدير
-                        context.go(session.links.doctorRequested ? '/doctor-pending' : '/doctor/apply');
-                        return;
-                      }
+                    onTap: () {
                       session.chooseRole(role);
-                      context.go(landing(session)); // من له ارتباط يذهب للوحته، وغيره لإدخال الرمز/إنشاء البيت
+                      context.go(landing(session)); // من له ارتباط يذهب للوحته، وغيره لإنشاء البيت/إدخال الرمز
                     },
                     child: Row(children: [
-                      Text(icon, style: const TextStyle(fontSize: 40)),
+                      Text(icon, style: const TextStyle(fontSize: 42)),
                       const SizedBox(width: 14),
                       Expanded(
                         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                           Text(title, style: const TextStyle(fontSize: 19, fontWeight: black, color: Brand.green)),
                           const SizedBox(height: 2),
-                          Text(sub, style: const TextStyle(fontSize: 13, color: Brand.grey, height: 1.5)),
+                          Text(sub, style: const TextStyle(fontSize: 13.5, color: Brand.grey, height: 1.5)),
                         ]),
                       ),
                       const Text('‹', style: TextStyle(fontSize: 22, color: Colors.grey)),
@@ -56,6 +50,22 @@ class RoleScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 12),
                 ],
+                // الطبيب والأخصائي مسار مهني منفصل: لا يزاحم اختيار الأسرة
+                Center(
+                  child: TextButton.icon(
+                    icon: const Icon(Icons.medical_services_outlined, size: 20),
+                    label: const Text('أنا طبيب أو أخصائي تغذية ←', style: TextStyle(fontWeight: black, fontSize: 15)),
+                    onPressed: () {
+                      if (session.links.isDoctor) {
+                        session.chooseRole(Role.doctor);
+                        context.go(landing(session));
+                      } else {
+                        context.push(session.links.doctorRequested ? '/doctor-pending' : '/doctor/apply'); // مراجعة واحدة من الإدارة
+                      }
+                    },
+                  ),
+                ),
+                const SizedBox(height: 6),
                 const MedicalNote(),
                 const SizedBox(height: 8),
                 TextButton(

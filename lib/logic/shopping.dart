@@ -3,7 +3,8 @@
 import '../data/household.dart';
 import '../data/models.dart';
 
-List<ShoppingLine> buildShopping(Program program, WeekPlan plan, int eaters, {List<ShoppingLine>? previous}) {
+/// [pantry]: مكوّنات في البيت فلا تُشترى. [servings]: حصص الأسرة (كبار + نصف الأطفال × حجم الحصة).
+List<ShoppingLine> buildShopping(Program program, WeekPlan plan, double servings, {List<ShoppingLine>? previous, Set<String> pantry = const {}}) {
   final totals = <String, double>{};
   for (final day in plan.days) {
     for (final MapEntry(key: slotId, value: optionId) in day.entries) {
@@ -11,7 +12,8 @@ List<ShoppingLine> buildShopping(Program program, WeekPlan plan, int eaters, {Li
       final opt = slot?.options.where((o) => o.id == optionId).firstOrNull;
       if (opt == null) continue;
       for (final (key, qty) in opt.items) {
-        totals[key] = (totals[key] ?? 0) + qty * eaters;
+        if (pantry.contains(key)) continue;
+        totals[key] = (totals[key] ?? 0) + qty * servings;
       }
     }
   }
@@ -19,11 +21,15 @@ List<ShoppingLine> buildShopping(Program program, WeekPlan plan, int eaters, {Li
   final keys = totals.keys.toList()..sort();
   return [
     for (final key in keys)
-      if (prev[key] case final p?)
-        ShoppingLine(key, p.packs, p.unitPrice, p.bought)
-      else
-        ShoppingLine(key, (totals[key]! / program.ingredients[key]!.buyQty).ceil().clamp(1, 1 << 30),
-            program.ingredients[key]!.buyPrice),
+      () {
+        final ing = program.ingredients[key]!;
+        final computed = (totals[key]! / ing.buyQty).ceil().clamp(1, 1 << 30);
+        final p = prev[key];
+        if (p == null) return ShoppingLine(key, computed, ing.buyPrice, false, computed);
+        // عدّلها المستخدم يدوياً (packs ≠ المحسوب سابقاً) ← نحفظ تعديله؛ وإلا نحدّثها مع الخطة والعدد والحصة
+        final edited = p.auto != null && p.packs != p.auto;
+        return ShoppingLine(key, edited ? p.packs : computed, p.unitPrice, p.bought, computed);
+      }(),
   ];
 }
 

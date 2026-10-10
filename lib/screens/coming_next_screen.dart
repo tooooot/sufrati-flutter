@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 
+import '../widgets/nav.dart';
 import '../theme.dart';
 import '../widgets/common.dart';
 
@@ -20,7 +20,7 @@ class ComingNextScreen extends StatelessWidget {
               Text(message,
                   textAlign: TextAlign.center, style: TextStyle(fontSize: 18, fontWeight: black, color: Brand.green)),
               const SizedBox(height: 16),
-              OutlinedButton(onPressed: () => context.go('/'), child: const Text('‹ رجوع')),
+              OutlinedButton(onPressed: () => context.back('/'), child: const Text('‹ رجوع')),
             ]),
           ),
         ]),

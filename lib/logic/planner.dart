@@ -46,12 +46,12 @@ class ScaledItem {
   ScaledItem(this.key, this.icon, this.label, this.unit, this.qtyLabel);
 }
 
-List<ScaledItem> scaledItems(MealOption? option, int eaters, Map<String, Ingredient> ingredients) {
+List<ScaledItem> scaledItems(MealOption? option, double servings, Map<String, Ingredient> ingredients) {
   if (option == null) return const [];
   return [
     for (final (key, qty) in option.items)
       ScaledItem(key, ingredients[key]!.icon, ingredients[key]!.label, ingredients[key]!.unit,
-          formatQty(qty * eaters)),
+          formatQty(qty * servings)),
   ];
 }
 
@@ -71,7 +71,8 @@ class Pick {
 
 /// خيار لكل وجبة × 7 أيام، مع الحدود الأسبوعية وتناوب نوع اليوم وعدم التكرار المتتالي — نفس _pick_week_options.
 /// [avoid]: خيارات الأسبوع السابق لكل وجبة (slotId ← معرّفات) — تُستبعد ما دام فيه بديل، فلا يتكرر الأسبوع الجديد حرفياً.
-List<Pick> pickWeekOptions(Program program, {Random? random, Map<String, Set<String>>? avoid}) {
+/// [hidden]: وجبات تستبعدها الأسرة، [favorites]: تُضاعَف فرصتها في القرعة.
+List<Pick> pickWeekOptions(Program program, {Random? random, Map<String, Set<String>>? avoid, Set<String> hidden = const {}, Set<String> favorites = const {}}) {
   final rnd = random ?? Random();
   final pattern = program.dayTypePattern;
   final tagCounts = {for (final t in program.limits.keys) t: 0};
@@ -81,7 +82,9 @@ List<Pick> pickWeekOptions(Program program, {Random? random, Map<String, Set<Str
   for (var day = 0; day < 7; day++) {
     final dayType = pattern?[day];
     for (final slot in program.slots) {
-      final options = [...slot.options]..shuffle(rnd);
+      var pool = slot.options.where((o) => !hidden.contains(o.id)).toList();
+      if (pool.isEmpty) pool = [...slot.options]; // لا نترك وجبة بلا خيارات مهما أخفت
+      final options = [...pool, ...pool.where((o) => favorites.contains(o.id))]..shuffle(rnd); // المفضلة مرتان
       bool ok(MealOption o) {
         for (final tag in o.tags) {
           final limit = program.limits[tag]?.maxMeals;

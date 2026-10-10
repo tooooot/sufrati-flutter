@@ -179,7 +179,7 @@ class _IntroScreenState extends State<IntroScreen> with SingleTickerProviderStat
                       ),
                       if (widget.showBrowse) ...[
                       TextButton(
-                        onPressed: () => context.go('/browse'),
+                        onPressed: () => context.push('/browse'),
                         child: const Text('تصفّح الأنظمة بلا تسجيل', style: TextStyle(color: Brand.cream, fontWeight: black, decoration: TextDecoration.underline)),
                       ),
                       Row(mainAxisAlignment: MainAxisAlignment.center, children: [

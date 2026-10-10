@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../auth/session.dart';
+import '../widgets/nav.dart';
 import '../theme.dart';
 import '../widgets/common.dart';
 
@@ -58,7 +59,7 @@ class _DoctorApplyScreenState extends State<DoctorApplyScreen> {
         body: ListView(padding: EdgeInsets.zero, children: [
           GreenHeader(
             icon: '🩺', title: 'طلب الانضمام كطبيب أو أخصائي', subtitle: 'مراجعة واحدة، ثم يصير ملفك ورابطك جاهزين',
-            leading: IconButton(icon: const Icon(Icons.arrow_back, color: Colors.white), onPressed: () => context.go('/role')),
+            leading: IconButton(icon: const Icon(Icons.arrow_back, color: Colors.white), onPressed: () => context.back('/role')),
           ),
           Center(
             child: ConstrainedBox(

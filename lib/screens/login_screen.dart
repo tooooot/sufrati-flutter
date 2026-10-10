@@ -172,7 +172,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ],
                   const SizedBox(height: 14),
                   TextButton(
-                    onPressed: () => context.go('/browse'),
+                    onPressed: () => context.push('/browse'),
                     child: const Text('تصفّح الأنظمة بلا تسجيل',
                         style: TextStyle(fontSize: 15, fontWeight: black, color: Brand.green, decoration: TextDecoration.underline)),
                   ),

@@ -30,7 +30,7 @@ class AdminScreen extends StatelessWidget {
                 padding: const EdgeInsets.fromLTRB(16, 20, 16, 32),
                 child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
                   CardBox(
-                    onTap: () => context.go('/admin/marketing'),
+                    onTap: () => context.push('/admin/marketing'),
                     child: const Row(children: [
                       Icon(Icons.campaign, color: Brand.honey, size: 30),
                       SizedBox(width: 12),
@@ -54,7 +54,7 @@ class AdminScreen extends StatelessWidget {
                   const SizedBox(height: 8),
                   _Reports(db: d),
                   const SizedBox(height: 16),
-                  OutlinedButton(onPressed: () => context.go('/browse'), child: const Text('تصفّح الأنظمة')),
+                  OutlinedButton(onPressed: () => context.push('/browse'), child: const Text('تصفّح الأنظمة')),
                 ]),
               ),
             ),

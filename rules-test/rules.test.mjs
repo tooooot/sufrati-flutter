@@ -240,3 +240,19 @@ test('طابور الإشعارات: كل نوع لكاتبه الصحيح فق�
   await assertFails(getDocs(q(as('own'))));
   await assertSucceeds(getDocs(q(as('adm', { admin: true }))));
 });
+
+test('رابط المشتريات: يُقرأ بالرمز، ويعلّم أي حامل «اشتريتُ» فقط، وإنشاؤه وتعديله لصاحبة البيت', async () => {
+  const ln = { hid: 'h1', createdBy: 'own', title: 'قائمة', lines: [{ k: 'egg', label: 'بيض', packs: 1 }], bought: {}, createdAt: Timestamp.now() };
+  await assertSucceeds(setDoc(doc(as('own'), 'shopLinks/T1'), ln));
+  await assertFails(setDoc(doc(as('cok'), 'shopLinks/T2'), { ...ln, createdBy: 'cok' }), 'الطاهي ليس مديراً للبيت');
+  await assertFails(setDoc(doc(as('own'), 'shopLinks/T3'), { ...ln, createdBy: 'غيري' }));
+  await assertFails(setDoc(doc(anon(), 'shopLinks/T4'), ln));
+  await assertSucceeds(getDoc(doc(anon(), 'shopLinks/T1')));
+  await assertFails(getDocs(collection(anon(), 'shopLinks')));
+  await assertSucceeds(updateDoc(doc(anon(), 'shopLinks/T1'), { 'bought.egg': true, updatedAt: Timestamp.now() }));
+  await assertFails(updateDoc(doc(anon(), 'shopLinks/T1'), { title: 'مزوّر' }));
+  await assertFails(updateDoc(doc(anon(), 'shopLinks/T1'), { lines: [] }));
+  await assertSucceeds(updateDoc(doc(as('own'), 'shopLinks/T1'), { lines: [] }));
+  await assertFails(deleteDoc(doc(anon(), 'shopLinks/T1')));
+  await assertSucceeds(deleteDoc(doc(as('own'), 'shopLinks/T1')));
+});

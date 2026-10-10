@@ -177,6 +177,18 @@ service cloud.firestore {
       allow read, write: if isAdmin();
     }
 
+    // ---- رابط المشتريات للمتسوّق (الزوج/السائق) بلا تسجيل ----
+    // نسخة من القائمة (أسماء وكميات فقط) تُقرأ بالرمز العشوائي؛ وأي حامل للرمز يعلّم «اشتريتُ» (حقل bought فقط)، وصاحبة البيت وحدها تنشئها وتعدّلها وتحذفها.
+    match /shopLinks/{token} {
+      allow get: if true;
+      allow list: if false;
+      allow create: if signedIn() && request.resource.data.createdBy == request.auth.uid
+        && hasRole(request.resource.data.hid, ['owner', 'doctor']);
+      allow update: if request.resource.data.diff(resource.data).affectedKeys().hasOnly(['bought', 'updatedAt'])
+        || (signedIn() && resource.data.createdBy == request.auth.uid);
+      allow delete: if signedIn() && resource.data.createdBy == request.auth.uid;
+    }
+
     // ---- طابور الإشعارات (يفرّغه عامل الخادم بحساب الخدمة) ----
     // الكاتب يُتحقَّق من صلاحيته بحسب نوع الحدث: الطاهي يبلّغ «حُضّرت» لبيته، والصاحب/الطبيب «تغيّرت الخطة»،
     // وأي مسجَّل يطلب الربط بطبيب، والمدير وحده «اعتُمد حسابك».
