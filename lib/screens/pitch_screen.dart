@@ -55,8 +55,9 @@ class _PitchScreenState extends State<PitchScreen> {
                 ChoiceChip(
                   label: Text(e.value, style: TextStyle(fontWeight: black, color: _lang == e.key ? Brand.green : Colors.white)),
                   selected: _lang == e.key,
-                  selectedColor: Brand.cream,
-                  backgroundColor: Colors.white24,
+                  showCheckmark: false,
+                  // لون صريح للحالتين: بلا تلوين افتراضي يجعل الخلفية بيضاء والنص الأبيض غير مقروء
+                  color: WidgetStateProperty.resolveWith((st) => st.contains(WidgetState.selected) ? Brand.cream : const Color(0x33FFFFFF)),
                   side: BorderSide.none,
                   onSelected: (_) => setState(() => _lang = e.key),
                 ),
