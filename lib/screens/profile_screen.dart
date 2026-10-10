@@ -114,6 +114,11 @@ class ProfileScreen extends StatelessWidget {
                       ]),
                     ),
                   const SizedBox(height: 20),
+                  if (links.isDoctor) ...[
+                    const _GroupTitle('مهنتي'),
+                    CardBox(padding: EdgeInsets.zero, child: _Row(Icons.badge_outlined, 'ملفي المهني ورابط متابعيّ', () => context.go('/doctor/profile'))),
+                    const SizedBox(height: 20),
+                  ],
                   const _GroupTitle('الخصوصية والبيانات'),
                   CardBox(
                     padding: EdgeInsets.zero,

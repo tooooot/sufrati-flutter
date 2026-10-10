@@ -137,3 +137,51 @@ test('الدعوة: يحفظ اسم من انضم', async () => {
   b.update(doc(db, 'households/h1'), { 'members.new': 'cook', lastInvite: 'CODE1' });
   await assertSucceeds(b.commit());
 });
+
+test('بروفايل الطبيب: المعتمد يُقرأ علناً، وغير المعتمد لصاحبه والمدير فقط، ولا يفعّل نفسه', async () => {
+  await env.withSecurityRulesDisabled(async (ctx) => {
+    await setDoc(doc(ctx.firestore(), 'doctors/VERIF1'), { uid: 'doc', name: 'د. أ', verified: true });
+    await setDoc(doc(ctx.firestore(), 'doctors/PEND1'), { uid: 'doc', name: 'د. ب', verified: false });
+  });
+  await assertSucceeds(getDoc(doc(anon(), 'doctors/VERIF1')));
+  await assertFails(getDoc(doc(anon(), 'doctors/PEND1')));
+  await assertSucceeds(getDoc(doc(as('doc'), 'doctors/PEND1')));
+  await assertSucceeds(getDoc(doc(as('adm', { admin: true }), 'doctors/PEND1')));
+  await assertFails(getDocs(collection(anon(), 'doctors')));
+  // الطبيب لا يفعّل نفسه ولا يغيّر مالك البروفايل
+  await assertFails(updateDoc(doc(as('doc'), 'doctors/PEND1'), { verified: true }));
+  await assertSucceeds(updateDoc(doc(as('doc'), 'doctors/PEND1'), { bio: 'نبذة' }));
+  await assertFails(updateDoc(doc(as('doc'), 'doctors/PEND1'), { uid: 'zzz' }));
+  await assertSucceeds(updateDoc(doc(as('adm', { admin: true }), 'doctors/PEND1'), { verified: true }));
+  // إنشاء: لطبيب معتمد فقط، بلا verified
+  await assertSucceeds(setDoc(doc(as('doc'), 'doctors/NEW1'), { uid: 'doc', name: 'د. ج', verified: false }));
+  await assertFails(setDoc(doc(as('doc'), 'doctors/NEW2'), { uid: 'doc', name: 'د. د', verified: true }));
+  await assertFails(setDoc(doc(as('new'), 'doctors/NEW3'), { uid: 'new', name: 'غير طبيب', verified: false }));
+  await assertFails(setDoc(doc(as('doc'), 'doctors/NEW4'), { uid: 'other', name: 'ينتحل', verified: false }));
+});
+test('طلبات الربط: صاحب البيت ينشئ، والطبيب صاحب البروفايل يقرأ ويحذف، وغيرهما لا', async () => {
+  await env.withSecurityRulesDisabled(async (ctx) => {
+    await setDoc(doc(ctx.firestore(), 'doctors/VERIF1'), { uid: 'doc', name: 'د. أ', verified: true });
+    await setDoc(doc(ctx.firestore(), 'doctors/VERIF1/requests/r1'), { from: 'own', hid: 'h1', inviteCode: 'OWN1' });
+  });
+  await assertSucceeds(setDoc(doc(as('own'), 'doctors/VERIF1/requests/r2'), { from: 'own', hid: 'h1', inviteCode: 'X' }));
+  await assertFails(setDoc(doc(as('cok'), 'doctors/VERIF1/requests/r3'), { from: 'cok', hid: 'h1', inviteCode: 'X' }), 'الطاهي ليس مالكاً');
+  await assertFails(setDoc(doc(as('own'), 'doctors/VERIF1/requests/r4'), { from: 'zzz', hid: 'h1', inviteCode: 'X' }));
+  await assertSucceeds(getDocs(collection(as('doc'), 'doctors/VERIF1/requests')));
+  await assertFails(getDocs(collection(as('own'), 'doctors/VERIF1/requests')));
+  await assertSucceeds(getDoc(doc(as('own'), 'doctors/VERIF1/requests/r1')));
+  await assertFails(getDoc(doc(as('cok'), 'doctors/VERIF1/requests/r1')));
+  await assertSucceeds(deleteDoc(doc(as('doc'), 'doctors/VERIF1/requests/r1')));
+});
+test('روابط التسويق: قراءة بالرمز للجميع، وتسجيل الفتح مرة واحدة فقط، والباقي للمدير', async () => {
+  await env.withSecurityRulesDisabled(async (ctx) => {
+    await setDoc(doc(ctx.firestore(), 'pitchLinks/TOK1'), { kind: 'doctor', name: 'أحمد', openedAt: null });
+  });
+  await assertSucceeds(getDoc(doc(anon(), 'pitchLinks/TOK1')));
+  await assertFails(getDocs(collection(anon(), 'pitchLinks')));
+  await assertFails(setDoc(doc(anon(), 'pitchLinks/TOK2'), { kind: 'doctor', name: 'x' }));
+  await assertFails(updateDoc(doc(anon(), 'pitchLinks/TOK1'), { name: 'مزوّر' }));
+  await assertSucceeds(updateDoc(doc(anon(), 'pitchLinks/TOK1'), { openedAt: Timestamp.now() }));
+  await assertFails(updateDoc(doc(anon(), 'pitchLinks/TOK1'), { openedAt: Timestamp.now() }), 'مرة واحدة');
+  await assertSucceeds(setDoc(doc(as('adm', { admin: true }), 'pitchLinks/TOK3'), { kind: 'cook', name: 'ماريا' }));
+});

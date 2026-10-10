@@ -27,7 +27,21 @@ abstract class LinkService extends ChangeNotifier {
   bool get ready;
   List<Membership> get memberships;
 
-  Membership? membershipOf(Role r) => memberships.where((m) => m.role == r).firstOrNull;
+  /// بيت المريض الذي يعمل عليه الطبيب الآن (للطبيب عدة مرضى).
+  String? activeHid;
+  void selectHousehold(String hid) {
+    activeHid = hid;
+    notifyListeners();
+  }
+
+  Membership? membershipOf(Role r) {
+    final list = memberships.where((m) => m.role == r);
+    if (r == Role.doctor && activeHid != null) {
+      final a = list.where((m) => m.householdId == activeHid).firstOrNull;
+      if (a != null) return a;
+    }
+    return list.firstOrNull;
+  }
 
   /// الدور المقترح لمن عنده ارتباطات: صاحب بيت، ثم طبيب، ثم طاهٍ.
   Role? get suggestedRole {

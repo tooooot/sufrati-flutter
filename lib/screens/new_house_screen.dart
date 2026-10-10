@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../auth/session.dart';
+import '../data/growth.dart';
 import '../data/links.dart';
 import '../data/repository.dart';
 import '../theme.dart';
@@ -13,7 +14,10 @@ class NewHouseScreen extends StatefulWidget {
   final Library library;
   final LinkService links;
   final Session session;
-  const NewHouseScreen({super.key, required this.library, required this.links, required this.session});
+  /// قادم من رابط طبيب: بعد إنشاء البيت يُرسَل طلب الربط به.
+  final GrowthService? growth;
+  final String? doctorCode;
+  const NewHouseScreen({super.key, required this.library, required this.links, required this.session, this.growth, this.doctorCode});
 
   @override
   State<NewHouseScreen> createState() => _NewHouseScreenState();
@@ -43,6 +47,8 @@ class _NewHouseScreenState extends State<NewHouseScreen> {
     setState(() { _busy = true; _error = null; });
     try {
       await widget.links.createHousehold(_name.text, _program!, _eaters);
+      final dr = widget.doctorCode;
+      if (dr != null && widget.growth != null) await widget.growth!.requestLink(dr); // فشله لا يمنع إنشاء البيت
       if (mounted) context.go('/me');
     } catch (_) {
       if (mounted) setState(() { _busy = false; _error = 'تعذّر إنشاء البيت. تأكد من الاتصال وحاول مرة أخرى.'; });

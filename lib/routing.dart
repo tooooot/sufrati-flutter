@@ -3,7 +3,8 @@ import 'auth/roles.dart';
 import 'auth/session.dart';
 
 bool isPublicPath(String p) =>
-    p == '/login' || p == '/browse' || p == '/intro' || p.startsWith('/programs/');
+    p == '/login' || p == '/browse' || p == '/intro' || p.startsWith('/programs/') || p.startsWith('/p/') || p.startsWith('/pitch/') ||
+    (p.startsWith('/dr/') && !p.endsWith('/join'));
 
 /// الشاشة الرئيسية لكل دور بعد الدخول.
 String landing(Session s) => switch (s.role) {
@@ -33,6 +34,6 @@ String? appRedirect(Session s, String p, {String? full, String? next, bool landi
   }
   if (p == '/admin' && !s.isAdmin) return landing(s);
   // الملف الشخصي متاح دائماً بعد الدخول (منه يُغيَّر الدور أو يُخرَج)، وما عداه يتطلب دوراً
-  if (s.needsRole && !isPublicPath(p) && p != '/role' && p != '/profile' && p != '/doctor-pending' && !p.startsWith('/i/')) return '/role';
+  if (s.needsRole && !isPublicPath(p) && p != '/role' && p != '/profile' && p != '/doctor-pending' && !p.startsWith('/i/') && !p.startsWith('/dr/')) return '/role';
   return null;
 }

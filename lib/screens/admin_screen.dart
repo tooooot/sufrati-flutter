@@ -28,6 +28,10 @@ class AdminScreen extends StatelessWidget {
                   const Text('طلبات تفعيل الأطباء', style: TextStyle(fontWeight: black, fontSize: 17)),
                   const SizedBox(height: 8),
                   _Doctors(db: d),
+                  const SizedBox(height: 20),
+                  const Text('بروفايلات الأطباء (التوثيق)', style: TextStyle(fontWeight: black, fontSize: 17)),
+                  const SizedBox(height: 8),
+                  _Profiles(db: d),
                   const SizedBox(height: 22),
                   const Text('بلاغات المحتوى', style: TextStyle(fontWeight: black, fontSize: 17)),
                   const SizedBox(height: 8),
@@ -102,6 +106,44 @@ class _Reports extends StatelessWidget {
                   child: Row(children: [
                     Expanded(child: Text(d.data()['reason'] as String? ?? '', style: const TextStyle(height: 1.5))),
                     IconButton(icon: const Icon(Icons.done, color: Brand.green), onPressed: () => d.reference.delete()),
+                  ]),
+                ),
+              ),
+          ]);
+        },
+      );
+}
+
+/// اعتماد بروفايل الطبيب العام: تفعيل verified يفتح رابطه للجميع. راجع رقم الترخيص قبل التفعيل.
+class _Profiles extends StatelessWidget {
+  final FirebaseFirestore db;
+  const _Profiles({required this.db});
+
+  @override
+  Widget build(BuildContext context) => StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
+        stream: db.collection('doctors').snapshots(),
+        builder: (context, snap) {
+          if (snap.hasError) return Text('تعذّر التحميل: ${snap.error}');
+          if (!snap.hasData) return const Center(child: CircularProgressIndicator());
+          if (snap.data!.docs.isEmpty) return const CardBox(child: Text('لا بروفايلات بعد.', style: TextStyle(color: Brand.grey)));
+          return Column(children: [
+            for (final d in snap.data!.docs)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 8),
+                child: CardBox(
+                  child: Row(children: [
+                    Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                      Text(d.data()['name'] as String? ?? '', style: const TextStyle(fontWeight: black)),
+                      Text('${d.data()['specialty'] ?? ''} · ${d.data()['city'] ?? ''}', style: const TextStyle(fontSize: 12, color: Brand.grey)),
+                      Text('ترخيص: ${(d.data()['licenseNo'] as String?)?.isNotEmpty == true ? d.data()['licenseNo'] : 'غير مذكور'}',
+                          style: const TextStyle(fontSize: 12, color: Brand.grey)),
+                      Text('الرمز: ${d.id}', style: const TextStyle(fontSize: 12, color: Brand.grey)),
+                    ])),
+                    Switch(
+                      value: d.data()['verified'] == true,
+                      activeThumbColor: Brand.green,
+                      onChanged: (v) => d.reference.update({'verified': v}),
+                    ),
                   ]),
                 ),
               ),

@@ -14,9 +14,14 @@ import 'auth/firebase_auth_service.dart';
 import 'auth/session.dart';
 import 'auth/roles.dart';
 import 'data/firestore_links.dart';
+import 'data/growth.dart';
 import 'data/links.dart';
 import 'screens/admin_screen.dart';
+import 'screens/doctor_join_screen.dart';
 import 'screens/doctor_pending_screen.dart';
+import 'screens/doctor_profile_screen.dart';
+import 'screens/doctor_public_screen.dart';
+import 'screens/pitch_screen.dart';
 import 'screens/house_create_screen.dart';
 import 'screens/household_screen.dart';
 import 'screens/invite_join_screen.dart';
@@ -71,7 +76,8 @@ Future<void> main() async {
   final LinkService links = FirestoreLinkService(db, auth);
   // نستعيد الجلسة المحفوظة قبل رسم أي شاشة: لا وميض لشاشة الدخول، ولا تضيع الروابط العميقة.
   await auth.initialized.timeout(const Duration(seconds: 6), onTimeout: () {});
-  runApp(SufratiApp(library: library, i18n: i18n, auth: auth, links: links, db: db));
+  final GrowthService growth = FirestoreGrowthService(db, auth, links);
+  runApp(SufratiApp(library: library, i18n: i18n, auth: auth, links: links, db: db, growth: growth));
 }
 
 class SufratiApp extends StatelessWidget {
@@ -80,7 +86,8 @@ class SufratiApp extends StatelessWidget {
   final AuthService auth;
   final LinkService links;
   final FirebaseFirestore? db;
-  SufratiApp({super.key, required this.library, required this.i18n, required this.auth, required this.links, required this.db});
+  final GrowthService growth;
+  SufratiApp({super.key, required this.library, required this.i18n, required this.auth, required this.links, required this.db, required this.growth});
 
   // الجلسة: الدخول أولاً (Google/Apple) ثم الدور المستنتج من الارتباطات. التصفح يبقى متاحاً بلا حساب.
   late final _session = Session(auth, links);
@@ -95,8 +102,15 @@ class SufratiApp extends StatelessWidget {
       GoRoute(path: '/doctor-pending', builder: (_, _) => DoctorPendingScreen(session: _session)),
       GoRoute(path: '/admin', builder: (_, _) => AdminScreen(db: db)),
       GoRoute(path: '/browse', builder: (_, _) => StartScreen(library: library)),
-      GoRoute(path: '/intro', builder: (_, _) => const IntroScreen()),
-      GoRoute(path: '/new-house', builder: (_, _) => NewHouseScreen(library: library, links: links, session: _session)),
+      GoRoute(path: '/intro', builder: (_, _) => IntroScreen()),
+      GoRoute(path: '/new-house',
+          builder: (_, st) => NewHouseScreen(library: library, links: links, session: _session, growth: growth, doctorCode: st.uri.queryParameters['dr'])),
+      GoRoute(path: '/p/:token', builder: (_, st) => PitchScreen(growth: growth, token: st.pathParameters['token'])),
+      GoRoute(path: '/pitch/:kind', builder: (_, st) => PitchScreen(growth: growth, kind: st.pathParameters['kind'])),
+      GoRoute(path: '/dr/:code', builder: (_, st) => DoctorPublicScreen(growth: growth, code: st.pathParameters['code']!)),
+      GoRoute(path: '/dr/:code/join',
+          builder: (_, st) => DoctorJoinScreen(session: _session, growth: growth, code: st.pathParameters['code']!)),
+      GoRoute(path: '/doctor/profile', builder: (_, _) => DoctorProfileScreen(growth: growth, links: links)),
       GoRoute(path: '/household', builder: (_, _) => HouseholdScreen(links: links, library: library)),
       GoRoute(path: '/profile', builder: (_, _) => ProfileScreen(session: _session, links: links)),
       GoRoute(path: '/i/:code',
@@ -105,7 +119,7 @@ class SufratiApp extends StatelessWidget {
           builder: (_, st) => JoinScreen(links: links, session: _session,
               role: st.pathParameters['role'] == 'doctor' ? Role.doctor : Role.cook)),
       GoRoute(path: '/login', builder: (_, s) => LoginScreen(auth: auth, next: s.uri.queryParameters['next'] ?? '/')),
-      GoRoute(path: '/', builder: (_, _) => kIsWeb ? LandingScreen(library: library) : const IntroScreen()),
+      GoRoute(path: '/', builder: (_, _) => kIsWeb ? LandingScreen(library: library) : IntroScreen()),
       GoRoute(path: '/programs/:id',
           builder: (_, s) => ProgramPreviewScreen(library: library, programId: s.pathParameters['id']!)),
       GoRoute(path: '/me',

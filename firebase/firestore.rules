@@ -128,6 +128,42 @@ service cloud.firestore {
       allow read, update, delete: if isAdmin();
     }
 
+    // ---- بروفايل الطبيب العام (المرحلة المجانية) ----
+    // يُقرأ بالرمز فقط وللمعتمد (verified) وحده؛ الطبيب يكتب بياناته ولا يستطيع تفعيل verified (المدير وحده).
+    match /doctors/{code} {
+      allow get: if isAdmin()
+        || resource.data.get('verified', false) == true
+        || (signedIn() && resource.data.uid == request.auth.uid);
+      allow list: if isAdmin();
+      allow create: if signedIn() && request.resource.data.uid == request.auth.uid
+        && get(/databases/$(db)/documents/users/$(request.auth.uid)).data.get('isDoctor', false) == true
+        && request.resource.data.get('verified', false) == false;
+      allow update: if isAdmin() || (signedIn() && resource.data.uid == request.auth.uid
+        && request.resource.data.uid == resource.data.uid
+        && request.resource.data.get('verified', false) == resource.data.get('verified', false));
+      allow delete: if isAdmin() || (signedIn() && resource.data.uid == request.auth.uid);
+
+      // طلب ربط من مريض: صاحب بيت يطلب الارتباط بالطبيب ومعه دعوة طبيب من بيته؛ الطبيب يقبل (يستهلك الدعوة) أو يرفض.
+      match /requests/{rid} {
+        allow create: if signedIn() && request.resource.data.from == request.auth.uid
+          && hasRole(request.resource.data.hid, ['owner']);
+        allow read, delete: if isAdmin() || (signedIn() && (resource.data.from == request.auth.uid
+          || get(/databases/$(db)/documents/doctors/$(code)).data.uid == request.auth.uid));
+        allow list: if isAdmin() || (signedIn()
+          && get(/databases/$(db)/documents/doctors/$(code)).data.uid == request.auth.uid);
+      }
+    }
+
+    // ---- روابط التسويق باسم الشخص (يضعها المدير) ----
+    // أي أحد يقرأها بالرمز العشوائي (فيها الاسم الأول والنوع فقط)، ويستطيع تسجيل «فُتح» مرة واحدة بلا غيره.
+    match /pitchLinks/{token} {
+      allow get: if true;
+      allow list: if isAdmin();
+      allow create, delete: if isAdmin();
+      allow update: if isAdmin() || (resource.data.get('openedAt', null) == null
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['openedAt']));
+    }
+
     match /{other=**} { allow read, write: if false; }
   }
 }
