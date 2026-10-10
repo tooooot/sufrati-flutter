@@ -281,7 +281,7 @@ class LinkShareVisual extends StatelessWidget {
               child: const Row(mainAxisSize: MainAxisSize.min, children: [
                 Icon(Icons.chat, color: Color(0xFF128C7E)),
                 SizedBox(width: 8),
-                Text('جرّبوا نظامي الغذائي بالتطبيق 👇', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 15, color: Color(0xFF1F2937))),
+                Text('جرّبوا نظامي الغذائي بالتطبيق', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 15, color: Color(0xFF1F2937))),
               ]),
             ),
           ),
