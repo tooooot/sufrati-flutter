@@ -19,6 +19,11 @@ String landing(Session s) => switch (s.role) {
 /// وجهة صالحة بعد الدخول: مسار داخلي فقط (يمنع التحويل لمواقع خارجية).
 bool _validNext(String? n) => n != null && n.startsWith('/') && !n.startsWith('//') && !n.startsWith('/login') && !n.startsWith('/loading');
 
+/// وجهات تُقبَل حتى لمن لم يختر دوراً بعد: روابط الدعوة (/i) وطبيب المتابعين (/dr) وختم التسويق (/r)
+/// وطلب الطبيب (/doctor/apply) والانضمام (/join). غيرها ← شاشة اختيار الدور أولاً.
+bool _roleless(String n) =>
+    n.startsWith('/i/') || n.startsWith('/dr/') || n.startsWith('/r/') || n.startsWith('/doctor/apply') || n.startsWith('/join/');
+
 /// [full] المسار مع الاستعلام (لحفظه عند التحويل للدخول)، [next] وجهة محفوظة من قبل.
 String? appRedirect(Session s, String p, {String? full, String? next, bool landingForGuests = false}) {
   if (!s.signedIn) {
@@ -29,7 +34,7 @@ String? appRedirect(Session s, String p, {String? full, String? next, bool landi
   // نحفظ الوجهة أثناء التحميل أيضاً (وإلا ضاع الرابط العميق وتحديث الصفحة)
   if (!s.ready) return p == '/loading' ? null : '/loading?next=${Uri.encodeComponent(full ?? p)}';
   if (p == '/loading' || p == '/login' || p == '/') {
-    if (!s.needsRole && _validNext(next)) return next;
+    if (_validNext(next) && (!s.needsRole || _roleless(next!))) return next;
     return landing(s);
   }
   if (p == '/admin' && !s.isAdmin) return landing(s);

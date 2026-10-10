@@ -9,6 +9,19 @@ import 'package:sufrati/logic/shopping.dart';
 import 'package:sufrati/routing.dart';
 
 void main() {
+  test('روابط الدخول الأول تصل وجهتها حتى بلا دور: دعوة الطاهي ومتابعو الطبيب والتسويق وطلب الطبيب', () async {
+    final auth = FakeAuthService();
+    final s = Session(auth, MemoryLinkService());
+    await auth.signIn(SignInMethod.google);
+    expect(s.needsRole, isTrue);
+    for (final n in ['/i/K7M2QX4D', '/dr/AB12CD34/join', '/r/TOKEN123', '/doctor/apply', '/join/cook']) {
+      expect(appRedirect(s, '/login', next: n), n, reason: n);
+      expect(appRedirect(s, '/loading', next: n), n, reason: 'تحديث الصفحة: $n');
+    }
+    expect(appRedirect(s, '/login', next: '/me'), '/role', reason: 'الرئيسية تتطلب دوراً');
+    expect(appRedirect(s, '/login', next: '//evil.example'), '/role', reason: 'خارجي مرفوض');
+  });
+
   test('الصفحة التعريفية للزائر على الويب فقط، والدعوة تُقبل قبل اختيار الدور', () {
     final s = Session(FakeAuthService(), MemoryLinkService());
     expect(appRedirect(s, '/', landingForGuests: true), isNull);
