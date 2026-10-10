@@ -11,13 +11,14 @@ double parseQty(Object? v) {
 }
 
 class Ingredient {
-  final String key, label, icon, unit, buyUnit;
+  final String key, label, icon, unit, buyUnit, category;
   final double buyQty, buyPrice;
   Ingredient(this.key, Map<String, dynamic> j)
       : label = j['label'] ?? key,
         icon = j['icon'] ?? '•',
         unit = j['unit'] ?? '',
         buyUnit = j['buy_unit'] ?? '',
+        category = j['category'] ?? 'other',
         buyQty = parseQty(j['buy_qty'] ?? 1),
         buyPrice = parseQty(j['buy_price'] ?? 0);
 }

@@ -287,7 +287,8 @@
    "unit": "بيضة",
    "buy_unit": "كرتون بيض (30 حبة)",
    "buy_qty": 30,
-   "buy_price": 15
+   "buy_price": 15,
+   "category": "dairy"
   },
   "egg_white": {
    "label": "بياض بيض",
@@ -295,7 +296,8 @@
    "unit": "حبة",
    "buy_unit": "كرتون بيض (30 حبة)",
    "buy_qty": 30,
-   "buy_price": 15
+   "buy_price": 15,
+   "category": "dairy"
   },
   "chicken_breast": {
    "label": "صدر دجاج",
@@ -303,7 +305,8 @@
    "unit": "قطعة",
    "buy_unit": "كيلو صدور دجاج (≈3 قطع)",
    "buy_qty": 3,
-   "buy_price": 22
+   "buy_price": 22,
+   "category": "meat"
   },
   "salmon": {
    "label": "سلمون",
@@ -311,7 +314,8 @@
    "unit": "قطعة",
    "buy_unit": "كيلو سلمون (≈3 قطع)",
    "buy_qty": 3,
-   "buy_price": 55
+   "buy_price": 55,
+   "category": "meat"
   },
   "tuna": {
    "label": "تونة",
@@ -319,7 +323,8 @@
    "unit": "علبة",
    "buy_unit": "كرتون تونة (12 علبة)",
    "buy_qty": 12,
-   "buy_price": 45
+   "buy_price": 45,
+   "category": "meat"
   },
   "beef": {
    "label": "لحم بقري",
@@ -327,7 +332,8 @@
    "unit": "قطعة",
    "buy_unit": "كيلو لحم بقري",
    "buy_qty": 4,
-   "buy_price": 50
+   "buy_price": 50,
+   "category": "meat"
   },
   "shrimp": {
    "label": "روبيان",
@@ -335,7 +341,8 @@
    "unit": "كوب",
    "buy_unit": "كيلو روبيان",
    "buy_qty": 4,
-   "buy_price": 45
+   "buy_price": 45,
+   "category": "meat"
   },
   "greek_yogurt": {
    "label": "زبادي يوناني",
@@ -343,7 +350,8 @@
    "unit": "كوب",
    "buy_unit": "عبوة زبادي يوناني (4 أكواب)",
    "buy_qty": 4,
-   "buy_price": 18
+   "buy_price": 18,
+   "category": "dairy"
   },
   "cottage_cheese": {
    "label": "جبنة قريش",
@@ -351,7 +359,8 @@
    "unit": "كوب",
    "buy_unit": "علبة جبنة قريش",
    "buy_qty": 4,
-   "buy_price": 14
+   "buy_price": 14,
+   "category": "dairy"
   },
   "cheddar": {
    "label": "جبنة شيدر",
@@ -359,7 +368,8 @@
    "unit": "شريحة",
    "buy_unit": "علبة شيدر (16 شريحة)",
    "buy_qty": 16,
-   "buy_price": 16
+   "buy_price": 16,
+   "category": "dairy"
   },
   "whole_milk": {
    "label": "حليب كامل الدسم",
@@ -367,7 +377,8 @@
    "unit": "كوب",
    "buy_unit": "كرتون حليب (1 لتر ≈ 4 أكواب)",
    "buy_qty": 4,
-   "buy_price": 7
+   "buy_price": 7,
+   "category": "dairy"
   },
   "butter": {
    "label": "زبدة",
@@ -375,7 +386,8 @@
    "unit": "ملعقة",
    "buy_unit": "عبوة زبدة (250غ ≈ 30 ملعقة)",
    "buy_qty": 30,
-   "buy_price": 15
+   "buy_price": 15,
+   "category": "fat"
   },
   "olive_oil": {
    "label": "زيت زيتون",
@@ -383,7 +395,8 @@
    "unit": "ملعقة",
    "buy_unit": "عبوة زيت زيتون 500 مل (~30 ملعقة)",
    "buy_qty": 30,
-   "buy_price": 22
+   "buy_price": 22,
+   "category": "fat"
   },
   "coconut_oil": {
    "label": "زيت جوز الهند",
@@ -391,7 +404,8 @@
    "unit": "ملعقة",
    "buy_unit": "عبوة زيت جوز الهند (~25 ملعقة)",
    "buy_qty": 25,
-   "buy_price": 25
+   "buy_price": 25,
+   "category": "fat"
   },
   "avocado": {
    "label": "أفوكادو",
@@ -399,7 +413,8 @@
    "unit": "حبة",
    "buy_unit": "كيلو أفوكادو (≈4 حبات)",
    "buy_qty": 4,
-   "buy_price": 20
+   "buy_price": 20,
+   "category": "fruit"
   },
   "almonds": {
    "label": "لوز",
@@ -407,7 +422,8 @@
    "unit": "حبة",
    "buy_unit": "كيس لوز (200غ)",
    "buy_qty": 40,
-   "buy_price": 18
+   "buy_price": 18,
+   "category": "fat"
   },
   "walnuts": {
    "label": "جوز",
@@ -415,7 +431,8 @@
    "unit": "حبة",
    "buy_unit": "كيس جوز (200غ)",
    "buy_qty": 30,
-   "buy_price": 22
+   "buy_price": 22,
+   "category": "fat"
   },
   "peanut_butter": {
    "label": "زبدة الفول السوداني",
@@ -423,7 +440,8 @@
    "unit": "ملعقة",
    "buy_unit": "عبوة زبدة فول سوداني",
    "buy_qty": 20,
-   "buy_price": 18
+   "buy_price": 18,
+   "category": "fat"
   },
   "chia_seeds": {
    "label": "بذور شيا",
@@ -431,7 +449,8 @@
    "unit": "ملعقة",
    "buy_unit": "كيس بذور شيا (200غ)",
    "buy_qty": 20,
-   "buy_price": 15
+   "buy_price": 15,
+   "category": "fat"
   },
   "spinach": {
    "label": "سبانخ",
@@ -439,7 +458,8 @@
    "unit": "كوب",
    "buy_unit": "ربطة سبانخ",
    "buy_qty": 4,
-   "buy_price": 4
+   "buy_price": 4,
+   "category": "veg"
   },
   "lettuce": {
    "label": "خس",
@@ -447,7 +467,8 @@
    "unit": "كوب",
    "buy_unit": "حبة خس",
    "buy_qty": 6,
-   "buy_price": 3
+   "buy_price": 3,
+   "category": "veg"
   },
   "cucumber": {
    "label": "خيار",
@@ -455,7 +476,8 @@
    "unit": "حبة",
    "buy_unit": "كيلو خيار",
    "buy_qty": 6,
-   "buy_price": 4
+   "buy_price": 4,
+   "category": "veg"
   },
   "tomato": {
    "label": "طماطم",
@@ -463,7 +485,8 @@
    "unit": "حبة",
    "buy_unit": "كيلو طماطم",
    "buy_qty": 6,
-   "buy_price": 4
+   "buy_price": 4,
+   "category": "veg"
   },
   "broccoli": {
    "label": "بروكلي",
@@ -471,7 +494,8 @@
    "unit": "كوب",
    "buy_unit": "كيلو بروكلي",
    "buy_qty": 4,
-   "buy_price": 8
+   "buy_price": 8,
+   "category": "veg"
   },
   "zucchini": {
    "label": "كوسة",
@@ -479,7 +503,8 @@
    "unit": "حبة",
    "buy_unit": "كيلو كوسة",
    "buy_qty": 6,
-   "buy_price": 6
+   "buy_price": 6,
+   "category": "veg"
   },
   "bell_pepper": {
    "label": "فلفل رومي",
@@ -487,7 +512,8 @@
    "unit": "حبة",
    "buy_unit": "كيلو فلفل رومي",
    "buy_qty": 5,
-   "buy_price": 8
+   "buy_price": 8,
+   "category": "veg"
   },
   "mushroom": {
    "label": "فطر",
@@ -495,7 +521,8 @@
    "unit": "كوب",
    "buy_unit": "كيلو فطر",
    "buy_qty": 4,
-   "buy_price": 12
+   "buy_price": 12,
+   "category": "veg"
   },
   "onion": {
    "label": "بصل",
@@ -503,7 +530,8 @@
    "unit": "حبة",
    "buy_unit": "كيلو بصل",
    "buy_qty": 6,
-   "buy_price": 4
+   "buy_price": 4,
+   "category": "veg"
   },
   "garlic": {
    "label": "ثوم",
@@ -511,7 +539,8 @@
    "unit": "فص",
    "buy_unit": "كيس ثوم",
    "buy_qty": 20,
-   "buy_price": 5
+   "buy_price": 5,
+   "category": "veg"
   },
   "mixed_salad": {
    "label": "سلطة خضار مشكلة",
@@ -519,7 +548,8 @@
    "unit": "كوب",
    "buy_unit": "كيلو خضار سلطة مشكلة",
    "buy_qty": 5,
-   "buy_price": 10
+   "buy_price": 10,
+   "category": "veg"
   },
   "banana": {
    "label": "موز",
@@ -527,7 +557,8 @@
    "unit": "حبة",
    "buy_unit": "كيلو موز (≈6 حبات)",
    "buy_qty": 6,
-   "buy_price": 5
+   "buy_price": 5,
+   "category": "fruit"
   },
   "apple": {
    "label": "تفاح",
@@ -535,7 +566,8 @@
    "unit": "حبة",
    "buy_unit": "كيلو تفاح",
    "buy_qty": 6,
-   "buy_price": 8
+   "buy_price": 8,
+   "category": "fruit"
   },
   "berries": {
    "label": "توت مشكل",
@@ -543,7 +575,8 @@
    "unit": "كوب",
    "buy_unit": "علبة توت مجمد",
    "buy_qty": 4,
-   "buy_price": 15
+   "buy_price": 15,
+   "category": "fruit"
   },
   "rice": {
    "label": "أرز مطبوخ",
@@ -551,7 +584,8 @@
    "unit": "كوب",
    "buy_unit": "كيس أرز (كيلو ≈ 5 أكواب مطبوخ)",
    "buy_qty": 5,
-   "buy_price": 8
+   "buy_price": 8,
+   "category": "grain"
   },
   "brown_rice": {
    "label": "أرز بني مطبوخ",
@@ -559,7 +593,8 @@
    "unit": "كوب",
    "buy_unit": "كيس أرز بني (كيلو ≈ 5 أكواب)",
    "buy_qty": 5,
-   "buy_price": 12
+   "buy_price": 12,
+   "category": "grain"
   },
   "oats": {
    "label": "شوفان",
@@ -567,7 +602,8 @@
    "unit": "كوب",
    "buy_unit": "كيس شوفان (500غ ≈ 6 أكواب)",
    "buy_qty": 6,
-   "buy_price": 12
+   "buy_price": 12,
+   "category": "grain"
   },
   "whole_bread": {
    "label": "خبز أسمر",
@@ -575,7 +611,8 @@
    "unit": "شريحة",
    "buy_unit": "كيس خبز أسمر (20 شريحة)",
    "buy_qty": 20,
-   "buy_price": 9
+   "buy_price": 9,
+   "category": "grain"
   },
   "sweet_potato": {
    "label": "بطاطا حلوة",
@@ -583,7 +620,8 @@
    "unit": "حبة",
    "buy_unit": "كيلو بطاطا حلوة",
    "buy_qty": 4,
-   "buy_price": 8
+   "buy_price": 8,
+   "category": "grain"
   },
   "potato": {
    "label": "بطاطس",
@@ -591,7 +629,8 @@
    "unit": "حبة",
    "buy_unit": "كيلو بطاطس",
    "buy_qty": 6,
-   "buy_price": 5
+   "buy_price": 5,
+   "category": "grain"
   },
   "quinoa": {
    "label": "كينوا مطبوخة",
@@ -599,7 +638,8 @@
    "unit": "كوب",
    "buy_unit": "كيس كينوا (كيلو ≈ 5 أكواب)",
    "buy_qty": 5,
-   "buy_price": 20
+   "buy_price": 20,
+   "category": "grain"
   },
   "lentils": {
    "label": "عدس",
@@ -607,7 +647,8 @@
    "unit": "كوب",
    "buy_unit": "كيس عدس (كيلو ≈ 4 أكواب)",
    "buy_qty": 4,
-   "buy_price": 8
+   "buy_price": 8,
+   "category": "grain"
   },
   "chickpeas": {
    "label": "حمص",
@@ -615,7 +656,8 @@
    "unit": "كوب",
    "buy_unit": "كيس حمص (كيلو ≈ 4 أكواب)",
    "buy_qty": 4,
-   "buy_price": 8
+   "buy_price": 8,
+   "category": "grain"
   },
   "protein_powder": {
    "label": "بروتين باودر",
@@ -623,7 +665,8 @@
    "unit": "سكوب",
    "buy_unit": "عبوة بروتين (30 سكوب)",
    "buy_qty": 30,
-   "buy_price": 140
+   "buy_price": 140,
+   "category": "other"
   },
   "lemon": {
    "label": "ليمون",
@@ -631,7 +674,8 @@
    "unit": "حبة",
    "buy_unit": "كيلو ليمون",
    "buy_qty": 8,
-   "buy_price": 6
+   "buy_price": 6,
+   "category": "veg"
   },
   "coffee": {
    "label": "قهوة",
@@ -639,7 +683,8 @@
    "unit": "كوب",
    "buy_unit": "عبوة قهوة",
    "buy_qty": 20,
-   "buy_price": 15
+   "buy_price": 15,
+   "category": "other"
   },
   "dark_chocolate": {
    "label": "شوكولاتة داكنة (85%+)",
@@ -647,7 +692,8 @@
    "unit": "قطعة",
    "buy_unit": "لوح شوكولاتة داكنة",
    "buy_qty": 10,
-   "buy_price": 15
+   "buy_price": 15,
+   "category": "other"
   }
  },
  "RECIPES": {

@@ -425,6 +425,17 @@ class _Chip extends StatelessWidget {
       );
 }
 
+/// أقسام المشتريات بترتيب عرضها (مفتاح التصنيف في بيانات الأنظمة ← الاسم).
+const _shopCats = {
+  'meat': 'لحوم وأسماك',
+  'dairy': 'ألبان وبيض',
+  'veg': 'خضار',
+  'fruit': 'فواكه',
+  'grain': 'حبوب ونشويات ومخبوزات',
+  'fat': 'دهون ومكسرات',
+  'other': 'أخرى',
+};
+
 class _ShoppingTab extends StatelessWidget {
   final HouseholdStore store;
   const _ShoppingTab({required this.store});
@@ -491,7 +502,13 @@ class _ShoppingCard extends StatelessWidget {
                 style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: Brand.grey));
           }),
           const SizedBox(height: 4),
-          for (final l in ([...lines]..sort((a, b) => a.bought == b.bought ? 0 : (a.bought ? 1 : -1))))
+          for (final cat in _shopCats.keys) ...[
+            if (lines.any((l) => program.ingredients[l.key]!.category == cat))
+              Padding(
+                padding: const EdgeInsets.only(top: 12, bottom: 2),
+                child: Text(_shopCats[cat]!, style: const TextStyle(fontWeight: FontWeight.w900, color: Brand.green, fontSize: 15)),
+              ),
+            for (final l in ([...lines.where((l) => program.ingredients[l.key]!.category == cat)]..sort((a, b) => a.bought == b.bought ? 0 : (a.bought ? 1 : -1))))
             Container(
               padding: const EdgeInsets.symmetric(vertical: 8),
               decoration: const BoxDecoration(border: Border(bottom: BorderSide(color: Brand.cream))),
@@ -522,6 +539,7 @@ class _ShoppingCard extends StatelessWidget {
                 ],
               ]),
             ),
+          ],
         ]),
       );
 }
