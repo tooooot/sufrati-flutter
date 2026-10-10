@@ -52,7 +52,7 @@ jobs:
           xcodebuild -workspace ios/Runner.xcworkspace -scheme Runner -configuration Release \
             -destination 'generic/platform=iOS' -archivePath "$RUNNER_TEMP/Runner.xcarchive" \
             DEVELOPMENT_TEAM="$TEAM_ID" CODE_SIGN_STYLE=Automatic \
-            CURRENT_PROJECT_VERSION="$((100 + ${{ github.run_number }}))" MARKETING_VERSION="$VERSION" \
+            CURRENT_PROJECT_VERSION="$((100 + ${{ github.run_number }}))" FLUTTER_BUILD_NUMBER="$((100 + ${{ github.run_number }}))" MARKETING_VERSION="$VERSION" \
             -allowProvisioningUpdates -authenticationKeyPath ~/private_keys/AuthKey_${ASC_KEY_ID}.p8 \
             -authenticationKeyID "$ASC_KEY_ID" -authenticationKeyIssuerID "$ASC_ISSUER_ID" \
             archive
