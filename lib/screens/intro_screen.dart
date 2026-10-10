@@ -354,7 +354,7 @@ class _LinesPainter extends CustomPainter {
   _LinesPainter(this.grow, this.pulse);
   @override
   void paint(Canvas canvas, Size s) {
-    final top = Offset(s.width / 2, 80), r = Offset(s.width - 74, s.height - 50), l = Offset(74, s.height - 50);
+    final top = Offset(s.width / 2, 122), r = Offset(s.width - 74, s.height - 50), l = Offset(74, s.height - 50);
     final p = Paint()..color = Colors.white.withValues(alpha: .55 * grow)..strokeWidth = 3 * pulse..strokeCap = StrokeCap.round;
     canvas.drawLine(top, Offset.lerp(top, r, grow)!, p);
     canvas.drawLine(top, Offset.lerp(top, l, grow)!, p);
