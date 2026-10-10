@@ -12,7 +12,14 @@ class IntroScreen extends StatefulWidget {
   final String? greeting;
   final String ctaLabel;
   final String ctaRoute;
-  IntroScreen({super.key, List<PitchBeat>? beats, this.greeting, this.ctaLabel = 'ابدأ الآن', this.ctaRoute = '/login'})
+  /// نصوص الإطار (تخطَّ، المس للتالي): تتغير مع لغة العرض (عرض الطاهي بثلاث لغات).
+  final String skipLabel, tapHint;
+  /// تصفّح الأنظمة وروابط الخصوصية في الختام (تُخفى في عرض الطاهي).
+  final bool showBrowse;
+  /// شريط اختياري أعلى اللقطة (مثل أزرار اللغة).
+  final Widget? header;
+  IntroScreen({super.key, List<PitchBeat>? beats, this.greeting, this.ctaLabel = 'ابدأ الآن', this.ctaRoute = '/login',
+      this.skipLabel = 'تخطَّ', this.tapHint = 'المس الشاشة للتالي', this.showBrowse = true, this.header})
       : beats = beats ?? beatsFor('user');
 
   @override
@@ -58,7 +65,8 @@ class _IntroScreenState extends State<IntroScreen> with SingleTickerProviderStat
             onTapUp: (d) {
               final w = MediaQuery.sizeOf(context).width;
               // RTL: الجهة اليمنى = التالي، واليسرى = السابق
-              d.localPosition.dx > w / 2 ? _go(_i + 1) : _go(_i - 1);
+              final rtl = Directionality.of(context) == TextDirection.rtl;
+              (rtl ? d.localPosition.dx > w / 2 : d.localPosition.dx < w / 2) ? _go(_i + 1) : _go(_i - 1);
             },
             child: Column(children: [
               Padding(
@@ -86,10 +94,11 @@ class _IntroScreenState extends State<IntroScreen> with SingleTickerProviderStat
                   ),
                   TextButton(
                     onPressed: () => context.go('/login'),
-                    child: const Text('تخطَّ', style: TextStyle(color: Brand.cream, fontWeight: black, fontSize: 15)),
+                    child: Text(widget.skipLabel, style: const TextStyle(color: Brand.cream, fontWeight: black, fontSize: 15)),
                   ),
                 ]),
               ),
+              if (widget.header != null) Padding(padding: const EdgeInsets.only(top: 8), child: widget.header),
               if (widget.greeting != null)
                 Padding(
                   padding: const EdgeInsets.only(top: 14),
@@ -135,6 +144,7 @@ class _IntroScreenState extends State<IntroScreen> with SingleTickerProviderStat
                         onPressed: () => context.go(widget.ctaRoute),
                         child: Text(widget.ctaLabel, style: TextStyle(fontSize: 18, fontWeight: black)),
                       ),
+                      if (widget.showBrowse) ...[
                       TextButton(
                         onPressed: () => context.go('/browse'),
                         child: const Text('تصفّح الأنظمة بلا تسجيل', style: TextStyle(color: Brand.cream, fontWeight: black, decoration: TextDecoration.underline)),
@@ -149,14 +159,15 @@ class _IntroScreenState extends State<IntroScreen> with SingleTickerProviderStat
                           child: const Text('حذف الحساب', style: TextStyle(color: Colors.white70, fontSize: 12)),
                         ),
                       ]),
+                      ],
                     ]),
                   ),
                 ),
               ),
               if (!last)
-                const Padding(
-                  padding: EdgeInsets.only(bottom: 22),
-                  child: Text('المس الشاشة للتالي', style: TextStyle(color: Colors.white54, fontSize: 12)),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 22),
+                  child: Text(widget.tapHint, style: const TextStyle(color: Colors.white54, fontSize: 12)),
                 ),
             ]),
               ),

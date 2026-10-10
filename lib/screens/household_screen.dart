@@ -172,6 +172,26 @@ Future<void> inviteFlow(BuildContext context, LinkService links, Role role) asyn
           onPressed: () => launchUrl(Uri.parse('https://wa.me/?text=${Uri.encodeComponent(msg)}'),
               mode: LaunchMode.externalApplication),
         ),
+        if (role == Role.cook) ...[
+          const SizedBox(height: 16),
+          const Text('أرسل للطاهي شرحًا قصيرًا (نصف دقيقة) بلغته:', textAlign: TextAlign.center,
+              style: TextStyle(fontWeight: FontWeight.w800, fontSize: 14, color: Brand.green)),
+          const SizedBox(height: 8),
+          Row(children: [
+            for (final e in const {'ar': 'العربية', 'en': 'English', 'am': 'አማርኛ'}.entries)
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 3),
+                  child: OutlinedButton(
+                    onPressed: () => launchUrl(
+                        Uri.parse('https://wa.me/?text=${Uri.encodeComponent(_cookPitchMessage(e.key))}'),
+                        mode: LaunchMode.externalApplication),
+                    child: Text(e.value, style: const TextStyle(fontWeight: black)),
+                  ),
+                ),
+              ),
+          ]),
+        ],
         const SizedBox(height: 8),
         OutlinedButton.icon(
           icon: const Icon(Icons.copy),
@@ -200,4 +220,14 @@ Future<void> _confirmRemove(BuildContext context, LinkService links, Role role, 
     ),
   );
   if (ok == true) await links.removeRole(role);
+}
+
+/// رسالة تعريف الطاهي بالتطبيق: رابط العرض الحركي بلغته.
+String _cookPitchMessage(String lang) {
+  final link = 'https://maeda.wardyat.net/pitch/cook?lang=$lang';
+  return switch (lang) {
+    'en' => 'Watch how to use the Sufrati app (30 seconds):\n$link',
+    'am' => 'የሱፍራቲ መተግበሪያን እንዴት እንደሚጠቀሙ ይመልከቱ (30 ሰከንድ)፡\n$link',
+    _ => 'شاهد كيف تستخدم تطبيق سفرتي (نصف دقيقة):\n$link',
+  };
 }

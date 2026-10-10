@@ -454,3 +454,196 @@ class MembersJoinVisual extends StatelessWidget {
     ]);
   }
 }
+
+/// نصوص رسوم الطاهي بثلاث لغات (ar/en/am): ما يراه الطاهي يطابق لغته.
+const cookText = <String, Map<String, String>>{
+  'ar': {
+    'meal': 'العشاء', 'time': '8:00 م', 'dish': 'سمك مشوي مع أرز وخضار', 'i1': 'سمك', 'i2': 'أرز', 'i3': 'خضار',
+    'n1': 'بعد 45 دقيقة', 'n2': 'حان موعد العشاء', 'btn': 'حُضّرت', 'ok': 'وصل صاحب الخطة: الوجبة جاهزة',
+  },
+  'en': {
+    'meal': 'Dinner', 'time': '8:00 PM', 'dish': 'Grilled fish with rice and vegetables', 'i1': 'Fish', 'i2': 'Rice', 'i3': 'Vegetables',
+    'n1': 'In 45 minutes', 'n2': 'Dinner time', 'btn': 'Prepared', 'ok': 'Owner notified: meal is ready',
+  },
+  'am': {
+    'meal': 'እራት', 'time': '8:00 PM', 'dish': 'የተጠበሰ ዓሳ ከሩዝና አትክልት ጋር', 'i1': 'ዓሳ', 'i2': 'ሩዝ', 'i3': 'አትክልት',
+    'n1': 'ከ45 ደቂቃ በኋላ', 'n2': 'የእራት ሰዓት ደርሷል', 'btn': 'ተዘጋጅቷል', 'ok': 'ለባለቤቱ ተላከ፡ ምግቡ ዝግጁ ነው',
+  },
+};
+
+/// 1) بطاقة وجبة اليوم للطاهي: الاسم والوقت ثم مكوّناتها تظهر واحداً بعد الآخر.
+class CookTodayVisual extends StatelessWidget {
+  final double t;
+  final String lang;
+  const CookTodayVisual(this.t, {super.key, required this.lang});
+  @override
+  Widget build(BuildContext context) {
+    final x = cookText[lang]!;
+    return Center(
+      child: Opacity(
+        opacity: seg(t, 0, .2),
+        child: Transform.translate(
+          offset: Offset(0, 30 * (1 - seg(t, 0, .2))),
+          child: SizedBox(
+            width: 300,
+            child: pitchCard(
+              child: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
+                Row(children: [
+                  const Icon(Icons.nights_stay, color: Brand.honey),
+                  const SizedBox(width: 8),
+                  Text(x['meal']!, style: const TextStyle(fontWeight: black, fontSize: 20)),
+                  const Spacer(),
+                  Text(x['time']!, style: const TextStyle(color: Brand.honey, fontWeight: black, fontSize: 16)),
+                ]),
+                const SizedBox(height: 8),
+                Text(x['dish']!, style: const TextStyle(fontSize: 16, height: 1.5, color: Brand.grey)),
+                const SizedBox(height: 12),
+                for (var k = 1; k <= 3; k++)
+                  Opacity(
+                    opacity: seg(t, .25 + k * .12, .4 + k * .12),
+                    child: Padding(
+                      padding: const EdgeInsets.only(bottom: 6),
+                      child: Row(children: [
+                        Icon(Icons.check_circle, size: 20, color: Brand.green.withValues(alpha: .85)),
+                        const SizedBox(width: 8),
+                        Text(x['i$k']!, style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 16)),
+                      ]),
+                    ),
+                  ),
+              ]),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// 2) تنبيهان ينزلان من الأعلى: قبل الموعد بـ45 دقيقة، ثم عند الموعد.
+class NotifyVisual extends StatelessWidget {
+  final double t;
+  final String lang;
+  const NotifyVisual(this.t, {super.key, required this.lang});
+  @override
+  Widget build(BuildContext context) {
+    final x = cookText[lang]!;
+    Widget card(String title, String sub, double from, {bool strong = false}) => Opacity(
+          opacity: seg(t, from, from + .18),
+          child: Transform.translate(
+            offset: Offset(0, -40 * (1 - seg(t, from, from + .18))),
+            child: Padding(
+              padding: const EdgeInsets.only(bottom: 14),
+              child: SizedBox(
+                width: 300,
+                child: pitchCard(
+                  child: Row(children: [
+                    CircleAvatar(radius: 20, backgroundColor: strong ? Brand.green : Brand.honey, child: const Icon(Icons.notifications_active, color: Colors.white, size: 22)),
+                    const SizedBox(width: 12),
+                    Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                      Text(title, style: const TextStyle(fontWeight: black, fontSize: 16)),
+                      Text(sub, style: const TextStyle(color: Brand.grey, fontSize: 13)),
+                    ])),
+                  ]),
+                ),
+              ),
+            ),
+          ),
+        );
+    return Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+      card('${x['meal']} · ${x['n1']}', x['dish']!, .05),
+      card('${x['n2']} · ${x['time']}', x['dish']!, .45, strong: true),
+    ]);
+  }
+}
+
+/// 3) اللغة: اسم الوجبة نفسه يتبدّل بين العربية والإنجليزية والأمهرية.
+class LanguageVisual extends StatelessWidget {
+  final double t;
+  const LanguageVisual(this.t, {super.key});
+  @override
+  Widget build(BuildContext context) {
+    const order = ['ar', 'en', 'am'];
+    const names = {'ar': 'العربية', 'en': 'English', 'am': 'አማርኛ'};
+    final i = (t * 3).floor().clamp(0, 2);
+    final x = cookText[order[i]]!;
+    return Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+      Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+        for (var k = 0; k < 3; k++)
+          Container(
+            margin: const EdgeInsets.symmetric(horizontal: 4),
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+            decoration: BoxDecoration(color: k == i ? Brand.honey : Colors.white24, borderRadius: BorderRadius.circular(20)),
+            child: Text(names[order[k]]!, style: const TextStyle(color: Colors.white, fontWeight: black, fontSize: 15)),
+          ),
+      ]),
+      const SizedBox(height: 18),
+      SizedBox(
+        width: 300,
+        child: pitchCard(
+          child: AnimatedSwitcher(
+            duration: const Duration(milliseconds: 300),
+            child: Column(key: ValueKey(i), crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
+              Text(x['meal']!, style: const TextStyle(fontWeight: black, fontSize: 20)),
+              const SizedBox(height: 6),
+              Text(x['dish']!, style: const TextStyle(fontSize: 16, height: 1.5, color: Brand.grey)),
+              const SizedBox(height: 10),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                decoration: BoxDecoration(color: Brand.green, borderRadius: BorderRadius.circular(12)),
+                child: Text(x['btn']!, style: const TextStyle(color: Colors.white, fontWeight: black)),
+              ),
+            ]),
+          ),
+        ),
+      ),
+    ]);
+  }
+}
+
+/// 4) زر «حُضّرت» يُضغط فتصل علامة الاطمئنان لصاحب الخطة (بلغة الطاهي).
+class CookDoneVisual extends StatelessWidget {
+  final double t;
+  final String lang;
+  const CookDoneVisual(this.t, {super.key, required this.lang});
+  @override
+  Widget build(BuildContext context) {
+    final x = cookText[lang]!;
+    final press = seg(t, .25, .4);
+    final ok = seg(t, .55, .8);
+    return Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+      SizedBox(
+        width: 300,
+        child: pitchCard(
+          child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+            Text('${x['meal']} · ${x['time']}', style: const TextStyle(fontWeight: black, fontSize: 18)),
+            const SizedBox(height: 10),
+            Transform.scale(
+              scale: 1 - .06 * (press < 1 ? press : 0),
+              child: Container(
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                decoration: BoxDecoration(color: press > .5 ? Brand.green : Brand.honey, borderRadius: BorderRadius.circular(12)),
+                child: Text(press > .5 ? '${x['btn']} ✓' : x['btn']!, textAlign: TextAlign.center,
+                    style: const TextStyle(color: Colors.white, fontWeight: black, fontSize: 17)),
+              ),
+            ),
+          ]),
+        ),
+      ),
+      const SizedBox(height: 18),
+      Opacity(
+        opacity: ok,
+        child: Transform.translate(
+          offset: Offset(0, 20 * (1 - ok)),
+          child: pitchCard(
+            color: Brand.cream,
+            child: Row(mainAxisSize: MainAxisSize.min, children: [
+              const Icon(Icons.verified, color: Brand.green),
+              const SizedBox(width: 8),
+              Flexible(child: Text(x['ok']!, style: const TextStyle(fontWeight: black, color: Brand.green, fontSize: 15))),
+            ]),
+          ),
+        ),
+      ),
+    ]);
+  }
+}

@@ -5,6 +5,7 @@ import 'package:sufrati/data/growth.dart';
 import 'package:sufrati/data/links.dart';
 import 'package:sufrati/routing.dart';
 import 'package:sufrati/screens/pitch_content.dart';
+import 'package:sufrati/screens/pitch_visuals.dart';
 
 import 'fake_auth.dart';
 import 'package:sufrati/auth/session.dart';
@@ -45,7 +46,7 @@ void main() {
   });
 
   test('لقطات العرض: أربع لكل دور، وكلها ببنية سليمة', () {
-    for (final k in ['user', 'doctor', 'group', 'غير معروف']) {
+    for (final k in ['user', 'doctor', 'group', 'cook', 'غير معروف']) {
       final b = beatsFor(k, name: 'د. خالد');
       expect(b, hasLength(4), reason: k);
       for (final x in b) {
@@ -62,5 +63,20 @@ void main() {
     expect(appRedirect(s, '/dr/ABCD2345'), isNull);
     expect(appRedirect(s, '/dr/ABCD2345/join', full: '/dr/ABCD2345/join'), startsWith('/login?next='));
     expect(appRedirect(s, '/doctor/profile'), startsWith('/login'));
+  });
+
+  test('عرض الطاهي بثلاث لغات: أربع لقطات لكل لغة، ونصوص الرسوم مكتملة، واللغة المجهولة عربية', () {
+    for (final l in ['ar', 'en', 'am']) {
+      final b = cookBeats(l);
+      expect(b, hasLength(4), reason: l);
+      expect(chromeFor(l).cta, isNotEmpty);
+      for (final k in ['meal', 'time', 'dish', 'i1', 'i2', 'i3', 'n1', 'n2', 'btn', 'ok']) {
+        expect(cookText[l]![k], isNotEmpty, reason: '$l/$k');
+      }
+    }
+    expect(cookBeats('xx').first.title, cookBeats('ar').first.title);
+    expect(chromeFor('en').rtl, isFalse);
+    expect(chromeFor('am').rtl, isFalse);
+    expect(chromeFor('ar').rtl, isTrue);
   });
 }
