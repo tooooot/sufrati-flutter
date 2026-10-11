@@ -441,7 +441,7 @@ class _JourneyScreenState extends State<JourneyScreen> {
           ]),
         );
       case 'result':
-        return _resultStep();
+        return ListView(padding: const EdgeInsets.fromLTRB(16, 4, 16, 28), children: [_resultStep()]);
     }
     return const SizedBox.shrink();
   }
@@ -453,15 +453,15 @@ class _JourneyScreenState extends State<JourneyScreen> {
     if (_mode == Mode.gain) {
       return _optionsPage('كم تريد أن تزيد؟', null, [
         const _Opt<int?>('3 كجم', 3), const _Opt<int?>('5 كجم', 5), const _Opt<int?>('8 كجم', 8), const _Opt<int?>('لا أحدد', null),
-      ], (v) => _answer('goal', v), grid: true);
+      ], (v) => _answer('goal', v), grid: true, cols: 2);
     }
     final opts = <_Opt<int?>>[for (final k in const [5, 10, 15, 20, 25]) if (w - k >= minGoal) _Opt<int?>('أنقص $k كجم', k)];
     if (opts.isEmpty) opts.add(const _Opt<int?>('أثبّت وزني', null));
-    return _optionsPage('كم تريد أن تنقص؟', null, opts, (v) => _answer('goal', v), grid: true);
+    return _optionsPage('كم تريد أن تنقص؟', null, opts, (v) => _answer('goal', v), grid: true, cols: 2);
   }
 
   /// صفحة خيارات كاملة: عنوان كبير وأزرار ضخمة. [grid] للشرائح (٣ أعمدة)، وإلا قائمة بطاقات كبيرة.
-  Widget _optionsPage<T>(String title, String? sub, List<_Opt<T>> opts, void Function(Object? v) onPick, {bool grid = false}) {
+  Widget _optionsPage<T>(String title, String? sub, List<_Opt<T>> opts, void Function(Object? v) onPick, {bool grid = false, int cols = 3}) {
     final head = Padding(
       padding: const EdgeInsets.fromLTRB(20, 10, 20, 14),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -477,7 +477,7 @@ class _JourneyScreenState extends State<JourneyScreen> {
           child: Wrap(spacing: 10, runSpacing: 10, children: [
             for (final o in opts)
               SizedBox(
-                width: (MediaQuery.sizeOf(context).width.clamp(0, 520) - 32 - 20) / 3,
+                width: (MediaQuery.sizeOf(context).width.clamp(0, 520) - 32 - 10 * (cols - 1)) / cols,
                 child: _OptButton(label: o.label, icon: o.icon, sub: o.sub, compact: true, onTap: () => onPick(o.value)),
               ),
           ]),
