@@ -51,7 +51,7 @@ class _JoinScreenState extends State<JoinScreen> {
         GreenHeader(
           icon: cook ? '👨‍🍳' : '🩺',
           title: cook ? 'الطاهي' : 'الطبيب',
-          subtitle: 'اكتب رمز الدعوة الذي وصلك من صاحب الخطة',
+          subtitle: 'اكتب رمز الدعوة الذي وصلك من مدير البيت',
         ),
         Center(
           child: ConstrainedBox(

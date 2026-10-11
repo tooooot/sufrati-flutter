@@ -20,13 +20,13 @@ import '../auth/roles.dart';
 import '../data/links.dart';
 import 'household_screen.dart';
 
-/// لوحة المريض/صاحب الخطة — نقل لـ user.html: الوجبات (اليوم/غداً) · المشتريات · الأسبوع القادم.
+/// لوحة المريض/مدير البيت — نقل لـ user.html: الوجبات (اليوم/غداً) · المشتريات · الأسبوع القادم.
 class PatientScreen extends StatefulWidget {
   final HouseholdStore store;
   final Library library;
   final LinkService links;
   final String userName;
-  /// صاحب الخطة فقط يرى تبويب «بيتي» ويدعو؛ الطبيب يرى الخطة والمشتريات والأسبوع.
+  /// مدير البيت فقط يرى تبويب «بيتي» ويدعو؛ الطبيب يرى الخطة والمشتريات والأسبوع.
   final bool showHome;
   const PatientScreen({super.key, required this.store, required this.library, required this.links,
       this.userName = '', this.showHome = true});
@@ -161,7 +161,7 @@ class _TodayTabState extends State<_TodayTab> {
         final servings = widget.store.household.servings;
         final tip = program.userTips.isEmpty ? null : program.userTips[_ordinal(now) % program.userTips.length];
         return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-          // خطوات البداية لصاحب الخطة الجديد: تختفي حين ينضم الطاهي
+          // خطوات البداية لمدير البيت الجديد: تختفي حين ينضم الطاهي
           if (widget.canInvite && widget.links.joinedBy(Role.cook) == null) ...[
             _FirstSteps(links: widget.links, tabs: widget.tabs),
             const SizedBox(height: 14),

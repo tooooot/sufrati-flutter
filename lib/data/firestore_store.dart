@@ -1,5 +1,5 @@
 // مخزن البيت الحقيقي: households/{hid}/weeks/{yyyy-MM-dd} و shopping/{yyyy-MM-dd}.
-// من يملك صلاحية الإدارة (صاحب الخطة/الطبيب) يولّد خطة الأسبوع عند أول فتح؛ الطاهي يقرأ فقط ويعلّم «جاهز».
+// من يملك صلاحية الإدارة (مدير البيت/الطبيب) يولّد خطة الأسبوع عند أول فتح؛ الطاهي يقرأ فقط ويعلّم «جاهز».
 import 'dart:async';
 import 'dart:math';
 
@@ -17,11 +17,11 @@ import 'models.dart';
 import 'repository.dart';
 import 'store.dart';
 
-/// الطاهي فتح الأسبوع قبل أن يجهّز صاحب الخطة أو الطبيب خطته.
+/// الطاهي فتح الأسبوع قبل أن يجهّز مدير البيت أو الطبيب خطته.
 class PlanNotReady implements Exception {
   const PlanNotReady();
   @override
-  String toString() => 'لم تُجهَّز خطة هذا الأسبوع بعد. اطلب من صاحب الخطة فتح التطبيق.';
+  String toString() => 'لم تُجهَّز خطة هذا الأسبوع بعد. اطلب من مدير البيت فتح التطبيق.';
 }
 
 String weekId(DateTime ws) =>
@@ -198,7 +198,7 @@ class FirestoreStore extends HouseholdStore {
       'prepared': value ? FieldValue.arrayUnion([k]) : FieldValue.arrayRemove([k]),
     });
     if (value) {
-      // يُخبَر صاحب الخطة والطبيب أن الوجبة حُضّرت (اسم الوجبة بالعربية كما في البرنامج)
+      // يُخبَر مدير البيت والطبيب أن الوجبة حُضّرت (اسم الوجبة بالعربية كما في البرنامج)
       final name = (await program()).slots.where((x) => x.id == slot).firstOrNull?.name;
       EventQueue.instance.emit('prepared', hid: hid, meal: name, throttleKey: 'prep:$hid:${weekId(weekStart)}:$k', every: const Duration(minutes: 5));
     }

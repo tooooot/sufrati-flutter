@@ -111,7 +111,7 @@ class _NewHouseScreenState extends State<NewHouseScreen> {
                     controller: _name,
                     onChanged: (_) => setState(() {}),
                     decoration: InputDecoration(
-                      labelText: 'اسم البيت أو صاحب الخطة', hintText: 'مثال: بيت أبو عبدالله',
+                      labelText: 'اسم البيت أو مدير البيت', hintText: 'مثال: بيت أبو عبدالله',
                       filled: true, fillColor: Colors.white,
                       border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
                     ),

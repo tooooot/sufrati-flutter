@@ -27,7 +27,7 @@ class CookScreen extends StatefulWidget {
   final Library library;
   final CookI18n i18n;
   final LinkService links;
-  /// صاحبة الخطة التي تطبخ بنفسها: نفس شاشة الطاهي (تنبيهات الوقت والتذكيرات) على بيتها، مع زر رجوع.
+  /// مديرة البيت التي تطبخ بنفسها: نفس شاشة الطاهي (تنبيهات الوقت والتذكيرات) على بيتها، مع زر رجوع.
   final bool ownerMode;
   const CookScreen({super.key, required this.store, required this.library, required this.i18n, required this.links, this.ownerMode = false});
 

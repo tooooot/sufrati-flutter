@@ -106,7 +106,7 @@ service cloud.firestore {
         && request.resource.data.get('usedBy', null) == null
         && request.resource.data.expiresAt is timestamp
         && (isAdmin()
-            || (hasRole(request.resource.data.hid, ['owner']) && request.resource.data.role in ['cook', 'doctor'])
+            || (hasRole(request.resource.data.hid, ['owner']) && request.resource.data.role in ['cook', 'doctor', 'owner'])
             || (hasRole(request.resource.data.hid, ['doctor']) && request.resource.data.role == 'owner'));
       allow update: if signedIn() && resource.data.get('usedBy', null) == null
         && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['usedBy', 'usedAt', 'usedByName'])

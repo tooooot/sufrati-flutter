@@ -196,9 +196,11 @@ class FirestoreLinkService extends LinkService {
     try {
       await b.commit();
     } on FirebaseException catch (e) {
-      if (e.code == 'permission-denied') return 'تعذّر الربط بهذا الرمز. اطلب رمزاً جديداً من صاحب الخطة.';
+      if (e.code == 'permission-denied') return 'تعذّر الربط بهذا الرمز. اطلب رمزاً جديداً من مدير البيت.';
       rethrow;
     }
+    activeHid = inv.hid; // البيت الذي انضم إليه الآن هو بيته الحالي (مهم للشريك الذي له بيت سابق)
+    notifyListeners();
     return null;
   }
 

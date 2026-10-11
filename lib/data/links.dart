@@ -1,4 +1,4 @@
-// الربط بين صاحب الخطة والطاهي والطبيب: كل ارتباط يتم برمز دعوة يصدره من يملك البيت ويدخله الطرف الآخر.
+// الربط بين مدير البيت والطاهي والطبيب: كل ارتباط يتم برمز دعوة يصدره من يملك البيت ويدخله الطرف الآخر.
 // LinkService واجهة؛ FirestoreLinkService هو التنفيذ الحقيقي، وMemoryLinkService للاختبارات.
 import 'dart:math';
 
@@ -27,7 +27,7 @@ abstract class LinkService extends ChangeNotifier {
   bool get ready;
   List<Membership> get memberships;
 
-  /// بيت المريض الذي يعمل عليه الطبيب الآن (للطبيب عدة مرضى).
+  /// البيت الذي يعمل عليه المستخدم الآن إن كان عضواً في أكثر من بيت (طبيب بعدة مرضى، أو شريك انضم لبيت جديد).
   String? activeHid;
   void selectHousehold(String hid) {
     activeHid = hid;
@@ -36,7 +36,7 @@ abstract class LinkService extends ChangeNotifier {
 
   Membership? membershipOf(Role r) {
     final list = memberships.where((m) => m.role == r);
-    if (r == Role.doctor && activeHid != null) {
+    if (activeHid != null) {
       final a = list.where((m) => m.householdId == activeHid).firstOrNull;
       if (a != null) return a;
     }
@@ -51,7 +51,7 @@ abstract class LinkService extends ChangeNotifier {
     return null;
   }
 
-  // بيت صاحب الخطة الحالي
+  // بيت مدير البيت الحالي
   bool get hasHousehold => membershipOf(Role.owner) != null;
   String get label => membershipOf(Role.owner)?.householdLabel ?? '';
   String get programId => membershipOf(Role.owner)?.programId ?? '';
@@ -60,7 +60,7 @@ abstract class LinkService extends ChangeNotifier {
   Invite? joinedBy(Role r);
 
   Future<void> createHousehold(String label, String programId, int eaters);
-  /// [householdId] اختياري: افتراضياً بيت صاحب الخطة الحالي (والطبيب يمرّر بيت مريضه).
+  /// [householdId] اختياري: افتراضياً بيت مدير البيت الحالي (والطبيب يمرّر بيت مريضه).
   Future<Invite> createInvite(Role role, {String? householdId});
 
   /// الطبيب لا يُفعَّل بالاختيار الذاتي: يُرسَل طلب لمدير سفرتي.
@@ -69,7 +69,7 @@ abstract class LinkService extends ChangeNotifier {
   /// يرسل طلب التفعيل للمدير مع مسودة بياناته المهنية (الاسم، التخصص، المدينة، النبذة، الترخيص) لتُراجَع مرة واحدة.
   Future<void> requestDoctor({Map<String, String>? draft});
 
-  /// صاحب الخطة: إلغاء دعوة معلّقة أو إزالة من انضم بهذا الدور (يخرج من البيت وتُحذف دعواته).
+  /// مدير البيت: إلغاء دعوة معلّقة أو إزالة من انضم بهذا الدور (يخرج من البيت وتُحذف دعواته).
   Future<void> removeRole(Role role);
 
   /// يدخل الطاهي/الطبيب رمزاً. يرجع نص الخطأ أو null عند النجاح.
@@ -81,7 +81,7 @@ abstract class LinkService extends ChangeNotifier {
   /// قبول دعوة من رابط: يُستنتج الدور من الدعوة نفسها فلا يُسأل المستخدم عنه ولا يكتب الرمز.
   Future<({Role? role, String? error})> redeemAny(String raw, {String who = 'مستخدم'}) async {
     final r = await inviteRoleOf(raw);
-    if (r == null) return (role: null, error: 'الرمز غير صحيح. تأكد منه مع صاحب الخطة.');
+    if (r == null) return (role: null, error: 'الرمز غير صحيح. تأكد منه مع مدير البيت.');
     final err = await redeem(raw, r, who: who);
     return (role: err == null ? r : null, error: err);
   }
@@ -151,6 +151,7 @@ class MemoryLinkService extends LinkService {
     if (err != null) return err;
     inv!.usedBy = who;
     _joined.add(Membership('mem-j', _label ?? 'بيت', _programId ?? '', asRole));
+    activeHid = 'mem-j';
     notifyListeners();
     return null;
   }
@@ -186,7 +187,7 @@ String normalizeCode(String raw) => raw.trim().toUpperCase().replaceAll(RegExp(r
 
 /// يتحقق من صلاحية دعوة لمن سيدخلها بدور معيّن. يرجع نص الخطأ أو null.
 String? checkInvite(Invite? inv, Role asRole, DateTime now) {
-  if (inv == null) return 'الرمز غير صحيح. تأكد منه مع صاحب الخطة.';
+  if (inv == null) return 'الرمز غير صحيح. تأكد منه مع مدير البيت.';
   if (inv.used) return 'هذا الرمز استُخدم من قبل.';
   if (inv.expires.isBefore(now)) return 'انتهت صلاحية الرمز. اطلب رمزاً جديداً.';
   if (inv.role != asRole) {
@@ -196,7 +197,7 @@ String? checkInvite(Invite? inv, Role asRole, DateTime now) {
 }
 
 String roleName(Role r) => switch (r) {
-      Role.owner => 'صاحب الخطة',
+      Role.owner => 'مدير البيت',
       Role.cook => 'الطاهي',
       Role.doctor => 'الطبيب',
       Role.admin => 'مدير سفرتي',

@@ -8,7 +8,7 @@ import 'pitch_content.dart';
 
 /// عرض الفكرة الحركي للزائر (على الجوال): أربع لقطات تتقدّم وحدها وبلمسة، وكل لقطة رسم متحرك بالكود. نفس روح مقدمة «مستشاري».
 class IntroScreen extends StatefulWidget {
-  /// لقطات العرض (الافتراضي: عرض صاحب الخطة)، وتحية اختيارية باسم الشخص، وزر الختام.
+  /// لقطات العرض (الافتراضي: عرض مدير البيت)، وتحية اختيارية باسم الشخص، وزر الختام.
   final List<PitchBeat> beats;
   final String? greeting;
   final String ctaLabel;

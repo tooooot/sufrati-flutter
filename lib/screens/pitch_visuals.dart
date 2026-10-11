@@ -91,7 +91,7 @@ class ShoppingVisual extends StatelessWidget {
   }
 }
 
-/// 3) تنبيه ينزل من الأعلى، وزر «حُضّرت» يُضغط، فتصل علامة الاطمئنان لصاحب الخطة.
+/// 3) تنبيه ينزل من الأعلى، وزر «حُضّرت» يُضغط، فتصل علامة الاطمئنان لمدير البيت.
 class CookVisual extends StatelessWidget {
   final double t;
   const CookVisual(this.t, {super.key});
@@ -159,7 +159,7 @@ class CookVisual extends StatelessWidget {
   }
 }
 
-/// 4) ثلاث دوائر (صاحب الخطة/الطاهي/الطبيب) تتصل بخطوط تنبض.
+/// 4) ثلاث دوائر (مدير البيت/الطاهي/الطبيب) تتصل بخطوط تنبض.
 class HouseVisual extends StatelessWidget {
   final double t;
   const HouseVisual(this.t, {super.key});
@@ -184,7 +184,7 @@ class HouseVisual extends StatelessWidget {
         );
     return Stack(alignment: Alignment.center, children: [
       CustomPaint(size: const Size(300, 270), painter: LinesPainter(seg(t, .3, .6), pulse)),
-      Positioned(top: 8, child: node(Icons.home, 'صاحب الخطة', 0, main: true)),
+      Positioned(top: 8, child: node(Icons.home, 'مدير البيت', 0, main: true)),
       Positioned(bottom: 6, right: 40, child: node(Icons.restaurant, 'الطاهي', .2)),
       Positioned(bottom: 6, left: 40, child: node(Icons.medical_services, 'الطبيب', .35)),
     ]);
@@ -459,7 +459,7 @@ class MembersJoinVisual extends StatelessWidget {
 const cookText = <String, Map<String, String>>{
   'ar': {
     'meal': 'العشاء', 'time': '8:00 م', 'dish': 'سمك مشوي مع أرز وخضار', 'i1': 'سمك', 'i2': 'أرز', 'i3': 'خضار',
-    'n1': 'بعد 45 دقيقة', 'n2': 'حان موعد العشاء', 'btn': 'حُضّرت', 'ok': 'وصل صاحب الخطة: الوجبة جاهزة',
+    'n1': 'بعد 45 دقيقة', 'n2': 'حان موعد العشاء', 'btn': 'حُضّرت', 'ok': 'وصل مدير البيت: الوجبة جاهزة',
   },
   'en': {
     'meal': 'Dinner', 'time': '8:00 PM', 'dish': 'Grilled fish with rice and vegetables', 'i1': 'Fish', 'i2': 'Rice', 'i3': 'Vegetables',
@@ -600,7 +600,7 @@ class LanguageVisual extends StatelessWidget {
   }
 }
 
-/// 4) زر «حُضّرت» يُضغط فتصل علامة الاطمئنان لصاحب الخطة (بلغة الطاهي).
+/// 4) زر «حُضّرت» يُضغط فتصل علامة الاطمئنان لمدير البيت (بلغة الطاهي).
 class CookDoneVisual extends StatelessWidget {
   final double t;
   final String lang;

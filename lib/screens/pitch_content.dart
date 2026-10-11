@@ -9,7 +9,7 @@ class PitchBeat {
   const PitchBeat(this.title, this.sub, this.visual);
 }
 
-/// لقطات كل عرض بحسب النوع: user (صاحب الخطة) · home (ربّة بيت تطبخ) · doctor (طبيب/أخصائي/صاحب جروب — دور واحد، وgroup اسم قديم له) · cook (الطاهي).
+/// لقطات كل عرض بحسب النوع: user (مدير البيت) · home (ربّة بيت تطبخ) · doctor (طبيب/أخصائي/صاحب جروب — دور واحد، وgroup اسم قديم له) · cook (الطاهي).
 /// [name] اختياري: اسم الطبيب يظهر في بطاقة بروفايله.
 List<PitchBeat> beatsFor(String kind, {String name = '', String lang = 'ar'}) => switch (kind) {
       'cook' => cookBeats(lang),
@@ -58,7 +58,7 @@ List<PitchBeat> cookBeats(String lang) {
       ('تعرف ماذا تطبخ اليوم', 'وجبات اليوم بأوقاتها ومكوّناتها في مكان واحد.'),
       ('ينبّهك قبل كل وجبة', 'يصلك تنبيه بصوت واهتزاز قبل الموعد بـ45 دقيقة، وآخر عند الموعد.'),
       ('بلغتك', 'العربية أو English أو አማርኛ — الوجبات والتنبيهات والتعليمات بلغتك.'),
-      ('اضغط «حُضّرت»', 'يعرف صاحب الخطة فورًا أن الوجبة جاهزة، بلا اتصال.'),
+      ('اضغط «حُضّرت»', 'يعرف مدير البيت فورًا أن الوجبة جاهزة، بلا اتصال.'),
     ],
     'en': [
       ('Know what to cook today', "Today's meals with their times and ingredients, all in one place."),

@@ -11,7 +11,7 @@ import '../widgets/common.dart';
 import '../widgets/link_explainer.dart';
 import '../widgets/profile_button.dart';
 
-/// «بيتي» كشاشة مستقلة (مسار /household) — محتواها نفسه تبويب «بيتي» في لوحة صاحب الخطة.
+/// «بيتي» كشاشة مستقلة (مسار /household) — محتواها نفسه تبويب «بيتي» في لوحة مدير البيت.
 class HouseholdScreen extends StatelessWidget {
   final LinkService links;
   final Library library;
@@ -67,7 +67,10 @@ class HouseholdBody extends StatelessWidget {
           else ...[
             const Text('أعضاء البيت', style: TextStyle(fontWeight: black, fontSize: 17)),
             const SizedBox(height: 8),
-            const _Member(icon: '👤', title: 'أنت', sub: 'صاحب الخطة', done: true),
+            const _Member(icon: '👤', title: 'أنت', sub: 'مدير البيت', done: true),
+            const SizedBox(height: 8),
+            _Slot(links: links, role: Role.owner, icon: '👫', title: 'شريكي في إدارة البيت',
+                empty: 'الزوج أو الزوجة: يرى الخطة نفسها ويعدّلها معك (بيت واحد، لا بيتان)'),
             const SizedBox(height: 8),
             _Slot(links: links, role: Role.cook, icon: '👨‍🍳', title: 'الطاهي',
                 empty: 'لم يُربط طاهٍ بعد — يرى وجبات اليوم ومكوّناتها فقط'),
@@ -143,7 +146,7 @@ class _Slot extends StatelessWidget {
 Future<void> inviteFlow(BuildContext context, LinkService links, Role role) async {
   final inv = links.inviteFor(role) ?? await links.createInvite(role);
   if (!context.mounted) return;
-  final who = role == Role.cook ? 'الطاهي' : 'الطبيب';
+  final who = switch (role) { Role.cook => 'الطاهي', Role.owner => 'شريك إدارة البيت', _ => 'الطبيب' };
   final link = 'https://maeda.wardyat.net/i/${inv.code}';
   final msg = 'دعوة للانضمام إلى بيتي في تطبيق سفرتي بدور $who.\nافتح الرابط وسجّل دخولك فتنضم مباشرة:\n$link\n'
       'أو اكتب الرمز يدوياً: ${inv.code}';
@@ -170,7 +173,7 @@ Future<void> inviteFlow(BuildContext context, LinkService links, Role role) asyn
           icon: const Icon(Icons.send),
           label: const Text('إرسال بواتساب', style: TextStyle(fontWeight: black)),
           // الفيديو الخاص بدور المستلم يُرفق مع الدعوة: الطاهي ← فيديو الطاهي، والطبيب ← فيديو الأخصائي
-          onPressed: () => RoleVideos.share(msg, role == Role.cook ? 'cook' : 'specialist'),
+          onPressed: () => RoleVideos.share(msg, switch (role) { Role.cook => 'cook', Role.owner => 'owner', _ => 'specialist' }),
         ),
         if (role == Role.cook) ...[
           const SizedBox(height: 16),

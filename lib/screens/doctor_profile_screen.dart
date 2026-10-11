@@ -158,7 +158,7 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
                                   style: FilledButton.styleFrom(backgroundColor: const Color(0xFF25D366)),
                                   icon: const Icon(Icons.share),
                                   label: const Text('واتساب'),
-                                  // المستلم متابع/مريض ← يُرفق فيديو «صاحب الخطة»
+                                  // المستلم متابع/مريض ← يُرفق فيديو «مدير البيت»
                                   onPressed: () => RoleVideos.share('جرّب نظامي الغذائي في تطبيق سفرتي:\n${p.link}', 'owner'),
                                 ),
                               ),

@@ -14,7 +14,7 @@ void main() {
 
   final ws = DateTime(2026, 10, 3); // سبت
 
-  test('صاحب الخطة يولّد الأسبوع مرة واحدة ويُحفظ، والطاهي يقرأ نفس الخطة', () async {
+  test('مدير البيت يولّد الأسبوع مرة واحدة ويُحفظ، والطاهي يقرأ نفس الخطة', () async {
     final (db, lib) = await setup();
     final owner = await FirestoreStore.open(db, lib, 'h1', canManage: true);
     final plan = await owner.week(ws);

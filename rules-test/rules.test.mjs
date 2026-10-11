@@ -96,7 +96,7 @@ test('الدعوة بلا علامة الاستخدام أو من غريب مر�
 const inv = (uid, role) => setDoc(doc(as(uid), 'invites/NEWC'), { hid: 'h1', role, createdBy: uid, expiresAt: future() });
 test('دعوة: الصاحب يدعو طاهياً', async () => { await assertSucceeds(inv('own', 'cook')); });
 test('دعوة: الصاحب يدعو طبيباً', async () => { await assertSucceeds(inv('own', 'doctor')); });
-test('دعوة: الصاحب لا ينشئ دعوة مالك', async () => { await assertFails(inv('own', 'owner')); });
+test('دعوة: مدير البيت يدعو شريكاً بدور مدير (البيت نفسه)', async () => { await assertSucceeds(inv('own', 'owner')); });
 test('دعوة: الطاهي لا يدعو', async () => { await assertFails(inv('cok', 'cook')); });
 test('دعوة: الطبيب يدعو مريضاً', async () => { await assertSucceeds(inv('doc', 'owner')); });
 test('دعوة: الطبيب لا يدعو طاهياً', async () => { await assertFails(inv('doc', 'cook')); });
@@ -255,4 +255,17 @@ test('رابط المشتريات: يُقرأ بالرمز، ويعلّم أي �
   await assertSucceeds(updateDoc(doc(as('own'), 'shopLinks/T1'), { lines: [] }));
   await assertFails(deleteDoc(doc(anon(), 'shopLinks/T1')));
   await assertSucceeds(deleteDoc(doc(as('own'), 'shopLinks/T1')));
+});
+
+test('شريك الإدارة: مدير البيت يدعو مديراً ثانياً لبيته نفسه، والطاهي لا يدعو أحداً، وينضم الشريك بالدعوة', async () => {
+  const exp = future();
+  await assertSucceeds(setDoc(doc(as('own'), 'invites/PART1'), { hid: 'h1', role: 'owner', createdBy: 'own', usedBy: null, expiresAt: exp }));
+  await assertFails(setDoc(doc(as('cok'), 'invites/PART2'), { hid: 'h1', role: 'owner', createdBy: 'cok', usedBy: null, expiresAt: exp }), 'الطاهي ليس مديراً');
+  await assertFails(setDoc(doc(as('zzz'), 'invites/PART3'), { hid: 'h1', role: 'owner', createdBy: 'zzz', usedBy: null, expiresAt: exp }), 'غريب عن البيت');
+  // الشريك ينضم بدور owner عبر المسار نفسه المختبر للطاهي
+  const sdb = as('spouse');
+  const b = writeBatch(sdb);
+  b.update(doc(sdb, 'invites/PART1'), { usedBy: 'spouse', usedAt: Timestamp.now(), usedByName: 'الزوج' });
+  b.update(doc(sdb, 'households/h1'), { 'members.spouse': 'owner', lastInvite: 'PART1' });
+  await assertSucceeds(b.commit());
 });

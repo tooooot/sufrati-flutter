@@ -15,7 +15,7 @@ class LinkExplainer extends StatelessWidget {
           const Text('كيف يتم الربط؟', style: TextStyle(fontWeight: black, fontSize: 16, color: Brand.green)),
           const SizedBox(height: 8),
           for (final (n, t) in const [
-            ('١', 'صاحب الخطة يضغط «دعوة» أمام الطاهي أو الطبيب، فيظهر رمز من 8 خانات.'),
+            ('١', 'مدير البيت يضغط «دعوة» أمام الطاهي أو الطبيب، فيظهر رمز من 8 خانات.'),
             ('٢', 'يرسل الرمز لهم بواتساب (زر المشاركة).'),
             ('٣', 'يسجّل الطاهي أو الطبيب دخوله ويختار دوره ثم يكتب الرمز، فيرتبط بالبيت فوراً.'),
           ])

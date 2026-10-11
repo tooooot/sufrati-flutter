@@ -3,7 +3,18 @@ import 'package:sufrati/auth/roles.dart';
 import 'package:sufrati/data/links.dart';
 
 void main() {
-  test('صاحب الخطة يلغي دعوة معلّقة ويزيل من انضم', () async {
+  test('شريك الإدارة: دعوة بدور مدير ثانٍ لبيت واحد (لا بيتان)، ولا تُقبل بدور غير دورها', () async {
+    final l = MemoryLinkService();
+    await l.createHousehold('بيتنا', 'saudi_family', 5);
+    final inv = await l.createInvite(Role.owner);
+    expect(l.inviteFor(Role.owner), isNotNull);
+    expect(await l.redeem(inv.code, Role.cook), contains('مخصّص'), reason: 'دور الدعوة مدير لا طاهٍ');
+    expect(await l.redeem(inv.code, Role.owner, who: 'الزوج'), isNull);
+    expect(l.joinedBy(Role.owner)?.usedBy, 'الزوج');
+    expect(l.membershipOf(Role.owner)?.householdLabel, 'بيتنا', reason: 'البيت نفسه');
+  });
+
+  test('مدير البيت يلغي دعوة معلّقة ويزيل من انضم', () async {
     final l = MemoryLinkService();
     await l.createHousehold('بيت', 'keto_general', 1);
     final inv = await l.createInvite(Role.cook);
@@ -17,7 +28,7 @@ void main() {
     expect(l.joinedBy(Role.cook), isNull);
   });
 
-  test('صاحب الخطة يدعو الطاهي والطاهي يدخل الرمز مرة واحدة فقط', () async {
+  test('مدير البيت يدعو الطاهي والطاهي يدخل الرمز مرة واحدة فقط', () async {
     final l = MemoryLinkService();
     await l.createHousehold('بيت أبو عبدالله', 'kidney_salama', 2);
     expect(l.hasHousehold, isTrue);

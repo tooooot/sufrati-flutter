@@ -117,7 +117,7 @@ class _MarketingScreenState extends State<MarketingScreen> {
       const Text('معاينة العروض (كما يراها المستلم)', style: TextStyle(fontWeight: black, fontSize: 15)),
       const SizedBox(height: 6),
       Wrap(spacing: 8, children: [
-        for (final e in const {'doctor': 'طبيب/أخصائي/صاحب جروب', 'cook': 'الطاهي', 'home': 'ربّة البيت', 'user': 'صاحب الخطة'}.entries)
+        for (final e in const {'doctor': 'طبيب/أخصائي/صاحب جروب', 'cook': 'الطاهي', 'home': 'ربّة البيت', 'user': 'مدير البيت'}.entries)
           ActionChip(label: Text(e.value), onPressed: () => context.push('/pitch/${e.key}')),
       ]),
       const SizedBox(height: 14),

@@ -35,7 +35,7 @@ abstract class GrowthService {
   Future<DoctorProfile> saveProfile({required String name, String specialty, String city, String bio, String licenseNo});
   Future<DoctorProfile?> byCode(String code);
 
-  /// صاحب الخطة يطلب الارتباط بطبيب بالرمز. يرجع نص الخطأ أو null عند النجاح.
+  /// مدير البيت يطلب الارتباط بطبيب بالرمز. يرجع نص الخطأ أو null عند النجاح.
   Future<String?> requestLink(String code);
   Future<List<LinkRequest>> requests();
   /// الطبيب يقبل (يستهلك دعوة المريض) أو يرفض. يرجع نص الخطأ أو null.
