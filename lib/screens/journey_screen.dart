@@ -258,8 +258,11 @@ class _JourneyScreenState extends State<JourneyScreen> {
     final rows = <Widget>[];
     for (final s in prog.slots) {
       if (s.options.isEmpty) continue;
-      final o = s.options.first;
-      final n = optionNutri(prog, o, portion: _draft!.track == 'weight' ? portion : 1).total;
+      final k = _draft!.track == 'weight' ? portion : 1.0;
+      // الخيار الأقرب لمتوسط الخانة: فيقرب مجموع اليوم المعروض من هدف السعرات بدل أن يصادف أثقل الخيارات
+      final avg = s.options.map((x) => optionNutri(prog, x).total.kcal).reduce((a, b) => a + b) / s.options.length;
+      final o = ([...s.options]..sort((a, b) => (optionNutri(prog, a).total.kcal - avg).abs().compareTo((optionNutri(prog, b).total.kcal - avg).abs()))).first;
+      final n = optionNutri(prog, o, portion: k).total;
       total = total + n;
       rows.add(Padding(
         padding: const EdgeInsets.symmetric(vertical: 5),
