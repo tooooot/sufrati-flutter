@@ -24,11 +24,13 @@ class TabsController extends ChangeNotifier {
 
 /// الشريط السفلي الثابت: وجهات قليلة بأيقونة داخل كبسولة للنشطة (نفس مبدأ الواجهة المعتمدة).
 class TabsScaffold extends StatefulWidget {
-  final Widget header;
+  final Widget? header;
+  /// ترويسة تتبدل مع التبويب (الفهرس، اسمه) وتغلب [header].
+  final Widget Function(int index, String label)? tabHeader;
   final List<TabItem> tabs;
   final String? programId;
   final TabsController? controller;
-  const TabsScaffold({super.key, required this.header, required this.tabs, this.programId, this.controller});
+  const TabsScaffold({super.key, this.header, this.tabHeader, required this.tabs, this.programId, this.controller});
 
   @override
   State<TabsScaffold> createState() => _TabsScaffoldState();
@@ -66,13 +68,13 @@ class _TabsScaffoldState extends State<TabsScaffold> {
       },
       child: Scaffold(
       body: ListView(padding: EdgeInsets.zero, children: [
-        widget.header,
+        widget.tabHeader != null ? widget.tabHeader!(i, widget.tabs[i].label) : widget.header!,
         Center(
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 512),
             child: Padding(
               padding: const EdgeInsets.fromLTRB(12, 16, 12, 32),
-              child: Column(children: [Builder(builder: widget.tabs[i].builder), MedicalNote(programId: widget.programId)]),
+              child: Column(children: [Builder(builder: widget.tabs[i].builder), if (i == 0) MedicalNote(programId: widget.programId)]),
             ),
           ),
         ),

@@ -61,7 +61,7 @@ class HouseSettingsCard extends StatelessWidget {
               ]),
               const Padding(
                 padding: EdgeInsets.only(top: 6),
-                child: Text('الكميات تقديرية من وصفات شائعة لأسرة 4–5؛ إن كان أهلك يأكلون أكثر أو أقل فغيّري الحجم والقائمة تتبعه.',
+                child: Text('الكميات تقديرية من وصفات شائعة لأسرة 4–5؛ إن كان أهلك يأكلون أكثر أو أقل فغيّر الحجم والقائمة تتبعه.',
                     style: TextStyle(fontSize: 12.5, color: Brand.grey, height: 1.6)),
               ),
               const SizedBox(height: 10),
@@ -118,7 +118,7 @@ class MealActions extends StatelessWidget {
           return Padding(
             padding: const EdgeInsets.only(top: 14),
             child: Row(children: [
-              b(Icons.autorenew, 'غيّريها', () async {
+              b(Icons.autorenew, 'غيّرها', () async {
                 final nav = Navigator.of(context);
                 await store.replaceMeal(weekStart, day, slotId);
                 nav.pop();

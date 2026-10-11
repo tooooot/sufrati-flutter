@@ -62,7 +62,7 @@ class ShopLinkScreen extends StatelessWidget {
                               ),
                           ],
                           const SizedBox(height: 16),
-                          const Text('علّم على ما اشتريتَه ليصل ربّة البيت. هذه القائمة من تطبيق سفرتي.', textAlign: TextAlign.center,
+                          const Text('علّم على ما اشتريتَه ليصل مدير البيت. هذه القائمة من تطبيق سفرتي.', textAlign: TextAlign.center,
                               style: TextStyle(fontSize: 12.5, color: Brand.grey, height: 1.6)),
                         ]),
                       ),

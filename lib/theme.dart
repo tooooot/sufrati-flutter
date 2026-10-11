@@ -17,4 +17,5 @@ ThemeData sufratiTheme() => ThemeData(
       textTheme: const TextTheme().apply(bodyColor: const Color(0xFF1F2937)),
     );
 
-const black = FontWeight.w900;
+/// الثقيل للعناوين والأرقام الكبيرة فقط؛ الأسماء والتفاصيل w700 فما دون.
+const black = FontWeight.w800;

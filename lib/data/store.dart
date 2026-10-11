@@ -79,6 +79,14 @@ abstract class HouseholdStore extends ChangeNotifier {
     return _household({'portion': p}, reflow: true);
   }
 
+  /// هدف السعرات (وبياناته) بعد تعديل صاحبه أو الأخصائي؛ [portion] الحصة المعايَرة الجديدة.
+  Future<void> setTarget(Map<String, dynamic> target, {double? portion, Map<String, dynamic>? profile}) {
+    household.target = target;
+    if (portion != null) household.portion = portion;
+    if (profile != null) household.profile = profile;
+    return _household({'target': target, 'portion': ?portion, 'profile': ?profile}, reflow: portion != null);
+  }
+
   /// «عندي في البيت»: لا يدخل المشتريات.
   Future<void> setPantry(String key, bool atHome) async {
     final cur = {...pantryOf(await program())};

@@ -45,7 +45,9 @@ class HouseholdScreen extends StatelessWidget {
 /// محتوى «بيتي»: أعضاء البيت (الطاهي والطبيب) وإصدار دعوات الربط، أو الدعوة لإنشاء بيت.
 class HouseholdBody extends StatelessWidget {
   final LinkService links;
-  const HouseholdBody({super.key, required this.links});
+  /// شخصي: بلا بطاقة «أنت» ولا شريك افتراضي (الأخصائي والشريك والطاهي اختيارية).
+  final bool personal;
+  const HouseholdBody({super.key, required this.links, this.personal = false});
 
   @override
   Widget build(BuildContext context) => ListenableBuilder(
@@ -65,21 +67,33 @@ class HouseholdBody extends StatelessWidget {
               ]),
             )
           else ...[
-            const Text('أعضاء البيت', style: TextStyle(fontWeight: black, fontSize: 17)),
+            if (!personal) ...[
+              const Text('أعضاء البيت', style: TextStyle(fontWeight: black, fontSize: 17)),
+              const SizedBox(height: 8),
+              const _Member(icon: '👤', title: 'أنت', sub: 'مدير البيت', done: true),
+              const SizedBox(height: 8),
+            ],
+            _Slot(links: links, role: Role.doctor, icon: '🩺', title: personal ? 'أخصائي التغذية أو الطبيب' : 'الطبيب',
+                empty: 'يتابع خطتك ويعدّل سعراتك'),
             const SizedBox(height: 8),
-            const _Member(icon: '👤', title: 'أنت', sub: 'مدير البيت', done: true),
-            const SizedBox(height: 8),
-            _Slot(links: links, role: Role.owner, icon: '👫', title: 'شريكي في إدارة البيت',
-                empty: 'الزوج أو الزوجة: يرى الخطة نفسها ويعدّلها معك (بيت واحد، لا بيتان)'),
+            _Slot(links: links, role: Role.owner, icon: '👫', title: personal ? 'شريك' : 'شريكي في إدارة البيت',
+                empty: personal ? 'شخص يرى خطتك ويعدّلها معك' : 'الزوج أو الزوجة: يرى الخطة نفسها ويعدّلها معك (بيت واحد، لا بيتان)'),
             const SizedBox(height: 8),
             _Slot(links: links, role: Role.cook, icon: '👨‍🍳', title: 'الطاهي',
-                empty: 'لم يُربط طاهٍ بعد — يرى وجبات اليوم ومكوّناتها فقط'),
-            const SizedBox(height: 8),
-            _Slot(links: links, role: Role.doctor, icon: '🩺', title: 'الطبيب',
-                empty: 'لم يُربط طبيب بعد — يتابع الخطة ويعدّلها'),
+                empty: 'يرى وجبات اليوم ومكوّناتها فقط'),
           ],
-          const SizedBox(height: 18),
-          const LinkExplainer(),
+          const SizedBox(height: 14),
+          Theme(
+            data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+            child: Container(
+              decoration: BoxDecoration(color: Brand.amber50, borderRadius: BorderRadius.circular(16), border: Border.all(color: Brand.honey.withValues(alpha: .4))),
+              child: const ExpansionTile(
+                title: Text('كيف يتم الربط؟', style: TextStyle(fontWeight: FontWeight.w700, color: Brand.green)),
+                childrenPadding: EdgeInsets.fromLTRB(8, 0, 8, 8),
+                children: [LinkExplainer()],
+              ),
+            ),
+          ),
         ]),
       );
 }
@@ -95,7 +109,7 @@ class _Member extends StatelessWidget {
           Text(icon, style: const TextStyle(fontSize: 30)),
           const SizedBox(width: 12),
           Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text(title, style: const TextStyle(fontWeight: black, fontSize: 16)),
+            Text(title, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 16)),
             Text(sub, style: const TextStyle(fontSize: 12, color: Brand.grey)),
           ])),
           ?trailing,
@@ -123,7 +137,7 @@ class _Slot extends StatelessWidget {
         Text(icon, style: const TextStyle(fontSize: 30)),
         const SizedBox(width: 12),
         Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text(title, style: const TextStyle(fontWeight: black, fontSize: 16)),
+          Text(title, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 16)),
           Text(pending == null ? empty : 'بانتظار أن يدخل الرمز', style: const TextStyle(fontSize: 12, color: Brand.grey)),
         ])),
         if (pending != null)
@@ -132,8 +146,7 @@ class _Slot extends StatelessWidget {
             icon: const Icon(Icons.close, color: Colors.red),
             onPressed: () => links.removeRole(role),
           ),
-        FilledButton(
-          style: FilledButton.styleFrom(backgroundColor: Brand.green),
+        OutlinedButton(
           onPressed: () => inviteFlow(context, links, role),
           child: Text(pending == null ? 'دعوة' : 'عرض الرمز'),
         ),

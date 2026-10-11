@@ -14,15 +14,24 @@ class Household {
   Set<String> hidden, favorites;
   /// وجبات خاصة أضافتها ربّة البيت: [{id, slot, label, items:[[key,qty]]}].
   List<Map<String, dynamic>> custom;
+  /// مسار الرحلة: family | weight | muscle | medical. الشخصي (weight/muscle) يدير نفسه ويرى هدف سعراته.
+  String track;
+  /// هدف السعرات والماكروز: {kcal, proteinG, fatG, carbG, weeks, status: estimate|reviewed, reviewedBy}.
+  Map<String, dynamic>? target;
+  /// بيانات الجسم المدخلة في الرحلة (لإعادة الحساب عند تحديث الوزن).
+  Map<String, dynamic>? profile;
   Household({
     required this.id, required this.label, required this.programId,
     this.cookName = '', this.city = 'Jeddah', this.eaters = 1, this.kids = 0, this.portion = 1.0,
-    this.pantry, Set<String>? hidden, Set<String>? favorites, List<Map<String, dynamic>>? custom,
+    this.track = 'family', this.target, this.profile, this.pantry, Set<String>? hidden, Set<String>? favorites, List<Map<String, dynamic>>? custom,
     this.cutoffDay = 5, this.cutoffTime = '20:00', Map<String, PrayerLink>? mealLinks,
   })  : mealLinks = mealLinks ?? Map.of(defaultMealLinks),
         hidden = hidden ?? {},
         favorites = favorites ?? {},
         custom = custom ?? [];
+
+  bool get personal => track == 'weight' || track == 'muscle';
+  double get targetKcal => (target?['kcal'] as num?)?.toDouble() ?? 0;
 
   /// عدد الحصص الفعلي للكميات: الكبار حصة، والأطفال نصف، × حجم الحصة. (الأدنى نصف حصة.)
   double get servings => (((eaters - kids).clamp(0, 99)) + kids * 0.5).clamp(0.5, 99) * portion;

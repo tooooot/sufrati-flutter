@@ -22,8 +22,7 @@ class MedicalNote extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(8, 20, 8, 4),
       child: Column(children: [
         const Text(
-          'سفرتي أداة لتنظيم الوجبات ولا تغني عن استشارة طبيبك أو أخصائي التغذية، '
-          'خاصة لمرضى الكلى والأمراض المزمنة. استشر طبيبك قبل أي تغيير في نظامك الغذائي.',
+          'سفرتي أداة تنظيم ولا تغني عن استشارة طبيبك أو أخصائي التغذية، خاصة لأصحاب الأمراض المزمنة.',
           textAlign: TextAlign.center,
           style: TextStyle(fontSize: 12.5, color: Brand.grey, height: 1.7),
         ),

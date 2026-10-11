@@ -16,8 +16,8 @@ import '../widgets/common.dart';
 import '../logic/names.dart';
 import '../widgets/meal_extras.dart';
 import 'home_controls.dart';
-import '../widgets/profile_button.dart';
 import '../widgets/tabs_scaffold.dart';
+import 'plan_tab.dart';
 import '../auth/roles.dart';
 import '../data/links.dart';
 import 'household_screen.dart';
@@ -57,31 +57,34 @@ class _PatientScreenState extends State<PatientScreen> {
     final greeting = now.hour < 12 ? 'صباح الخير' : 'مساء الخير';
     return ListenableBuilder(
       listenable: store,
-      builder: (context, _) => TabsScaffold(
-        controller: _tabs,
-        programId: store.household.programId,
-        header: GreenHeader(
-          icon: meta.icon,
-          title: first.isEmpty ? greeting : '$greeting، $first',
-          subtitle: '$dayName · ${arDate(today)}',
-          leading: Row(children: [
-            const ProfileButton(),
-            const Spacer(),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-              decoration: BoxDecoration(color: Colors.white24, borderRadius: BorderRadius.circular(14)),
-              child: Text(meta.label, style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: black)),
-            ),
-          ]),
-        ),
-        tabs: [
-          TabItem(Icons.restaurant_menu, 'اليوم',
-              (_) => _TodayTab(store: store, library: widget.library, links: widget.links, tabs: _tabs, canInvite: widget.showHome)),
-          TabItem(Icons.shopping_cart_outlined, 'المشتريات', (_) => _ShoppingTab(store: store)),
-          TabItem(Icons.calendar_month_outlined, 'الأسبوع', (_) => _NextWeekTab(store: store, library: widget.library)),
-          if (widget.showHome) TabItem(Icons.home_outlined, 'بيتي', (_) => Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [HouseSettingsCard(store: store), const SizedBox(height: 14), HouseholdBody(links: widget.links)])),
-        ],
-      ),
+      builder: (context, _) {
+        final h = store.household;
+        final personal = h.personal;
+        final chip = Container(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+          decoration: BoxDecoration(color: Colors.white24, borderRadius: BorderRadius.circular(14)),
+          child: Text(meta.label, style: const TextStyle(color: Colors.white, fontSize: 12.5, fontWeight: FontWeight.w700)),
+        );
+        final planLabel = personal ? 'خطتي' : 'بيتي';
+        return TabsScaffold(
+          controller: _tabs,
+          programId: h.programId,
+          tabHeader: (i, label) => CompactHeader(
+            title: i == 0 ? (first.isEmpty ? greeting : '$greeting، $first') : label,
+            subtitle: i == 0 ? '$dayName · ${arDate(today)}' : null,
+            trailing: i == 0 ? chip : null,
+          ),
+          tabs: [
+            TabItem(Icons.restaurant_menu, 'اليوم',
+                (_) => _TodayTab(store: store, library: widget.library, links: widget.links, tabs: _tabs, canInvite: widget.showHome, specialist: !widget.showHome)),
+            TabItem(Icons.shopping_cart_outlined, 'المشتريات', (_) => _ShoppingTab(store: store)),
+            TabItem(Icons.calendar_month_outlined, 'الأسبوع', (_) => _NextWeekTab(store: store, library: widget.library)),
+            if (widget.showHome || personal)
+              TabItem(personal ? Icons.flag_outlined : Icons.home_outlined, planLabel,
+                  (_) => PlanTab(store: store, links: widget.links, specialist: !widget.showHome, who: widget.userName)),
+          ],
+        );
+      },
     );
   }
 }
@@ -91,8 +94,8 @@ class _TodayTab extends StatefulWidget {
   final Library library;
   final LinkService links;
   final TabsController tabs;
-  final bool canInvite;
-  const _TodayTab({required this.store, required this.library, required this.links, required this.tabs, required this.canInvite});
+  final bool canInvite, specialist;
+  const _TodayTab({required this.store, required this.library, required this.links, required this.tabs, required this.canInvite, this.specialist = false});
   @override
   State<_TodayTab> createState() => _TodayTabState();
 }
@@ -159,13 +162,18 @@ class _TodayTabState extends State<_TodayTab> {
         final (Program program, DayView day, List<ShoppingLine> lines) = snap.data!;
         final next = tomorrow ? null : _nextSlot(day, now);
         final doneCount = day.slots.where((x) => x.prepared).length;
+        final personal = widget.store.household.personal;
         final eaters = widget.store.household.eaters;
         final servings = widget.store.household.servings;
         final tip = program.userTips.isEmpty ? null : program.userTips[_ordinal(now) % program.userTips.length];
         return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
           // خطوات البداية لمدير البيت الجديد: تختفي حين ينضم الطاهي
-          if (widget.canInvite && widget.links.joinedBy(Role.cook) == null) ...[
+          if (widget.canInvite && !personal && widget.links.joinedBy(Role.cook) == null) ...[
             _FirstSteps(links: widget.links, tabs: widget.tabs),
+            const SizedBox(height: 14),
+          ],
+          if (personal && widget.store.household.targetKcal > 0) ...[
+            _DayRing(program: program, day: day, portion: widget.store.household.portion, target: widget.store.household.target!, tomorrow: tomorrow),
             const SizedBox(height: 14),
           ],
           if (!tomorrow)
@@ -174,20 +182,26 @@ class _TodayTabState extends State<_TodayTab> {
                 : _DayDoneHero(done: doneCount, total: day.slots.length),
           const SizedBox(height: 14),
           Row(children: [
-            _Quick(Icons.person_add_alt_1, 'دعوة الطاهي', widget.canInvite ? () => inviteFlow(context, widget.links, Role.cook) : null),
-            const SizedBox(width: 10),
+            if (!personal) ...[
+              _Quick(Icons.person_add_alt_1, 'دعوة الطاهي', widget.canInvite ? () => inviteFlow(context, widget.links, Role.cook) : null),
+              const SizedBox(width: 10),
+            ],
             _Quick(Icons.ios_share, 'شارك المشتريات', () => _shareShopping(program, lines)),
             const SizedBox(width: 10),
             _Quick(Icons.autorenew, 'تعديل الأسبوع', () => widget.tabs.select(2)),
+            if (personal) ...[
+              const SizedBox(width: 10),
+              _Quick(Icons.flag_outlined, 'هدفي', () => widget.tabs.select(3)),
+            ],
           ]),
-          if (widget.canInvite) ...[
+          if (widget.canInvite && !personal) ...[
             const SizedBox(height: 10),
             CardBox(
               onTap: () => context.push('/cook/me'),
               child: const Row(children: [
                 Icon(Icons.alarm, color: Brand.honey, size: 28),
                 SizedBox(width: 10),
-                Expanded(child: Text('أطبخ بنفسي: افتح شاشة الطبخ والتنبيهات (فك الدجاج، نقع الأرز…)', style: TextStyle(fontWeight: black, fontSize: 14, height: 1.5))),
+                Expanded(child: Text('أطبخ بنفسي: افتح شاشة الطبخ والتنبيهات (فك الدجاج، نقع الأرز…)', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 14, height: 1.5))),
                 Icon(Icons.chevron_left, color: Brand.grey),
               ]),
             ),
@@ -197,7 +211,7 @@ class _TodayTabState extends State<_TodayTab> {
             Expanded(child: Text(tomorrow ? 'وجبات الغد' : 'وجبات اليوم',
                 style: const TextStyle(fontSize: 19, fontWeight: black, color: Brand.green))),
             if (!tomorrow)
-              Text('حُضّرت $doneCount من ${day.slots.length}',
+              Text(personal ? 'أكلتَ $doneCount من ${day.slots.length}' : 'حُضّرت $doneCount من ${day.slots.length}',
                   style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w800, color: Brand.honey)),
           ]),
           const SizedBox(height: 8),
@@ -209,7 +223,9 @@ class _TodayTabState extends State<_TodayTab> {
           ]),
           const SizedBox(height: 12),
           for (final s in day.slots) ...[
-            _MealRow(s: s, isNext: identical(s, next), onTap: () => _showMeal(context, s, program, servings, day)),
+            _MealRow(s: s, isNext: identical(s, next), onTap: () => _showMeal(context, s, program, servings, day),
+                kcal: personal && s.option != null ? optionNutri(program, s.option!, portion: widget.store.household.portion).total.kcal : null,
+                onToggle: personal && !tomorrow ? () => widget.store.setPrepared(day.weekStart, day.dayIndex, s.slot.id, !s.prepared) : null),
             const SizedBox(height: 8),
           ],
           const SizedBox(height: 10),
@@ -251,6 +267,83 @@ class _TodayTabState extends State<_TodayTab> {
 }
 
 /// الوجبة القادمة: البطاقة الكبيرة الوحيدة في أعلى «اليوم».
+String forPeople(int n) => n == 1 ? 'لشخص واحد' : n == 2 ? 'لشخصين' : n <= 10 ? 'لـ$n أشخاص' : 'لـ$n شخصاً';
+
+/// حلقة السعرات: ما أُكل (الوجبات المعلَّمة) من هدف اليوم، وتحتها البروتين والكربوهيدرات والدهون.
+class _DayRing extends StatelessWidget {
+  final Program program;
+  final DayView day;
+  final double portion;
+  final Map<String, dynamic> target;
+  final bool tomorrow;
+  const _DayRing({required this.program, required this.day, required this.portion, required this.target, required this.tomorrow});
+
+  @override
+  Widget build(BuildContext context) {
+    var eaten = Nutri.zero, planned = Nutri.zero;
+    for (final s in day.slots) {
+      if (s.option == null) continue;
+      final n = optionNutri(program, s.option!, portion: portion).total;
+      planned = planned + n;
+      if (s.prepared) eaten = eaten + n;
+    }
+    final goal = (target['kcal'] as num).toDouble();
+    final shown = tomorrow ? planned : eaten;
+    final left = goal - shown.kcal;
+    final bars = [
+      ('بروتين', shown.p, (target['proteinG'] as num?)?.toDouble() ?? 0),
+      ('كربوهيدرات', shown.c, (target['carbG'] as num?)?.toDouble() ?? 0),
+      ('دهون', shown.f, (target['fatG'] as num?)?.toDouble() ?? 0),
+    ];
+    return CardBox(
+      child: Column(children: [
+        Row(children: [
+          SizedBox(
+            width: 104, height: 104,
+            child: Stack(alignment: Alignment.center, children: [
+              SizedBox(
+                width: 104, height: 104,
+                child: CircularProgressIndicator(value: (shown.kcal / goal).clamp(0, 1).toDouble(), strokeWidth: 10,
+                    backgroundColor: Brand.green.withValues(alpha: .1), color: left < 0 ? Brand.honey : Brand.green),
+              ),
+              Column(mainAxisSize: MainAxisSize.min, children: [
+                Text('${shown.kcal.round()}', style: const TextStyle(fontSize: 24, fontWeight: black, height: 1.1)),
+                Text('من ${goal.round()}', style: const TextStyle(fontSize: 12.5, color: Brand.grey)),
+              ]),
+            ]),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Text(tomorrow ? 'خطة الغد' : (left >= 0 ? 'متبقٍّ ${left.round()} سعرة' : 'تجاوزتَ بـ${(-left).round()} سعرة'),
+                  style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w800, color: Brand.green)),
+              const SizedBox(height: 4),
+              Text(tomorrow ? 'مجموع وجبات الغد المخطط' : 'مخطط اليوم كله ≈ ${planned.kcal.round()} سعرة',
+                  style: const TextStyle(fontSize: 13, color: Brand.grey, height: 1.5)),
+            ]),
+          ),
+        ]),
+        const SizedBox(height: 12),
+        for (final (l, v, g) in bars)
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 3),
+            child: Row(children: [
+              SizedBox(width: 86, child: Text(l, style: const TextStyle(fontSize: 13))),
+              Expanded(
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(4),
+                  child: LinearProgressIndicator(value: g <= 0 ? 0 : (v / g).clamp(0, 1).toDouble(), minHeight: 8,
+                      backgroundColor: Brand.green.withValues(alpha: .1), color: Brand.honey),
+                ),
+              ),
+              SizedBox(width: 78, child: Text('${v.round()}/${g.round()} غ', textAlign: TextAlign.end, style: const TextStyle(fontSize: 12.5, color: Brand.grey))),
+            ]),
+          ),
+      ]),
+    );
+  }
+}
+
 class _NextMealHero extends StatelessWidget {
   final SlotView s;
   final Program program;
@@ -291,7 +384,7 @@ class _NextMealHero extends StatelessWidget {
             const SizedBox(height: 8),
             Text(s.option?.label ?? '—', style: const TextStyle(fontSize: 21, fontWeight: black)),
             const SizedBox(height: 2),
-            Text('${s.slot.name} · لـ$eaters', style: const TextStyle(fontSize: 14, color: Brand.grey)),
+            Text('${s.slot.name} · ${forPeople(eaters)}', style: const TextStyle(fontSize: 14, color: Brand.grey)),
             if (s.option != null) _NutriLine(program: program, option: s.option!, portion: portion),
           ]),
         ),
@@ -367,18 +460,25 @@ class _MealRow extends StatelessWidget {
   final SlotView s;
   final bool isNext;
   final VoidCallback onTap;
-  const _MealRow({required this.s, required this.isNext, required this.onTap});
+  /// للمستخدم الشخصي: سعرات الوجبة بحصته، وزر «أكلتها» يعلّمها.
+  final double? kcal;
+  final VoidCallback? onToggle;
+  const _MealRow({required this.s, required this.isNext, required this.onTap, this.kcal, this.onToggle});
   @override
   Widget build(BuildContext context) => CardBox(
         onTap: onTap,
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
         border: isNext ? Border.all(color: Brand.honey, width: 2) : null,
         child: Row(children: [
-          Container(
-            width: 34, height: 34,
-            decoration: BoxDecoration(shape: BoxShape.circle,
-                color: s.prepared ? Brand.green : Brand.honey.withValues(alpha: .18)),
-            child: Icon(s.prepared ? Icons.check : Icons.schedule, size: 18, color: s.prepared ? Colors.white : Brand.honey),
+          GestureDetector(
+            onTap: onToggle,
+            behavior: HitTestBehavior.opaque,
+            child: Container(
+              width: 40, height: 40,
+              decoration: BoxDecoration(shape: BoxShape.circle,
+                  color: s.prepared ? Brand.green : Brand.honey.withValues(alpha: .18)),
+              child: Icon(s.prepared ? Icons.check : (onToggle != null ? Icons.radio_button_unchecked : Icons.schedule), size: 20, color: s.prepared ? Colors.white : Brand.honey),
+            ),
           ),
           const SizedBox(width: 12),
           Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -386,7 +486,10 @@ class _MealRow extends StatelessWidget {
             Text(s.option?.label ?? '—', maxLines: 1, overflow: TextOverflow.ellipsis,
                 style: const TextStyle(fontSize: 13, color: Brand.grey)),
           ])),
-          Text(ar12(s.time), style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w800, color: Brand.honey)),
+          Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
+            Text(ar12(s.time), style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w800, color: Brand.honey)),
+            if (kcal != null) Text('${kcal!.round()} سعرة', style: const TextStyle(fontSize: 12.5, color: Brand.grey)),
+          ]),
           const SizedBox(width: 4),
           const Icon(Icons.chevron_left, color: Colors.grey, size: 20),
         ]),
@@ -568,7 +671,7 @@ class _ShoppingTab extends StatelessWidget {
             child: Row(children: [
               const Icon(Icons.kitchen, color: Brand.green),
               const SizedBox(width: 10),
-              Expanded(child: Text('عندك في البيت ${store.pantryOf(program).length} صنفاً (لا تُشترى) — اضغطي للتعديل',
+              Expanded(child: Text('عندك في البيت ${store.pantryOf(program).length} صنفاً (لا تُشترى) — اضغط للتعديل',
                   style: const TextStyle(fontWeight: black, fontSize: 14))),
               const Icon(Icons.chevron_left, color: Brand.grey),
             ]),
@@ -618,35 +721,30 @@ class _ShoppingCard extends StatelessWidget {
                 child: Text(_shopCats[cat]!, style: const TextStyle(fontWeight: FontWeight.w900, color: Brand.green, fontSize: 15)),
               ),
             for (final l in ([...lines.where((l) => program.ingredients[l.key]!.category == cat)]..sort((a, b) => a.bought == b.bought ? 0 : (a.bought ? 1 : -1))))
-            Container(
-              padding: const EdgeInsets.symmetric(vertical: 8),
-              decoration: const BoxDecoration(border: Border(bottom: BorderSide(color: Brand.cream))),
-              child: Row(children: [
-                Text(program.ingredients[l.key]!.icon, style: const TextStyle(fontSize: 28)),
-                const SizedBox(width: 8),
-                Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  Text(program.ingredients[l.key]!.name, style: TextStyle(fontWeight: FontWeight.bold, decoration: l.bought ? TextDecoration.lineThrough : null, color: l.bought ? Brand.grey : null)),
-                  Text(program.ingredients[l.key]!.buyUnit, style: const TextStyle(fontSize: 13, color: Brand.grey)),
-                ])),
-                if (locked) ...[
-                  Text('× ${l.packs}', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                  Column(children: [
-                    Checkbox(value: l.bought, activeColor: Brand.green,
-                        onChanged: (v) => store.updateShopping(week, l.key, bought: v ?? false)),
-                    const Text('تم', style: TextStyle(fontSize: 11)),
-                  ]),
-                ] else ...[
-                  _Step('−', l.packs > 0 ? () => store.updateShopping(week, l.key, packs: l.packs - 1) : null),
-                  SizedBox(width: 32, child: Text('${l.packs}', textAlign: TextAlign.center,
-                      style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold))),
-                  _Step('+', () => store.updateShopping(week, l.key, packs: l.packs + 1)),
-                  Column(children: [
-                    Checkbox(value: l.bought, activeColor: Brand.green,
-                        onChanged: (v) => store.updateShopping(week, l.key, bought: v ?? false)),
-                    const Text('تم', style: TextStyle(fontSize: 11)),
-                  ]),
-                ],
-              ]),
+            InkWell(
+              onTap: () => store.updateShopping(week, l.key, bought: !l.bought),
+              child: Container(
+                padding: const EdgeInsets.symmetric(vertical: 10),
+                decoration: const BoxDecoration(border: Border(bottom: BorderSide(color: Brand.cream))),
+                child: Row(children: [
+                  Icon(l.bought ? Icons.check_circle : Icons.radio_button_unchecked, size: 30, color: l.bought ? Brand.green : Colors.black38),
+                  const SizedBox(width: 10),
+                  Text(program.ingredients[l.key]!.icon, style: const TextStyle(fontSize: 26)),
+                  const SizedBox(width: 8),
+                  Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                    Text(program.ingredients[l.key]!.name, style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700, decoration: l.bought ? TextDecoration.lineThrough : null, color: l.bought ? Brand.grey : null)),
+                    Text(program.ingredients[l.key]!.buyUnit, style: const TextStyle(fontSize: 13, color: Brand.grey)),
+                  ])),
+                  if (locked)
+                    Text('× ${l.packs}', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w800))
+                  else ...[
+                    _Step('−', l.packs > 0 ? () => store.updateShopping(week, l.key, packs: l.packs - 1) : null),
+                    SizedBox(width: 30, child: Text('${l.packs}', textAlign: TextAlign.center,
+                        style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w800))),
+                    _Step('+', () => store.updateShopping(week, l.key, packs: l.packs + 1)),
+                  ],
+                ]),
+              ),
             ),
           ],
         ]),
@@ -681,7 +779,7 @@ class _NextWeekTab extends StatelessWidget {
               Expanded(
                 child: OutlinedButton.icon(
                   icon: const Icon(Icons.casino_outlined),
-                  label: const Text('أعيدي توليد الأسبوع'),
+                  label: const Text('أعد توليد الأسبوع'),
                   onPressed: () async {
                     final ok = await showDialog<bool>(
                       context: context,
@@ -690,7 +788,7 @@ class _NextWeekTab extends StatelessWidget {
                         content: const Text('تُستبدل كل وجبات الأسبوع القادم بوجبات جديدة تتجنب ما قُدّم هذا الأسبوع وتحترم ما أخفيتِه وما فضّلتِه. المشتريات تُحسب من جديد.'),
                         actions: [
                           TextButton(onPressed: () => Navigator.pop(c, false), child: const Text('إلغاء')),
-                          FilledButton(onPressed: () => Navigator.pop(c, true), child: const Text('أعيدي')),
+                          FilledButton(onPressed: () => Navigator.pop(c, true), child: const Text('أعد التوليد')),
                         ],
                       ),
                     );

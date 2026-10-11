@@ -119,3 +119,34 @@ double portionFor(Program prog, double targetKcal) {
   if (base <= 0) return 1;
   return double.parse((targetKcal / base).clamp(0.6, 1.5).toStringAsFixed(2));
 }
+
+/// يعيد بناء Profile من خريطة البيت (مفاتيح journey.dart)، وnull إن نقصت بياناته.
+Profile? profileFromMap(Map<String, dynamic>? m) {
+  if (m == null) return null;
+  try {
+    return Profile(
+      sex: Sex.values.byName(m['sex'] as String),
+      age: (m['age'] as num).toInt(),
+      heightCm: (m['heightCm'] as num).toDouble(),
+      weightKg: (m['weightKg'] as num).toDouble(),
+      activity: Activity.values.byName(m['activity'] as String),
+      goalKg: (m['goalKg'] as num?)?.toDouble(),
+      paceKgWeek: (m['paceKgWeek'] as num?)?.toDouble() ?? 0.5,
+      mode: Mode.values.asNameMap()[m['mode']] ?? Mode.lose,
+    );
+  } catch (_) {
+    return null;
+  }
+}
+
+Map<String, dynamic> targetMapOf(Plan p, {String status = 'estimate', String? by}) => {
+      'kcal': p.kcal, 'proteinG': p.proteinG.round(), 'fatG': p.fatG.round(), 'carbG': p.carbG.round(), 'weeks': p.weeks,
+      'status': status, 'reviewedBy': ?by,
+    };
+
+/// ماكروز لهدف سعرات يدوي: يبقى البروتين كما هو، الدهون 27%، والباقي كربوهيدرات.
+Map<String, dynamic> targetForKcal(double kcal, int proteinG, {int? weeks, String status = 'custom', String? by}) {
+  final fat = kcal * 0.27 / 9;
+  final carb = (kcal - proteinG * 4 - fat * 9) / 4;
+  return {'kcal': kcal, 'proteinG': proteinG, 'fatG': fat.round(), 'carbG': (carb < 0 ? 0 : carb).round(), 'weeks': weeks, 'status': status, 'reviewedBy': ?by};
+}

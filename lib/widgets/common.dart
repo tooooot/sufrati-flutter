@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../theme.dart';
+import 'profile_button.dart';
 
 /// الشريط الأخضر أعلى كل صفحة (مثل bg-brand-green في الموقع).
 class GreenHeader extends StatelessWidget {
@@ -31,6 +32,34 @@ class GreenHeader extends StatelessWidget {
       ]),
     );
   }
+}
+
+/// ترويسة مدمجة (نحو 76 بكسل): عنوان التبويب الحالي وزر الحساب، بدل الترويسة الكبيرة المكررة.
+class CompactHeader extends StatelessWidget {
+  final String title;
+  final String? subtitle;
+  final Widget? trailing;
+  const CompactHeader({super.key, required this.title, this.subtitle, this.trailing});
+
+  @override
+  Widget build(BuildContext context) => Container(
+        width: double.infinity,
+        decoration: const BoxDecoration(color: Brand.green, boxShadow: [BoxShadow(color: Colors.black26, blurRadius: 6)]),
+        padding: EdgeInsets.fromLTRB(12, MediaQuery.paddingOf(context).top + 8, 12, 12),
+        child: Row(children: [
+          const ProfileButton(),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Text(title, maxLines: 1, overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: black)),
+              if (subtitle != null)
+                Text(subtitle!, style: TextStyle(color: Colors.white.withValues(alpha: .8), fontSize: 13)),
+            ]),
+          ),
+          ?trailing,
+        ]),
+      );
 }
 
 class CardBox extends StatelessWidget {
