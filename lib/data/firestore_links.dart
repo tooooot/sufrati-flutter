@@ -23,6 +23,7 @@ class FirestoreLinkService extends LinkService {
   final _households = <String, Map<String, dynamic>>{};
   final _invites = <String, Invite>{};
   final _pendingFirst = <String>{};
+  Set<String> _knownHids = {};
 
   FirestoreLinkService(this.db, this.auth, {DateTime Function()? clock}) : _now = clock ?? DateTime.now {
     auth.addListener(_onAuth);
@@ -66,6 +67,7 @@ class FirestoreLinkService extends LinkService {
     _households.clear();
     _invites.clear();
     _pendingFirst.clear();
+    _knownHids = {};
     _isDoctor = _doctorRequested = false;
   }
 
@@ -74,6 +76,7 @@ class FirestoreLinkService extends LinkService {
     _isDoctor = d['isDoctor'] == true;
     _doctorRequested = d['doctorRequested'] == true;
     final hids = {...List<String>.from(d['hids'] ?? const [])};
+    _knownHids = hids;
     for (final h in _hhSubs.keys.toList()) {
       if (!hids.contains(h)) {
         _hhSubs.remove(h)?.cancel();
@@ -83,24 +86,42 @@ class FirestoreLinkService extends LinkService {
     for (final h in hids) {
       if (_hhSubs.containsKey(h)) continue;
       _pendingFirst.add(h);
-      _hhSubs[h] = db.doc('households/$h').snapshots().listen((s) {
-        _pendingFirst.remove(h);
-        if (s.exists) {
-          _households[h] = s.data()!;
-          _watchInvites(List<String>.from(s.data()!['inviteCodes'] ?? const []), h);
-        } else {
-          _households.remove(h);
-        }
-        _markReady();
-      }, onError: (_) {
-        // لم يعد المستخدم عضواً (حُذف البيت أو أُزيل) — نتجاهله
-        _pendingFirst.remove(h);
-        _households.remove(h);
-        _markReady();
-      });
+      _listenHousehold(h, 0);
     }
     _markReady();
   }
+
+  /// يتابع وثيقة البيت. الاستماع قد يبدأ قبل أن يثبّت الخادم كتابة الانضمام/الإنشاء (دفعة واحدة: users + households)،
+  /// فيرفضه الخادم لحظة ولا يعيد Firestore محاولته أبداً ← يبقى المستخدم «بلا بيت» حتى يعيد فتح التطبيق.
+  /// لذلك نعيد الاستماع بتأخير متزايد قبل أن نعدّ العضوية منتهية.
+  static const _retryDelays = [Duration(milliseconds: 400), Duration(milliseconds: 900), Duration(milliseconds: 1800), Duration(milliseconds: 3500), Duration(seconds: 6)];
+
+  void _listenHousehold(String h, int attempt) {
+    _hhSubs[h] = db.doc('households/$h').snapshots().listen((s) {
+      _pendingFirst.remove(h);
+      if (s.exists) {
+        _households[h] = s.data()!;
+        _watchInvites(List<String>.from(s.data()!['inviteCodes'] ?? const []), h);
+      } else {
+        _households.remove(h);
+      }
+      _markReady();
+    }, onError: (_) {
+      _hhSubs.remove(h)?.cancel();
+      if (attempt < _retryDelays.length && _uid != null) {
+        Future.delayed(_retryDelays[attempt], () {
+          if (_uid != null && !_hhSubs.containsKey(h) && _userHasHid(h)) _listenHousehold(h, attempt + 1);
+        });
+        return;
+      }
+      // لم يعد المستخدم عضواً (حُذف البيت أو أُزيل) — نتجاهله
+      _pendingFirst.remove(h);
+      _households.remove(h);
+      _markReady();
+    });
+  }
+
+  bool _userHasHid(String h) => _knownHids.contains(h);
 
   void _markReady() {
     if (_pendingFirst.isEmpty) _ready = true;
