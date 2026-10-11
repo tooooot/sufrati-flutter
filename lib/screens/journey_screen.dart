@@ -10,7 +10,15 @@ import '../logic/calories.dart';
 import '../theme.dart';
 import '../widgets/common.dart';
 
-/// رحلة الاستكشاف قبل الدخول: اختر هدفك ← أجب بأسئلة قصيرة ← خطة تقديرية ← احفظها (يطلب الدخول عندها فقط).
+/// خيار زر في صفحة سؤال: النقر عليه يقدّم للتالي مباشرة.
+class _Opt<T> {
+  final String label;
+  final String? icon, sub;
+  final T value;
+  const _Opt(this.label, this.value, {this.icon, this.sub});
+}
+
+/// رحلة الاستكشاف قبل الدخول: شاشة الأنظمة ← (ساعدني/اختر لي) ← أسئلة بالأزرار فقط، سؤال في كل صفحة ← خطة تقديرية ← احفظها (الدخول عندها فقط).
 class JourneyScreen extends StatefulWidget {
   final Library library;
   final Session session;
@@ -22,80 +30,115 @@ class JourneyScreen extends StatefulWidget {
   State<JourneyScreen> createState() => _JourneyScreenState();
 }
 
-enum _Step { goal, family, body, medical, result }
+enum _Flow { catalog, help1, help2, reco, q }
 
 class _JourneyScreenState extends State<JourneyScreen> {
-  _Step _step = _Step.goal;
+  _Flow _flow = _Flow.catalog;
+  // الاختيار
+  String? _pid;
   String _track = 'family';
-  int _eaters = 5, _kids = 2;
-  Sex _sex = Sex.female;
-  Activity _act = Activity.light;
-  final _age = TextEditingController(), _h = TextEditingController(), _w = TextEditingController(), _goal = TextEditingController();
-  double _pace = 0.5;
-  bool _special = false, _consent = false;
-  Mode _mode = Mode.lose; // lose | cut | gain
+  Mode _mode = Mode.lose;
+  // مساعد الاختيار
+  String? _helpGoal;
+  // خطوات الأسئلة
+  List<String> _steps = const [];
+  int _qi = 0;
+  final _a = <String, Object?>{};
   JourneyDraft? _draft;
   Program? _prog;
-  String? _error;
-
-  @override
-  void dispose() {
-    for (final c in [_age, _h, _w, _goal]) {
-      c.dispose();
-    }
-    super.dispose();
-  }
-
-  double? _num(TextEditingController c) => double.tryParse(c.text.trim().replaceAll(',', '.'));
-
-  void _back() {
-    setState(() {
-      _error = null;
-      _step = switch (_step) { _Step.result => _track == 'family' ? _Step.family : _Step.body, _ => _Step.goal };
-      _mode = _track == 'muscle' ? _mode : Mode.lose;
-    });
-  }
-
-  Future<void> _computeFamily() async {
-    final prog = await widget.library.program('saudi_family');
-    final servings = (_eaters - _kids) + 0.5 * _kids;
-    setState(() {
-      _prog = prog;
-      _draft = JourneyDraft(track: 'family', programId: 'saudi_family', eaters: _eaters, kids: _kids);
-      _step = _Step.result;
-      _servings = servings;
-    });
-  }
-
   double _servings = 1;
 
-  Future<void> _computeBody() async {
-    final age = _num(_age)?.round(), h = _num(_h), w = _num(_w), g = _num(_goal);
-    final gain = _mode == Mode.gain;
-    if (age == null || h == null || w == null || (g == null && !gain)) {
-      setState(() => _error = gain ? 'أكمل العمر والطول والوزن.' : 'أكمل الحقول الأربعة (العمر والطول والوزن والوزن المستهدف).');
-      return;
+  // ---- النظام ← المسار ----
+  void _select(String pid) {
+    _pid = pid;
+    switch (pid) {
+      case 'saudi_family':
+        _track = 'family';
+      case 'kidney_salama':
+        _track = 'medical';
+      case 'muscle_gain':
+        _track = 'muscle';
+        _mode = Mode.gain;
+      case 'cutting_gym':
+        _track = 'muscle';
+        _mode = Mode.cut;
+      default:
+        _track = 'weight';
+        _mode = Mode.lose;
     }
-    if (g != null && (gain ? g <= w : g >= w)) {
-      setState(() => _error = gain ? 'الوزن المستهدف يجب أن يكون أعلى من وزنك الحالي.' : 'الوزن المستهدف يجب أن يكون أقل من وزنك الحالي.');
-      return;
-    }
-    final prof = Profile(sex: _sex, age: age, heightCm: h, weightKg: w, activity: _act, goalKg: g, paceKgWeek: _pace, needsSpecialist: _special, mode: _mode);
-    final plan = planFor(prof);
-    if (plan == null) {
-      setState(() => _error = _special || age < 18
-          ? 'حالتك تحتاج أخصائي تغذية يحدد السعرات بنفسه، ولا نحسبها آلياً. تصفّح الأنظمة أو تواصل مع طبيب.'
-          : 'تحقق من الأرقام المدخلة (الطول بالسنتيمتر والوزن بالكيلو).');
-      return;
-    }
-    final pid = switch (_mode) { Mode.gain => 'muscle_gain', Mode.cut => 'cutting_gym', Mode.lose => 'weight_loss_general' };
-    final prog = await widget.library.program(pid);
-    setState(() {
-      _prog = prog;
-      _draft = JourneyDraft(track: _track, programId: pid, eaters: 1, profile: prof, plan: plan, portion: portionFor(prog, plan.kcal));
-      _error = null;
-      _step = _Step.result;
+    _steps = switch (_track) {
+      'family' => const ['members', 'kids', 'cooker', 'result'],
+      'medical' => const ['consent'],
+      _ => const ['health', 'sex', 'age', 'height', 'weight', 'goal', 'activity', 'pace', 'result'],
+    };
+    _a.clear();
+    _qi = 0;
+    setState(() => _flow = _Flow.q);
+  }
+
+  void _back() => setState(() {
+        switch (_flow) {
+          case _Flow.catalog:
+            break;
+          case _Flow.help1:
+            _flow = _Flow.catalog;
+          case _Flow.help2:
+            _flow = _Flow.help1;
+          case _Flow.reco:
+            _flow = _Flow.catalog;
+          case _Flow.q:
+            if (_qi > 0) {
+              _qi--;
+            } else {
+              _flow = _Flow.catalog;
+            }
+        }
+      });
+
+  bool get _atRoot => _flow == _Flow.catalog;
+
+  bool _locked = false;
+
+  void _answer(String key, Object? v) {
+    if (_locked) return; // نقرتان سريعتان لا تتخطيان سؤالاً
+    _locked = true;
+    _a[key] = v;
+    Future.delayed(const Duration(milliseconds: 140), () async {
+      if (!mounted) return;
+      _locked = false;
+      final cur = _steps[_qi];
+      // فحص صحي: غير «لا» ← صفحة إحالة بدل المتابعة
+      if (cur == 'health' && v != 'none') {
+        setState(() => _steps = const ['health', 'blocked']);
+        _qi = 1;
+        return;
+      }
+      if (_steps[_qi + 1] == 'result') await _computeResult();
+      if (mounted) setState(() => _qi++);
     });
+  }
+
+  // ---- الحساب من الشرائح ----
+  Future<void> _computeResult() async {
+    if (_track == 'family') {
+      final eaters = (_a['members'] as int?) ?? 5, kids = ((_a['kids'] as int?) ?? 0).clamp(0, eaters - 1);
+      final prog = await widget.library.program('saudi_family');
+      _prog = prog;
+      _servings = (eaters - kids) + 0.5 * kids;
+      _draft = JourneyDraft(track: 'family', programId: 'saudi_family', eaters: eaters, kids: kids, cooker: _a['cooker'] as String?);
+      return;
+    }
+    final w = (_a['weight'] as num).toDouble(), h = (_a['height'] as num).toDouble();
+    final delta = (_a['goal'] as num?)?.toDouble();
+    double? goal;
+    if (delta != null) goal = _mode == Mode.gain ? w + delta : w - delta;
+    final prof = Profile(
+        sex: _a['sex'] as Sex, age: (_a['age'] as num).round(), heightCm: h, weightKg: w,
+        activity: _a['activity'] as Activity, goalKg: goal, paceKgWeek: (_a['pace'] as num?)?.toDouble() ?? 0.5, mode: _mode);
+    final plan = planFor(prof)!;
+    final prog = await widget.library.program(_pid!);
+    _prog = prog;
+    _draft = JourneyDraft(track: _track, programId: _pid!, profile: prof, plan: plan, portion: portionFor(prog, plan.kcal));
   }
 
   void _save() {
@@ -107,183 +150,349 @@ class _JourneyScreenState extends State<JourneyScreen> {
     }
   }
 
+  // ---- الواجهة ----
   @override
   Widget build(BuildContext context) {
-    final title = switch (_step) {
-      _Step.goal => 'ما هدفك؟',
-      _Step.family => 'أسرتك',
-      _Step.body => 'عنك',
-      _Step.medical => 'حالتك الصحية',
-      _Step.result => 'خطتك المقترحة',
-    };
-    return Scaffold(
-      body: ListView(padding: EdgeInsets.zero, children: [
-        GreenHeader(
-          icon: '🧭', title: title, subtitle: widget.update ? 'نظامك الحالي يُستبدل بالجديد' : 'دقيقة واحدة بلا تسجيل',
-          leading: _step == _Step.goal ? null : IconButton(onPressed: _back, icon: const Icon(Icons.arrow_forward, color: Colors.white)),
-        ),
-        Center(
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 480),
-            child: Padding(padding: const EdgeInsets.fromLTRB(16, 20, 16, 32), child: _body(context)),
+    final progress = _flow == _Flow.q && _steps.isNotEmpty ? (_qi + 1) / _steps.length : null;
+    return PopScope(
+      canPop: _atRoot,
+      onPopInvokedWithResult: (didPop, _) {
+        if (!didPop) _back();
+      },
+      child: Scaffold(
+        body: SafeArea(
+          child: Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 520),
+              child: Column(children: [
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(8, 6, 16, 0),
+                  child: Row(children: [
+                    IconButton(
+                      onPressed: _atRoot ? (context.canPop() ? () => context.pop() : null) : _back,
+                      icon: Icon(Icons.arrow_forward, color: (_atRoot && !context.canPop()) ? Colors.transparent : Brand.green),
+                    ),
+                    Expanded(
+                      child: progress == null
+                          ? const SizedBox.shrink()
+                          : ClipRRect(
+                              borderRadius: BorderRadius.circular(6),
+                              child: LinearProgressIndicator(value: progress, minHeight: 8, backgroundColor: Brand.green.withValues(alpha: .12), color: Brand.honey),
+                            ),
+                    ),
+                  ]),
+                ),
+                Expanded(child: AnimatedSwitcher(duration: const Duration(milliseconds: 200), child: KeyedSubtree(key: ValueKey('$_flow$_qi${_steps.length}'), child: _page()))),
+              ]),
+            ),
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _page() => switch (_flow) {
+        _Flow.catalog => _catalog(),
+        _Flow.help1 => _helpGoalPage(),
+        _Flow.help2 => _helpStylePage(),
+        _Flow.reco => _recoPage(),
+        _Flow.q => _questionPage(_steps[_qi]),
+      };
+
+  // ---- شاشة الأنظمة ----
+  Widget _catalog() {
+    final progs = widget.library.active;
+    return ListView(padding: const EdgeInsets.fromLTRB(16, 4, 16, 28), children: [
+      const Text('اختر نظامك', style: TextStyle(fontSize: 28, fontWeight: black, color: Brand.green)),
+      const SizedBox(height: 4),
+      const Text('اضغط النظام لتبدأ مباشرة، أو اطلب المساعدة.', style: TextStyle(fontSize: 14, color: Brand.grey)),
+      const SizedBox(height: 12),
+      FilledButton.icon(
+        style: FilledButton.styleFrom(backgroundColor: Brand.honey, minimumSize: const Size.fromHeight(54), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16))),
+        onPressed: () => setState(() => _flow = _Flow.help1),
+        icon: const Icon(Icons.auto_awesome),
+        label: const Text('ساعدني في اختيار النظام', style: TextStyle(fontSize: 17, fontWeight: black)),
+      ),
+      const SizedBox(height: 14),
+      for (final p in progs)
+        Padding(
+          padding: const EdgeInsets.only(bottom: 10),
+          child: CardBox(
+            onTap: () => _select(p.id),
+            child: Row(children: [
+              Text(p.icon, style: const TextStyle(fontSize: 34)),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  Text(p.label, style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w800, color: Brand.green)),
+                  const SizedBox(height: 2),
+                  Text(p.blurb, maxLines: 2, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 12.5, color: Brand.grey, height: 1.5)),
+                ]),
+              ),
+              TextButton(onPressed: () => context.push('/programs/${p.id}'), child: const Text('معاينة')),
+            ]),
+          ),
+        ),
+      CardBox(
+        color: Brand.amber50,
+        border: Border.all(color: Brand.honey, width: 1.5),
+        onTap: () => setState(() => _flow = _Flow.help1),
+        child: const Row(children: [
+          Text('✨', style: TextStyle(fontSize: 34)),
+          SizedBox(width: 12),
+          Expanded(child: Text('اختر لي', style: TextStyle(fontSize: 18, fontWeight: black, color: Brand.honey))),
+          Icon(Icons.chevron_left, color: Brand.honey),
+        ]),
+      ),
+      if (!widget.session.signedIn)
+        Center(child: TextButton(onPressed: () => context.push('/login'), child: const Text('لدي حساب — دخول'))),
+    ]);
+  }
+
+  // ---- مساعد الاختيار («اختر لي»): سؤالان ثم ترشيح واحد ----
+  Widget _helpGoalPage() => _optionsPage(
+        'ما هدفك الأهم؟', null,
+        [
+          const _Opt('أنقص وزني', 'lose', icon: '⚖️'),
+          const _Opt('أبني عضلاً', 'gain', icon: '💪'),
+          const _Opt('أنشّف جسمي', 'cut', icon: '🔥'),
+          const _Opt('أدير غذاء أسرتي', 'family', icon: '👨‍👩‍👧‍👦'),
+          const _Opt('عندي حالة صحية', 'health', icon: '🩺'),
+        ],
+        (v) {
+          _helpGoal = v as String;
+          setState(() => _flow = (v == 'lose' || v == 'health') ? _Flow.help2 : _Flow.reco);
+        },
+      );
+
+  Widget _helpStylePage() => _helpGoal == 'health'
+      ? _optionsPage('أي حالة؟', null, [
+          const _Opt('الكلى', 'kidney_salama', icon: '🫘'),
+          const _Opt('السكري أو الضغط أو الحمل', 'soon', icon: '🩸', sub: 'قيد الإعداد'),
+        ], (v) {
+          _helpGoal = v as String;
+          setState(() => _flow = _Flow.reco);
+        })
+      : _optionsPage('كيف تفضّل أن تأكل؟', null, [
+          const _Opt('متوازن ومرن', 'weight_loss_general', icon: '🥗'),
+          const _Opt('كارب قليل', 'low_carb', icon: '🥩'),
+          const _Opt('كيتو صارم', 'keto_general', icon: '🥑'),
+          const _Opt('أتمرن وأريد طاقة', 'carb_cycle', icon: '🔄'),
+          const _Opt('لا أعرف', 'weight_loss_general', icon: '🤷'),
+        ], (v) {
+          _helpGoal = v as String;
+          setState(() => _flow = _Flow.reco);
+        });
+
+  String get _recoId => switch (_helpGoal) {
+        'gain' => 'muscle_gain',
+        'cut' => 'cutting_gym',
+        'family' => 'saudi_family',
+        'soon' => 'soon',
+        final g? when widget.library.meta(g) != null => g,
+        _ => 'weight_loss_general',
+      };
+
+  static const _reasons = {
+    'muscle_gain': 'فائض سعرات وبروتين عالٍ يدعمان بناء العضل مع التمرين.',
+    'cutting_gym': 'عجز سعرات مع بروتين عالٍ لإظهار العضل وحفظه.',
+    'saudi_family': 'وجبات سعودية مألوفة لأسرتك بمقاديرها ومشترياتها.',
+    'kidney_salama': 'نظام مبني على دليل غذائي طبي لمرضى الكلى.',
+    'weight_loss_general': 'عجز معتدل يمكن الاستمرار عليه، بحصص محسوبة.',
+    'low_carb': 'تقليل النشويات مع مرونة أكبر من الكيتو.',
+    'keto_general': 'كارب منخفض جداً ودهون عالية لمن يريد الالتزام الصارم.',
+    'carb_cycle': 'أيام كارب أعلى وأخرى أقل لتوازن بين التنحيف والطاقة.',
+  };
+
+  Widget _recoPage() {
+    final id = _recoId;
+    if (id == 'soon') {
+      return Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+          const Text('🩸', style: TextStyle(fontSize: 56)),
+          const SizedBox(height: 12),
+          const Text('هذه الحالات قيد الإعداد', textAlign: TextAlign.center, style: TextStyle(fontSize: 22, fontWeight: black, color: Brand.green)),
+          const SizedBox(height: 8),
+          const Text('لا نطلقها قبل مرجع طبي موثوق لكل حالة. عالجها مع طبيبك الآن.', textAlign: TextAlign.center, style: TextStyle(color: Brand.grey, height: 1.7)),
+          const SizedBox(height: 20),
+          OutlinedButton(onPressed: () => setState(() => _flow = _Flow.catalog), child: const Text('رجوع للأنظمة')),
+        ]),
+      );
+    }
+    final m = widget.library.meta(id)!;
+    return Padding(
+      padding: const EdgeInsets.all(20),
+      child: Column(mainAxisAlignment: MainAxisAlignment.center, crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+        const Text('نرشّح لك', textAlign: TextAlign.center, style: TextStyle(fontSize: 16, color: Brand.grey)),
+        const SizedBox(height: 10),
+        CardBox(
+          padding: const EdgeInsets.all(22),
+          border: Border.all(color: Brand.honey, width: 2),
+          child: Column(children: [
+            Text(m.icon, style: const TextStyle(fontSize: 56)),
+            const SizedBox(height: 8),
+            Text(m.label, textAlign: TextAlign.center, style: const TextStyle(fontSize: 24, fontWeight: black, color: Brand.green)),
+            const SizedBox(height: 8),
+            Text(_reasons[id] ?? m.blurb, textAlign: TextAlign.center, style: const TextStyle(fontSize: 14.5, height: 1.7, color: Brand.grey)),
+          ]),
+        ),
+        const SizedBox(height: 18),
+        FilledButton(
+          style: FilledButton.styleFrom(backgroundColor: Brand.honey, minimumSize: const Size.fromHeight(56), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16))),
+          onPressed: () => _select(id),
+          child: const Text('ابدأ بهذا النظام', style: TextStyle(fontSize: 18, fontWeight: black)),
+        ),
+        TextButton(onPressed: () => setState(() => _flow = _Flow.catalog), child: const Text('أرني غيره')),
       ]),
     );
   }
 
-  Widget _body(BuildContext context) => switch (_step) {
-        _Step.goal => _goalStep(),
-        _Step.family => _familyStep(),
-        _Step.body => _bodyStep(),
-        _Step.medical => _medicalStep(),
-        _Step.result => _resultStep(),
-      };
-
-  Widget _choice(String icon, String title, String sub, VoidCallback onTap) => Padding(
-        padding: const EdgeInsets.only(bottom: 10),
-        child: CardBox(
-          onTap: onTap,
-          child: Row(children: [
-            Text(icon, style: const TextStyle(fontSize: 34)),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                Text(title, style: const TextStyle(fontSize: 17, fontWeight: black, color: Brand.green)),
-                const SizedBox(height: 2),
-                Text(sub, style: const TextStyle(fontSize: 13, color: Brand.grey, height: 1.5)),
-              ]),
+  // ---- صفحات الأسئلة ----
+  Widget _questionPage(String step) {
+    switch (step) {
+      case 'health':
+        return _optionsPage('هل عندك حالة خاصة؟', 'للسلامة: بعض الحالات تحتاج أخصائياً لا حاسبة.', [
+          const _Opt('لا، لا شيء من ذلك', 'none', icon: '✅'),
+          const _Opt('حامل أو مرضعة', 'preg', icon: '🤰'),
+          const _Opt('سكري أو كلى أو ضغط', 'chronic', icon: '🩺'),
+          const _Opt('اضطراب في الأكل', 'ed', icon: '⚠️'),
+        ], (v) => _answer('health', v));
+      case 'blocked':
+        return Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+            const Text('🩺', style: TextStyle(fontSize: 56)),
+            const SizedBox(height: 12),
+            const Text('حالتك تحتاج أخصائي تغذية', textAlign: TextAlign.center, style: TextStyle(fontSize: 22, fontWeight: black, color: Brand.green)),
+            const SizedBox(height: 8),
+            const Text('لا نحسب السعرات آلياً لحالتك لسلامتك. اعرض نظامك على طبيبك أو أخصائيك.', textAlign: TextAlign.center, style: TextStyle(color: Brand.grey, height: 1.7)),
+            const SizedBox(height: 20),
+            OutlinedButton(onPressed: () => setState(() => _flow = _Flow.catalog), child: const Text('رجوع للأنظمة')),
+          ]),
+        );
+      case 'sex':
+        return _optionsPage('أنت…', null, [const _Opt('أنثى', Sex.female, icon: '👩'), const _Opt('ذكر', Sex.male, icon: '👨')], (v) => _answer('sex', v));
+      case 'age':
+        return _optionsPage('كم عمرك؟', null, [
+          for (final e in const [('18–25', 22), ('26–35', 30), ('36–45', 40), ('46–55', 50), ('56 فأكثر', 60)]) _Opt(e.$1, e.$2),
+        ], (v) => _answer('age', v), grid: true);
+      case 'height':
+        return _optionsPage('كم طولك؟', 'بالسنتيمتر', [
+          for (final e in const [('أقل من 155', 150), ('155–159', 157), ('160–164', 162), ('165–169', 167), ('170–174', 172), ('175–179', 177), ('180–184', 182), ('185 فأكثر', 188)]) _Opt(e.$1, e.$2),
+        ], (v) => _answer('height', v), grid: true);
+      case 'weight':
+        return _optionsPage('كم وزنك الآن؟', 'بالكيلوجرام', [
+          const _Opt('أقل من 55', 52),
+          for (var lo = 55; lo < 120; lo += 5) _Opt('$lo–${lo + 4}', lo + 2),
+          const _Opt('120 فأكثر', 125),
+        ], (v) => _answer('weight', v), grid: true);
+      case 'goal':
+        return _goalPage();
+      case 'activity':
+        return _optionsPage('كم تتحرك يومياً؟', null, [
+          const _Opt('أجلس غالباً', Activity.sedentary, icon: '🪑'),
+          const _Opt('أمشي قليلاً', Activity.light, icon: '🚶'),
+          const _Opt('أتمرن ٣–٥ أيام', Activity.moderate, icon: '🏃'),
+          const _Opt('أتمرن يومياً', Activity.high, icon: '🏋️'),
+          const _Opt('رياضي محترف', Activity.athlete, icon: '🏅'),
+        ], (v) => _answer('activity', v));
+      case 'pace':
+        return _optionsPage(_mode == Mode.gain ? 'بأي سرعة تريد البناء؟' : 'بأي سرعة تريد النزول؟', null, [
+          _Opt('هادئ', 0.25, icon: '🐢', sub: _mode == Mode.gain ? 'فائض صغير' : '٠٫٢٥ كجم أسبوعياً'),
+          _Opt('متوازن', 0.5, icon: '⚖️', sub: _mode == Mode.gain ? 'فائض معتدل' : '٠٫٥ كجم أسبوعياً'),
+          _Opt('سريع', 0.75, icon: '🐇', sub: _mode == Mode.gain ? 'فائض كبير' : '٠٫٧٥ كجم أسبوعياً'),
+        ], (v) => _answer('pace', v));
+      case 'members':
+        return _optionsPage('كم عدد أفراد الأسرة؟', null, [
+          for (var n = 2; n <= 7; n++) _Opt('$n', n),
+          const _Opt('8 فأكثر', 8),
+        ], (v) => _answer('members', v), grid: true);
+      case 'kids':
+        final max = ((_a['members'] as int?) ?? 5) - 1;
+        return _optionsPage('كم منهم أطفال؟', 'الطفل يُحسب بنصف حصة', [
+          for (var n = 0; n <= 4 && n <= max; n++) _Opt(n == 0 ? 'لا أحد' : '$n', n),
+        ], (v) => _answer('kids', v), grid: true);
+      case 'cooker':
+        return _optionsPage('من يطبخ في بيتكم؟', null, [
+          const _Opt('أنا', 'me', icon: '👩‍🍳'),
+          const _Opt('طاهٍ أو طاهية عندنا', 'cook', icon: '🧑‍🍳'),
+          const _Opt('أحد أفراد الأسرة', 'other', icon: '👪'),
+        ], (v) => _answer('cooker', v));
+      case 'consent':
+        return Padding(
+          padding: const EdgeInsets.all(22),
+          child: Column(mainAxisAlignment: MainAxisAlignment.center, crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+            const Text('🫘', textAlign: TextAlign.center, style: TextStyle(fontSize: 56)),
+            const SizedBox(height: 10),
+            const Text('نظام مرضى الكلى', textAlign: TextAlign.center, style: TextStyle(fontSize: 24, fontWeight: black, color: Brand.green)),
+            const SizedBox(height: 8),
+            const Text('مبني على دليل غذائي طبي منشور. لا نحسب لك سعرات آلياً، وهذا النظام ليس بديلاً عن طبيبك: اعرضه عليه قبل الالتزام به.',
+                textAlign: TextAlign.center, style: TextStyle(height: 1.8, color: Brand.grey)),
+            const SizedBox(height: 22),
+            FilledButton(
+              style: FilledButton.styleFrom(backgroundColor: Brand.green, minimumSize: const Size.fromHeight(56), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16))),
+              onPressed: () {
+                _draft = const JourneyDraft(track: 'medical', programId: 'kidney_salama');
+                _save();
+              },
+              child: const Text('أفهم، تابع', style: TextStyle(fontSize: 18, fontWeight: black)),
             ),
           ]),
-        ),
-      );
+        );
+      case 'result':
+        return _resultStep();
+    }
+    return const SizedBox.shrink();
+  }
 
-  Widget _goalStep() => Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-        _choice('👨‍👩‍👧‍👦', 'أدير غذاء أسرتي', 'قائمة سعودية أسبوعية بالمقادير ومشتريات جاهزة، والتذكيرات للطاهي.', () => setState(() { _track = 'family'; _step = _Step.family; })),
-        _choice('⚖️', 'أريد تنقيص وزني', 'نحسب سعراتك من طولك ووزنك، وتصلك وجبات بحصص مضبوطة.', () => setState(() { _track = 'weight'; _mode = Mode.lose; _step = _Step.body; })),
-        _choice('🩺', 'عندي حالة صحية', 'كلى، سكري، ضغط، حمل… بنظام غذائي مبني على مرجع طبي.', () => setState(() { _track = 'medical'; _step = _Step.medical; })),
-        _choice('💪', 'أريد بناء العضل أو التنشيف', 'سعرات وبروتين حسب جسمك وتمرينك، لتضخيم نظيف أو تنشيف يحفظ العضل.', () => setState(() { _track = 'muscle'; _mode = Mode.gain; _step = _Step.body; })),
-        if (!widget.session.signedIn)
-          Center(child: TextButton(onPressed: () => context.push('/login'), child: const Text('لدي حساب — دخول'))),
-      ]);
+  /// الهدف نسبي (كم تنقص/تزيد) لا رقماً مكتوباً. تُخفى الخيارات التي تنزل عن حدّ كتلة الجسم الصحي.
+  Widget _goalPage() {
+    final w = (_a['weight'] as num).toDouble(), h = (_a['height'] as num).toDouble();
+    final minGoal = (18.5 * (h / 100) * (h / 100)).clamp(40, 200).toDouble();
+    if (_mode == Mode.gain) {
+      return _optionsPage('كم تريد أن تزيد؟', null, [
+        const _Opt<int?>('3 كجم', 3), const _Opt<int?>('5 كجم', 5), const _Opt<int?>('8 كجم', 8), const _Opt<int?>('لا أحدد', null),
+      ], (v) => _answer('goal', v), grid: true);
+    }
+    final opts = <_Opt<int?>>[for (final k in const [5, 10, 15, 20, 25]) if (w - k >= minGoal) _Opt<int?>('أنقص $k كجم', k)];
+    if (opts.isEmpty) opts.add(const _Opt<int?>('أثبّت وزني', null));
+    return _optionsPage('كم تريد أن تنقص؟', null, opts, (v) => _answer('goal', v), grid: true);
+  }
 
-  Widget _stepper(String label, int v, int min, int max, ValueChanged<int> on) => Padding(
-        padding: const EdgeInsets.symmetric(vertical: 6),
-        child: Row(children: [
-          Expanded(child: Text(label, style: const TextStyle(fontSize: 16, fontWeight: black))),
-          IconButton(onPressed: v > min ? () => on(v - 1) : null, icon: const Icon(Icons.remove_circle_outline)),
-          SizedBox(width: 30, child: Text('$v', textAlign: TextAlign.center, style: const TextStyle(fontSize: 20, fontWeight: black))),
-          IconButton(onPressed: v < max ? () => on(v + 1) : null, icon: const Icon(Icons.add_circle_outline, color: Brand.green)),
-        ]),
-      );
-
-  Widget _familyStep() => Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-        CardBox(child: Column(children: [
-          _stepper('عدد أفراد الأسرة', _eaters, 1, 15, (v) => setState(() { _eaters = v; if (_kids > v - 1) _kids = v - 1; })),
-          _stepper('منهم أطفال', _kids, 0, _eaters - 1, (v) => setState(() => _kids = v)),
-          const SizedBox(height: 4),
-          const Text('الطفل يُحسب بنصف حصة. تغيّر هذا لاحقاً من التحكم.', style: TextStyle(fontSize: 12, color: Brand.grey)),
-        ])),
-        const SizedBox(height: 14),
-        FilledButton(
-          style: FilledButton.styleFrom(backgroundColor: Brand.green, minimumSize: const Size.fromHeight(52)),
-          onPressed: _computeFamily,
-          child: const Text('أرِني الخطة', style: TextStyle(fontSize: 17, fontWeight: black)),
-        ),
-      ]);
-
-  Widget _field(String label, TextEditingController c, String hint) => Padding(
-        padding: const EdgeInsets.only(bottom: 10),
-        child: TextField(
-          controller: c,
-          keyboardType: const TextInputType.numberWithOptions(decimal: true),
-          decoration: InputDecoration(labelText: label, hintText: hint, border: const OutlineInputBorder()),
-        ),
-      );
-
-  Widget _seg<T>(List<(T, String)> items, T cur, ValueChanged<T> on) => Wrap(spacing: 8, runSpacing: 8, children: [
-        for (final (v, l) in items)
-          InkWell(
-            onTap: () => on(v),
-            borderRadius: BorderRadius.circular(20),
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
-              decoration: BoxDecoration(
-                color: cur == v ? Brand.green : Colors.white,
-                border: Border.all(color: cur == v ? Brand.green : Colors.black26),
-                borderRadius: BorderRadius.circular(20),
+  /// صفحة خيارات كاملة: عنوان كبير وأزرار ضخمة. [grid] للشرائح (٣ أعمدة)، وإلا قائمة بطاقات كبيرة.
+  Widget _optionsPage<T>(String title, String? sub, List<_Opt<T>> opts, void Function(Object? v) onPick, {bool grid = false}) {
+    final head = Padding(
+      padding: const EdgeInsets.fromLTRB(20, 10, 20, 14),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Text(title, style: const TextStyle(fontSize: 28, fontWeight: black, color: Brand.green, height: 1.3)),
+        if (sub != null) Padding(padding: const EdgeInsets.only(top: 4), child: Text(sub, style: const TextStyle(fontSize: 14, color: Brand.grey))),
+      ]),
+    );
+    if (grid) {
+      return ListView(padding: const EdgeInsets.only(bottom: 24), children: [
+        head,
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Wrap(spacing: 10, runSpacing: 10, children: [
+            for (final o in opts)
+              SizedBox(
+                width: (MediaQuery.sizeOf(context).width.clamp(0, 520) - 32 - 20) / 3,
+                child: _OptButton(label: o.label, icon: o.icon, sub: o.sub, compact: true, onTap: () => onPick(o.value)),
               ),
-              child: Text(l, style: TextStyle(color: cur == v ? Colors.white : Colors.black87, fontWeight: black, fontSize: 14)),
-            ),
-          ),
-      ]);
-
-  Widget _bodyStep() => Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-        if (_track == 'muscle') ...[
-          _seg<Mode>(const [(Mode.gain, 'بناء عضل (تضخيم)'), (Mode.cut, 'تنشيف')], _mode, (v) => setState(() => _mode = v)),
-          const SizedBox(height: 14),
-        ],
-        _seg<Sex>(const [(Sex.female, 'أنثى'), (Sex.male, 'ذكر')], _sex, (v) => setState(() => _sex = v)),
-        const SizedBox(height: 14),
-        _field('العمر (سنة)', _age, '30'),
-        _field('الطول (سم)', _h, '165'),
-        _field('الوزن الحالي (كجم)', _w, '85'),
-        _field(_mode == Mode.gain ? 'الوزن المستهدف (كجم) — اختياري' : 'الوزن المستهدف (كجم)', _goal, '70'),
-        const Text('نشاطك اليومي', style: TextStyle(fontWeight: black)),
-        const SizedBox(height: 6),
-        _seg<Activity>(const [
-          (Activity.sedentary, 'جلوس غالباً'), (Activity.light, 'خفيف (مشي)'), (Activity.moderate, 'رياضة ٣–٥ أيام'),
-          (Activity.high, 'رياضة يومية'), (Activity.athlete, 'رياضي محترف'),
-        ], _act, (v) => setState(() => _act = v)),
-        const SizedBox(height: 14),
-        Text(_mode == Mode.gain ? 'سرعة البناء' : 'سرعة النزول', style: TextStyle(fontWeight: black)),
-        const SizedBox(height: 6),
-        _seg<double>(_mode == Mode.gain ? const [(0.25, 'هادئ (+٥٪)'), (0.5, 'متوازن (+١٠٪)'), (0.75, 'سريع (+١٥٪)')] : const [(0.25, 'هادئ ٠٫٢٥ كجم/أسبوع'), (0.5, 'متوازن ٠٫٥'), (0.75, 'سريع ٠٫٧٥')], _pace, (v) => setState(() => _pace = v)),
-        CheckboxListTile(
-          contentPadding: EdgeInsets.zero,
-          value: _special,
-          onChanged: (v) => setState(() => _special = v ?? false),
-          controlAffinity: ListTileControlAffinity.leading,
-          title: const Text('حامل أو مرضعة، أو عندي سكري/كلى/اضطراب أكل', style: TextStyle(fontSize: 13)),
-        ),
-        if (_error != null) Padding(padding: const EdgeInsets.only(bottom: 8), child: Text(_error!, style: const TextStyle(color: Colors.red, height: 1.6))),
-        FilledButton(
-          style: FilledButton.styleFrom(backgroundColor: Brand.green, minimumSize: const Size.fromHeight(52)),
-          onPressed: _computeBody,
-          child: const Text('احسب خطتي', style: TextStyle(fontSize: 17, fontWeight: black)),
+          ]),
         ),
       ]);
-
-  Widget _medicalStep() => Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-        CardBox(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          const Text('🫘 مرضى الكلى', style: TextStyle(fontSize: 18, fontWeight: black, color: Brand.green)),
-          const SizedBox(height: 6),
-          const Text('نظام غذائي مبني على دليل غذائي طبي منشور، بوجبات قليلة البوتاسيوم والفوسفور والصوديوم. لا نحسب لك سعرات آلياً: القيم تحددها طبيبتك أو أخصائيك.',
-              style: TextStyle(fontSize: 13.5, height: 1.7)),
-          CheckboxListTile(
-            contentPadding: EdgeInsets.zero,
-            value: _consent,
-            onChanged: (v) => setState(() => _consent = v ?? false),
-            controlAffinity: ListTileControlAffinity.leading,
-            title: const Text('أفهم أن النظام ليس بديلاً عن طبيبي، وسأعرضه عليه قبل الالتزام به.', style: TextStyle(fontSize: 13, height: 1.6)),
-          ),
-          FilledButton(
-            style: FilledButton.styleFrom(backgroundColor: Brand.green, minimumSize: const Size.fromHeight(50)),
-            onPressed: _consent
-                ? () {
-                    _draft = const JourneyDraft(track: 'medical', programId: 'kidney_salama');
-                    _save();
-                  }
-                : null,
-            child: const Text('ابدأ بنظام الكلى', style: TextStyle(fontSize: 16, fontWeight: black)),
-          ),
-        ])),
-        const SizedBox(height: 10),
-        CardBox(child: const Text(
-            '🩸 السكري · 💓 الضغط · 🤰 الحمل — قيد الإعداد: لا نطلقها قبل مرجع طبي موثوق لكل حالة. عالجها مع طبيبك الآن، ويمكنك لاحقاً ربط أخصائي بخطتك من داخل التطبيق.',
-            style: TextStyle(fontSize: 13.5, height: 1.7, color: Brand.grey))),
-        TextButton(onPressed: () => context.push('/browse'), child: const Text('تصفّح الأنظمة المتاحة')),
-      ]);
+    }
+    return ListView(padding: const EdgeInsets.only(bottom: 24), children: [
+      head,
+      for (final o in opts)
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
+          child: _OptButton(label: o.label, icon: o.icon, sub: o.sub, onTap: () => onPick(o.value)),
+        ),
+    ]);
+  }
 
   Widget _macro(String l, String v) => Expanded(
         child: Column(children: [
@@ -369,6 +578,53 @@ class _JourneyScreenState extends State<JourneyScreen> {
       ),
     ]);
   }
+
+}
+
+/// زر خيار كبير: يضيء لحظة عند النقر ثم تتقدّم الصفحة.
+class _OptButton extends StatefulWidget {
+  final String label;
+  final String? icon, sub;
+  final bool compact;
+  final VoidCallback onTap;
+  const _OptButton({required this.label, required this.onTap, this.icon, this.sub, this.compact = false});
+
+  @override
+  State<_OptButton> createState() => _OptButtonState();
+}
+
+class _OptButtonState extends State<_OptButton> {
+  bool _on = false;
+
+  @override
+  Widget build(BuildContext context) => GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: () {
+          setState(() => _on = true);
+          widget.onTap();
+        },
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 100),
+          padding: EdgeInsets.symmetric(horizontal: 16, vertical: widget.compact ? 18 : 18),
+          decoration: BoxDecoration(
+            color: _on ? Brand.green : Colors.white,
+            borderRadius: BorderRadius.circular(18),
+            border: Border.all(color: _on ? Brand.green : Brand.green.withValues(alpha: .25), width: 2),
+            boxShadow: const [BoxShadow(color: Color(0x14000000), blurRadius: 8, offset: Offset(0, 2))],
+          ),
+          child: widget.compact
+              ? Text(widget.label, textAlign: TextAlign.center, style: TextStyle(fontSize: 17, fontWeight: FontWeight.w800, color: _on ? Colors.white : Brand.green))
+              : Row(children: [
+                  if (widget.icon != null) ...[Text(widget.icon!, style: const TextStyle(fontSize: 30)), const SizedBox(width: 14)],
+                  Expanded(
+                    child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                      Text(widget.label, style: TextStyle(fontSize: 19, fontWeight: FontWeight.w800, color: _on ? Colors.white : Brand.green)),
+                      if (widget.sub != null) Text(widget.sub!, style: TextStyle(fontSize: 13, color: _on ? Colors.white70 : Brand.grey)),
+                    ]),
+                  ),
+                ]),
+        ),
+      );
 }
 
 /// يحوّل المسودة إلى بيت حقيقي بعد الدخول، ثم يفتح الشاشة الرئيسية.

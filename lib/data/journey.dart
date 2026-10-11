@@ -10,13 +10,16 @@ class JourneyDraft {
   final Profile? profile;
   final Plan? plan;
   final double portion;
-  const JourneyDraft({required this.track, required this.programId, this.eaters = 1, this.kids = 0, this.profile, this.plan, this.portion = 1});
+  /// من يطبخ في البيت: me | cook | other (للأسرة).
+  final String? cooker;
+  const JourneyDraft({required this.track, required this.programId, this.eaters = 1, this.kids = 0, this.profile, this.plan, this.portion = 1, this.cooker});
 
   /// حقول تُخزَّن في وثيقة البيت (للأخصائي والتحكم لاحقاً).
   Map<String, dynamic> toHousehold() => {
         'kids': kids,
         'portion': portion,
         'track': track,
+        'cooker': ?cooker,
         if (profile != null && plan != null)
           'profile': {
             'sex': profile!.sex.name, 'age': profile!.age, 'heightCm': profile!.heightCm, 'weightKg': profile!.weightKg,
