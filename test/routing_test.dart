@@ -118,6 +118,18 @@ void main() {
     expect(appRedirect(s, '/loading', next: '/cook?x=1'), '/cook?x=1');
   });
 
+  test('سباق الدخول: وهو على /login والارتباطات تُحمَّل تُحمل وجهة الدخول (next) لا عنوان الدخول', () async {
+    final auth = FakeAuthService();
+    final links = _SlowLinks();
+    final s = Session(auth, links);
+    await auth.signIn(SignInMethod.google);
+    expect(s.ready, isFalse);
+    expect(appRedirect(s, '/login', full: '/login?next=%2Fjourney%2Ffinish', next: '/journey/finish'), '/loading?next=%2Fjourney%2Ffinish');
+    links.finish();
+    await links.createHousehold('بيت', 'keto_general', 1);
+    expect(appRedirect(s, '/loading', next: '/journey/finish'), '/journey/finish');
+  });
+
   test('قفل المشتريات الافتراضي الخميس مساءً (السبت=0 ← الخميس=5)', () async {
     final links = MemoryLinkService();
     expect(links.hasHousehold, isFalse);

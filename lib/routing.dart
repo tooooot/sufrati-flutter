@@ -32,7 +32,11 @@ String? appRedirect(Session s, String p, {String? full, String? next, bool landi
     return '/login?next=${Uri.encodeComponent(full ?? p)}';
   }
   // نحفظ الوجهة أثناء التحميل أيضاً (وإلا ضاع الرابط العميق وتحديث الصفحة)
-  if (!s.ready) return p == '/loading' ? null : '/loading?next=${Uri.encodeComponent(full ?? p)}';
+  if (!s.ready) {
+    // على شاشة الدخول نحمل وجهتها (next) لا عنوان الدخول نفسه، وإلا ضاعت الوجهة وفُتحت شاشة الدور (سباق بعد الدخول)
+    final carry = p == '/login' && _validNext(next) ? next! : (full ?? p);
+    return p == '/loading' ? null : '/loading?next=${Uri.encodeComponent(carry)}';
+  }
   if (p == '/loading' || p == '/login' || p == '/') {
     if (_validNext(next) && (!s.needsRole || _roleless(next!))) return next;
     return landing(s);
