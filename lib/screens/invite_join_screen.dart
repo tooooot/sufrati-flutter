@@ -43,7 +43,9 @@ class _InviteJoinScreenState extends State<InviteJoinScreen> {
         return;
       }
       widget.session.chooseRole(role);
-      if (mounted) context.go(landing(widget.session));
+      // وجهة صريحة لا landing(): ارتباط البيت الجديد لم يصل من Firestore بعد، فكان landing يرمي الشريك إلى «أنشئ بيتك».
+      // StoreLoader ينتظر وصول الارتباط ثم يفتح البيت.
+      if (mounted) context.go(role == Role.cook ? '/cook' : '/me');
     } catch (_) {
       if (mounted) setState(() => _error = 'تعذّر الاتصال. تأكد من الإنترنت وحاول مرة أخرى.');
     }
