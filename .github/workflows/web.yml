@@ -20,7 +20,7 @@ jobs:
           flutter pub get
           flutter build web --release --no-wasm-dry-run --base-href /preview/ --pwa-strategy=none
           mv build/web build/web_preview
-          flutter build web --release --no-wasm-dry-run --base-href / --pwa-strategy=none
+          flutter build web --release --wasm --base-href / --pwa-strategy=none
           mv build/web build/web_root
       # نسخة /preview/ لسيرفر maeda، ونسخة الجذر لـFirebase Hosting (CDN عالمي أسرع من السيرفر المزدحم)
       - uses: actions/upload-artifact@v4
