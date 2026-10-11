@@ -170,7 +170,7 @@ class _TodayTabState extends State<_TodayTab> {
           ],
           if (!tomorrow)
             next != null
-                ? _NextMealHero(s: next, program: program, library: widget.library, eaters: eaters, now: now)
+                ? _NextMealHero(s: next, program: program, library: widget.library, eaters: eaters, now: now, portion: widget.store.household.portion)
                 : _DayDoneHero(done: doneCount, total: day.slots.length),
           const SizedBox(height: 14),
           Row(children: [
@@ -257,7 +257,8 @@ class _NextMealHero extends StatelessWidget {
   final Library library;
   final int eaters;
   final DateTime now;
-  const _NextMealHero({required this.s, required this.program, required this.library, required this.eaters, required this.now});
+  final double portion;
+  const _NextMealHero({required this.s, required this.program, required this.library, required this.eaters, required this.now, this.portion = 1});
 
   @override
   Widget build(BuildContext context) {
@@ -291,6 +292,7 @@ class _NextMealHero extends StatelessWidget {
             Text(s.option?.label ?? '—', style: const TextStyle(fontSize: 21, fontWeight: black)),
             const SizedBox(height: 2),
             Text('${s.slot.name} · لـ$eaters', style: const TextStyle(fontSize: 14, color: Brand.grey)),
+            if (s.option != null) _NutriLine(program: program, option: s.option!, portion: portion),
           ]),
         ),
       ]),
