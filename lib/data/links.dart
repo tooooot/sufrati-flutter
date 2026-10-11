@@ -60,6 +60,9 @@ abstract class LinkService extends ChangeNotifier {
   Invite? joinedBy(Role r);
 
   Future<void> createHousehold(String label, String programId, int eaters, {Map<String, dynamic>? extra});
+
+  /// يغيّر نظام بيت مدير البيت الحالي (من رحلة «غيّر نظامي»): ينظّف وجبات النظام القديم وخططه ويطبّق الجديد.
+  Future<void> applyJourney(String programId, int eaters, Map<String, dynamic> fields);
   /// [householdId] اختياري: افتراضياً بيت مدير البيت الحالي (والطبيب يمرّر بيت مريضه).
   Future<Invite> createInvite(Role role, {String? householdId});
 
@@ -121,6 +124,12 @@ class MemoryLinkService extends LinkService {
   @override
   Future<void> createHousehold(String label, String programId, int eaters, {Map<String, dynamic>? extra}) async {
     _label = label.trim();
+    _programId = programId;
+    notifyListeners();
+  }
+
+  @override
+  Future<void> applyJourney(String programId, int eaters, Map<String, dynamic> fields) async {
     _programId = programId;
     notifyListeners();
   }

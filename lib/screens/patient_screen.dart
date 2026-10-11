@@ -91,7 +91,7 @@ class _PatientScreenState extends State<PatientScreen> {
             TabItem(Icons.calendar_month_outlined, 'الأسبوع', (_) => _NextWeekTab(store: store, library: widget.library)),
             if (widget.showHome || personal)
               TabItem(personal ? Icons.flag_outlined : Icons.home_outlined, planLabel,
-                  (_) => PlanTab(store: store, links: widget.links, specialist: !widget.showHome, who: widget.userName)),
+                  (_) => PlanTab(store: store, links: widget.links, specialist: !widget.showHome, who: widget.userName, programLabel: meta.label)),
           ],
         );
       },

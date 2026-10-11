@@ -2,6 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:sufrati/data/household.dart';
 import 'package:sufrati/data/repository.dart';
 import 'package:sufrati/data/store.dart';
+import 'package:sufrati/logic/calories.dart';
 import 'package:sufrati/logic/planner.dart';
 import 'package:sufrati/logic/shopping_text.dart';
 
@@ -103,5 +104,22 @@ void main() {
     first.bought = true;
     expect(shoppingText(prog, lines, pantry: s.pantryOf(prog)), isNot(contains(prog.ingredients[first.key]!.buyUnit)));
     expect(shoppingText(prog, [], pantry: {}), contains('لا شيء ناقص'));
+  });
+  test('وجبة من مطعم: تدخل الخطة بلا مشتريات ولا تدخل القرعة، وسعراتها مما أدخله المستخدم', () async {
+    final s = await mk();
+    final before = (await s.shopping(ws)).fold<int>(0, (a, x) => a + x.packs);
+    await s.setOutMeal(ws, 4, 'meal2', 'البيك', kcal: 900); // الجمعة
+    final prog = await s.program();
+    final pid = (await s.week(ws)).days[4]['meal2']!;
+    final o = prog.slots.firstWhere((x) => x.id == 'meal2').options.firstWhere((x) => x.id == pid);
+    expect(o.isOut, isTrue);
+    expect(o.label, contains('البيك'));
+    expect(optionNutri(prog, o).total.kcal, 900);
+    // لا تُختار وجبة المطعم في أسبوع جديد
+    await s.regenerateWeek(ws);
+    for (final d in (await s.week(ws)).days) {
+      expect(d['meal2']!.startsWith('o_'), isFalse);
+    }
+    expect(before, greaterThan(0));
   });
 }

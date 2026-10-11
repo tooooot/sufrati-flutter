@@ -220,6 +220,74 @@
       ]
      ],
      "photo_prompt": "Labneh drizzled with olive oil and zaatar with cucumber, tomato and Arabic bread. Served on a plain white ceramic plate, overhead 45-degree angle, warm natural light, appetizing home-style presentation, photorealistic. No text, no watermark."
+    },
+    {
+     "id": "s1o9",
+     "label": "كورن فليكس بالحليب مع تمر",
+     "tags": [],
+     "items": [
+      [
+       "cornflakes",
+       1.5
+      ],
+      [
+       "whole_milk",
+       1
+      ],
+      [
+       "dates",
+       2
+      ]
+     ],
+     "photo_prompt": "A bowl of cornflakes with cold milk beside a small plate of dates and a glass of milk. Served on a plain white ceramic plate, overhead 45-degree angle, warm natural light, appetizing home-style presentation, photorealistic. No text, no watermark."
+    },
+    {
+     "id": "s1o10",
+     "label": "توست بالجبنة مع شاهي",
+     "tags": [],
+     "items": [
+      [
+       "toast",
+       2
+      ],
+      [
+       "white_cheese",
+       2
+      ],
+      [
+       "tea",
+       1
+      ],
+      [
+       "sugar",
+       1
+      ]
+     ],
+     "photo_prompt": "Two slices of golden toast with melted white cheese and a glass of Saudi tea on a plate. Served on a plain white ceramic plate, overhead 45-degree angle, warm natural light, appetizing home-style presentation, photorealistic. No text, no watermark."
+    },
+    {
+     "id": "s1o11",
+     "label": "ساندويتش بيض وجبنة مع عصير",
+     "tags": [],
+     "items": [
+      [
+       "samouli",
+       1
+      ],
+      [
+       "egg",
+       1
+      ],
+      [
+       "white_cheese",
+       1
+      ],
+      [
+       "orange_juice",
+       1
+      ]
+     ],
+     "photo_prompt": "A samouli sandwich filled with fried egg and cheese, with a glass of orange juice. Served on a plain white ceramic plate, overhead 45-degree angle, warm natural light, appetizing home-style presentation, photorealistic. No text, no watermark."
     }
    ]
   },
@@ -939,6 +1007,108 @@
      ],
      "video_q": "مجدرة عدس بالأرز",
      "photo_prompt": "Mujaddara: lentils and rice topped with crispy fried onions, with yogurt on the side, in a large family bowl. Served on one very large round family serving platter (for 5-6 people), overhead 45-degree angle, warm natural light, rich appetizing colors, photorealistic. No text, no watermark."
+    },
+    {
+     "id": "s2o17",
+     "label": "أرز بالخضار مع دجاج مشوي",
+     "tags": [],
+     "items": [
+      [
+       "rice",
+       0.6
+      ],
+      [
+       "chicken_pieces",
+       1
+      ],
+      [
+       "carrot",
+       0.5
+      ],
+      [
+       "green_beans",
+       0.5
+      ],
+      [
+       "onion",
+       0.25
+      ],
+      [
+       "oil",
+       0.5
+      ]
+     ],
+     "remind": [
+      {
+       "text": "أخرجي الدجاج من الفريزر الآن ليذوب",
+       "hours_before": 14
+      }
+     ],
+     "photo_prompt": "Rice cooked with carrots and green beans served with grilled chicken pieces on a large family platter for 5 people. Served on one very large round family serving platter (for 5-6 people), overhead 45-degree angle, warm natural light, rich appetizing colors, photorealistic. No text, no watermark."
+    },
+    {
+     "id": "s2o18",
+     "label": "مكرونة بالصلصة الحمراء واللحم المفروم",
+     "tags": [
+      "red_meat"
+     ],
+     "items": [
+      [
+       "pasta",
+       0.6
+      ],
+      [
+       "beef_mince",
+       100
+      ],
+      [
+       "tomato_paste",
+       0.5
+      ],
+      [
+       "onion",
+       0.25
+      ],
+      [
+       "cheese_grated",
+       0.5
+      ],
+      [
+       "oil",
+       0.5
+      ]
+     ],
+     "photo_prompt": "Macaroni in red tomato and minced meat sauce topped with grated cheese in a large family dish for 5 people. Served on one very large round family serving platter (for 5-6 people), overhead 45-degree angle, warm natural light, rich appetizing colors, photorealistic. No text, no watermark."
+    },
+    {
+     "id": "s2o19",
+     "label": "كبدة غنم بالخضار مع أرز",
+     "tags": [
+      "red_meat"
+     ],
+     "items": [
+      [
+       "liver",
+       100
+      ],
+      [
+       "rice",
+       0.5
+      ],
+      [
+       "onion",
+       0.5
+      ],
+      [
+       "green_pepper",
+       0.5
+      ],
+      [
+       "tomato",
+       0.5
+      ]
+     ],
+     "photo_prompt": "Sauteed lamb liver with peppers and onions beside white rice in a family dish. Served on one very large round family serving platter (for 5-6 people), overhead 45-degree angle, warm natural light, rich appetizing colors, photorealistic. No text, no watermark."
     }
    ]
   },
@@ -1121,6 +1291,46 @@
       ]
      ],
      "photo_prompt": "A platter of cut seasonal fruit with dates and small cups of Saudi coffee. Served on a plain white ceramic plate, overhead 45-degree angle, warm natural light, appetizing home-style presentation, photorealistic. No text, no watermark."
+    },
+    {
+     "id": "s3o7",
+     "label": "حليب بالهيل وتمر",
+     "tags": [
+      "light"
+     ],
+     "items": [
+      [
+       "whole_milk",
+       1
+      ],
+      [
+       "dates",
+       3
+      ],
+      [
+       "sugar",
+       0.5
+      ]
+     ],
+     "photo_prompt": "A glass of warm cardamom milk beside a small plate of dates. Served on a plain white ceramic plate, overhead 45-degree angle, warm natural light, appetizing home-style presentation, photorealistic. No text, no watermark."
+    },
+    {
+     "id": "s3o8",
+     "label": "عصير برتقال ومعمول",
+     "tags": [
+      "sweet"
+     ],
+     "items": [
+      [
+       "orange_juice",
+       1
+      ],
+      [
+       "maamoul",
+       2
+      ]
+     ],
+     "photo_prompt": "A glass of fresh orange juice with maamoul date cookies on a tray. Served on a plain white ceramic plate, overhead 45-degree angle, warm natural light, appetizing home-style presentation, photorealistic. No text, no watermark."
     }
    ]
   },
@@ -1358,6 +1568,74 @@
       ]
      ],
      "photo_prompt": "Labneh and cucumber wraps in Arabic bread. Served on a plain white ceramic plate, overhead 45-degree angle, warm natural light, appetizing home-style presentation, photorealistic. No text, no watermark."
+    },
+    {
+     "id": "s4o9",
+     "label": "ساندويتش ناجتس دجاج",
+     "tags": [
+      "fastfood"
+     ],
+     "items": [
+      [
+       "tortilla",
+       1
+      ],
+      [
+       "nuggets",
+       4
+      ],
+      [
+       "lettuce",
+       0.25
+      ],
+      [
+       "tomato",
+       0.25
+      ],
+      [
+       "cheese_grated",
+       0.25
+      ]
+     ],
+     "photo_prompt": "Crispy chicken nugget tortilla wraps with lettuce, tomato and cheese on a platter. Served on a plain white ceramic plate, overhead 45-degree angle, warm natural light, appetizing home-style presentation, photorealistic. No text, no watermark."
+    },
+    {
+     "id": "s4o10",
+     "label": "برجر منزلي مع بطاطس",
+     "tags": [
+      "fastfood"
+     ],
+     "items": [
+      [
+       "burger_patty",
+       1
+      ],
+      [
+       "burger_bun",
+       1
+      ],
+      [
+       "white_cheese",
+       1
+      ],
+      [
+       "tomato",
+       0.5
+      ],
+      [
+       "lettuce",
+       0.25
+      ],
+      [
+       "potato",
+       1
+      ],
+      [
+       "oil",
+       0.5
+      ]
+     ],
+     "photo_prompt": "A homemade beef burger with cheese, lettuce and tomato in a bun with golden fries on the side. Served on a plain white ceramic plate, overhead 45-degree angle, warm natural light, appetizing home-style presentation, photorealistic. No text, no watermark."
     }
    ]
   }
@@ -2203,6 +2481,126 @@
    "f": 5,
    "nutri": "estimate"
   },
+  "cornflakes": {
+   "name": "كورن فليكس",
+   "label": "كورن فليكس",
+   "icon": "🥣",
+   "unit": "كوب",
+   "buy_unit": "علبة كورن فليكس (≈12 كوباً)",
+   "buy_qty": 12,
+   "buy_price": 18,
+   "category": "grain",
+   "kcal": 110,
+   "p": 2,
+   "c": 25,
+   "f": 0.2,
+   "nutri": "estimate"
+  },
+  "whole_milk": {
+   "name": "حليب كامل الدسم",
+   "label": "حليب كامل الدسم",
+   "icon": "🥛",
+   "unit": "كوب",
+   "buy_unit": "لتر حليب (4 أكواب)",
+   "buy_qty": 4,
+   "buy_price": 6,
+   "category": "dairy",
+   "kcal": 150,
+   "p": 8,
+   "c": 12,
+   "f": 8,
+   "nutri": "estimate"
+  },
+  "toast": {
+   "name": "توست",
+   "label": "توست",
+   "icon": "🍞",
+   "unit": "شريحة",
+   "buy_unit": "كيس توست (≈20 شريحة)",
+   "buy_qty": 20,
+   "buy_price": 6,
+   "category": "grain",
+   "kcal": 75,
+   "p": 2.5,
+   "c": 14,
+   "f": 1,
+   "nutri": "estimate"
+  },
+  "nuggets": {
+   "name": "ناجتس دجاج",
+   "label": "ناجتس دجاج",
+   "icon": "🍗",
+   "unit": "قطعة",
+   "buy_unit": "كيس ناجتس (≈25 قطعة)",
+   "buy_qty": 25,
+   "buy_price": 28,
+   "category": "meat",
+   "kcal": 50,
+   "p": 3,
+   "c": 3,
+   "f": 3,
+   "nutri": "estimate"
+  },
+  "tortilla": {
+   "name": "خبز تورتيلا",
+   "label": "خبز تورتيلا",
+   "icon": "🌯",
+   "unit": "حبة",
+   "buy_unit": "كيس تورتيلا (8 حبات)",
+   "buy_qty": 8,
+   "buy_price": 12,
+   "category": "grain",
+   "kcal": 130,
+   "p": 3.5,
+   "c": 22,
+   "f": 3,
+   "nutri": "estimate"
+  },
+  "burger_patty": {
+   "name": "برجر لحم",
+   "label": "برجر لحم",
+   "icon": "🍔",
+   "unit": "قطعة",
+   "buy_unit": "كرتون برجر (≈10 قطع)",
+   "buy_qty": 10,
+   "buy_price": 35,
+   "category": "meat",
+   "kcal": 260,
+   "p": 19,
+   "c": 1,
+   "f": 20,
+   "nutri": "estimate"
+  },
+  "burger_bun": {
+   "name": "خبز برجر",
+   "label": "خبز برجر",
+   "icon": "🍔",
+   "unit": "حبة",
+   "buy_unit": "كيس خبز برجر (6 حبات)",
+   "buy_qty": 6,
+   "buy_price": 9,
+   "category": "grain",
+   "kcal": 150,
+   "p": 5,
+   "c": 28,
+   "f": 2,
+   "nutri": "estimate"
+  },
+  "orange_juice": {
+   "name": "عصير برتقال",
+   "label": "عصير برتقال",
+   "icon": "🍊",
+   "unit": "كوب",
+   "buy_unit": "علبة عصير برتقال لتر (≈4 أكواب)",
+   "buy_qty": 4,
+   "buy_price": 8,
+   "category": "other",
+   "kcal": 110,
+   "p": 1.5,
+   "c": 26,
+   "f": 0.3,
+   "nutri": "estimate"
+  },
   "maamoul": {
    "name": "معمول",
    "label": "معمول",
@@ -2380,6 +2778,9 @@
   },
   "sweet": {
    "max_meals": 3
+  },
+  "fastfood": {
+   "max_meals": 2
   }
  },
  "DAY_TYPE_PATTERN": null,

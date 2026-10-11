@@ -130,10 +130,41 @@ class MealActions extends StatelessWidget {
                 nav.pop();
               }, c: Colors.red.shade700),
               b(fav ? Icons.star : Icons.star_border, fav ? 'مفضلة ✓' : 'مفضلة', () => store.toggleFavorite(option.id), c: Brand.honey),
+              b(Icons.storefront_outlined, 'من مطعم', () async {
+                final nav = Navigator.of(context);
+                final ok = await showOutMealDialog(context, store, weekStart, day, slotId);
+                if (ok) nav.pop();
+              }, c: Brand.grey),
             ]),
           );
         },
       );
+}
+
+/// «اليوم من مطعم»: اسم المطعم وسعرات تقديرية اختيارية. يرجع true عند الحفظ.
+Future<bool> showOutMealDialog(BuildContext context, HouseholdStore store, DateTime weekStart, int day, String slotId) async {
+  final name = TextEditingController(), kcal = TextEditingController();
+  final ok = await showDialog<bool>(
+    context: context,
+    builder: (d) => AlertDialog(
+      title: const Text('وجبة من مطعم'),
+      content: Column(mainAxisSize: MainAxisSize.min, children: [
+        TextField(controller: name, decoration: const InputDecoration(labelText: 'اسم المطعم أو الوجبة', hintText: 'مثال: البيك', border: OutlineInputBorder())),
+        const SizedBox(height: 10),
+        TextField(controller: kcal, keyboardType: TextInputType.number,
+            decoration: const InputDecoration(labelText: 'سعرات تقريبية (اختياري)', suffixText: 'سعرة', border: OutlineInputBorder())),
+        const SizedBox(height: 6),
+        const Text('لا تدخل هذه الوجبة قائمة المشتريات.', style: TextStyle(fontSize: 12.5, color: Brand.grey)),
+      ]),
+      actions: [
+        TextButton(onPressed: () => Navigator.pop(d, false), child: const Text('إلغاء')),
+        FilledButton(onPressed: () => Navigator.pop(d, true), child: const Text('احفظ')),
+      ],
+    ),
+  );
+  if (ok != true) return false;
+  await store.setOutMeal(weekStart, day, slotId, name.text, kcal: double.tryParse(kcal.text.trim()));
+  return true;
 }
 
 /// إدارة وجبات النظام: أخفِ ما لا تحبه الأسرة، فضّل ما تحبه، وأضف وجبتك الخاصة.

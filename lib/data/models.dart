@@ -46,6 +46,9 @@ class MealOption {
   final List<String> tags;
   final List<(String, double)> items;
   final String? recipe, dayType, videoQ, photoPrompt;
+  /// وجبة من مطعم: لا مكوّنات ولا مشتريات، وسعراتها تقدير يدخله المستخدم (اختياري) بلا تعديل بحجم الحصة.
+  final bool isOut;
+  final double? kcal;
   /// تذكيرات تحضير قبل الوجبة (فك الدجاج، نقع الأرز…): نص + كم ساعة قبل موعد الوجبة.
   final List<({String text, double hoursBefore})> remind;
   MealOption(Map<String, dynamic> j)
@@ -53,6 +56,8 @@ class MealOption {
         label = j['label'],
         tags = List<String>.from(j['tags'] ?? const []),
         items = [for (final it in (j['items'] as List? ?? const [])) (it[0] as String, parseQty(it[1]))],
+        isOut = j['out'] == true,
+        kcal = j['kcal'] == null ? null : parseQty(j['kcal']),
         recipe = j['recipe'],
         dayType = j['day_type'],
         videoQ = j['video_q'],
@@ -140,7 +145,7 @@ class Program {
             ...(s['options'] as List),
             for (final c in custom.where((c) => c['slot'] == s['id']))
               {
-                'id': c['id'], 'label': c['label'], 'tags': const <String>[],
+                'id': c['id'], 'label': c['label'], 'tags': const <String>[], 'out': c['out'] == true, 'kcal': c['kcal'],
                 // Firestore يخزّن المكوّنات خرائط {k,q}؛ نحوّلها لأزواج [مفتاح، كمية] كبقية الوجبات (والمجهول يُهمَل)
                 'items': [
                   for (final it in (c['items'] as List? ?? const []))

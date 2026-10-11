@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../data/links.dart';
 import '../data/store.dart';
@@ -14,8 +15,8 @@ class PlanTab extends StatelessWidget {
   final LinkService links;
   /// طبيب يعرض خطة مريضه: يرى الهدف والوجبات فقط.
   final bool specialist;
-  final String who;
-  const PlanTab({super.key, required this.store, required this.links, this.specialist = false, this.who = ''});
+  final String who, programLabel;
+  const PlanTab({super.key, required this.store, required this.links, this.specialist = false, this.who = '', this.programLabel = ''});
 
   @override
   Widget build(BuildContext context) => ListenableBuilder(
@@ -23,6 +24,20 @@ class PlanTab extends StatelessWidget {
         builder: (context, _) {
           final h = store.household;
           return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+            if (!specialist) ...[
+              CardBox(
+                child: Row(children: [
+                  const Icon(Icons.swap_horiz, color: Brand.green),
+                  const SizedBox(width: 10),
+                  Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                    const Text('نظامي الحالي', style: TextStyle(fontSize: 12.5, color: Brand.grey)),
+                    Text(programLabel, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700)),
+                  ])),
+                  OutlinedButton(onPressed: () => context.push('/journey?update=1'), child: const Text('غيّر نظامي')),
+                ]),
+              ),
+              const SizedBox(height: 14),
+            ],
             if (h.personal) ...[
               GoalCard(store: store, isSpecialist: specialist, who: who),
               const SizedBox(height: 14),

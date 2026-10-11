@@ -26,7 +26,7 @@ class StoreLoader extends StatefulWidget {
 class _StoreLoaderState extends State<StoreLoader> {
   FirestoreStore? _store;
   Future<FirestoreStore>? _future;
-  String? _hid;
+  String? _hid, _prog;
 
   Membership? get _membership => widget.links.membershipOf(widget.role);
 
@@ -34,6 +34,7 @@ class _StoreLoaderState extends State<StoreLoader> {
     _store?.dispose();
     _store = null;
     _hid = m.householdId;
+    _prog = m.programId;
     _future = FirestoreStore.open(widget.db!, widget.library, m.householdId, canManage: widget.role != Role.cook)
         .then((s) => _store = s);
   }
@@ -55,7 +56,7 @@ class _StoreLoaderState extends State<StoreLoader> {
                 widget.role == Role.cook ? 'اطلب رمز الدعوة من مدير البيت.' : 'أنشئ بيتك أو اطلب رمزاً من مريضك.',
                 action: widget.role == Role.cook ? ('إدخال الرمز', '/join/cook') : ('بيتي', '/household'));
           }
-          if (_hid != m.householdId) _open(m);
+          if (_hid != m.householdId || _prog != m.programId) _open(m); // تغيير النظام يعيد فتح المخزن
           return FutureBuilder<FirestoreStore>(
             future: _future,
             builder: (context, snap) {

@@ -14,7 +14,9 @@ import '../widgets/common.dart';
 class JourneyScreen extends StatefulWidget {
   final Library library;
   final Session session;
-  const JourneyScreen({super.key, required this.library, required this.session});
+  /// تغيير نظام بيت قائم (لا إنشاء بيت جديد).
+  final bool update;
+  const JourneyScreen({super.key, required this.library, required this.session, this.update = false});
 
   @override
   State<JourneyScreen> createState() => _JourneyScreenState();
@@ -99,7 +101,7 @@ class _JourneyScreenState extends State<JourneyScreen> {
   void _save() {
     JourneyDraft.current = _draft;
     if (widget.session.signedIn) {
-      context.go('/journey/finish');
+      context.go(widget.update ? '/journey/finish?update=1' : '/journey/finish');
     } else {
       context.push('/login?next=${Uri.encodeComponent('/journey/finish')}');
     }
@@ -117,7 +119,7 @@ class _JourneyScreenState extends State<JourneyScreen> {
     return Scaffold(
       body: ListView(padding: EdgeInsets.zero, children: [
         GreenHeader(
-          icon: '🧭', title: title, subtitle: 'دقيقة واحدة بلا تسجيل',
+          icon: '🧭', title: title, subtitle: widget.update ? 'نظامك الحالي يُستبدل بالجديد' : 'دقيقة واحدة بلا تسجيل',
           leading: _step == _Step.goal ? null : IconButton(onPressed: _back, icon: const Icon(Icons.arrow_forward, color: Colors.white)),
         ),
         Center(
@@ -161,9 +163,8 @@ class _JourneyScreenState extends State<JourneyScreen> {
         _choice('⚖️', 'أريد تنقيص وزني', 'نحسب سعراتك من طولك ووزنك، وتصلك وجبات بحصص مضبوطة.', () => setState(() { _track = 'weight'; _mode = Mode.lose; _step = _Step.body; })),
         _choice('🩺', 'عندي حالة صحية', 'كلى، سكري، ضغط، حمل… بنظام غذائي مبني على مرجع طبي.', () => setState(() { _track = 'medical'; _step = _Step.medical; })),
         _choice('💪', 'أريد بناء العضل أو التنشيف', 'سعرات وبروتين حسب جسمك وتمرينك، لتضخيم نظيف أو تنشيف يحفظ العضل.', () => setState(() { _track = 'muscle'; _mode = Mode.gain; _step = _Step.body; })),
-        Center(
-          child: TextButton(onPressed: () => context.push('/login'), child: const Text('لدي حساب — دخول')),
-        ),
+        if (!widget.session.signedIn)
+          Center(child: TextButton(onPressed: () => context.push('/login'), child: const Text('لدي حساب — دخول'))),
       ]);
 
   Widget _stepper(String label, int v, int min, int max, ValueChanged<int> on) => Padding(
@@ -374,7 +375,8 @@ class _JourneyScreenState extends State<JourneyScreen> {
 class JourneyFinishScreen extends StatefulWidget {
   final LinkService links;
   final Session session;
-  const JourneyFinishScreen({super.key, required this.links, required this.session});
+  final bool update;
+  const JourneyFinishScreen({super.key, required this.links, required this.session, this.update = false});
 
   @override
   State<JourneyFinishScreen> createState() => _JourneyFinishScreenState();
@@ -391,6 +393,16 @@ class _JourneyFinishScreenState extends State<JourneyFinishScreen> {
 
   Future<void> _run() async {
     final d = JourneyDraft.current;
+    if (widget.update && d != null && widget.links.hasHousehold) {
+      try {
+        await widget.links.applyJourney(d.programId, d.eaters, d.toHousehold());
+        JourneyDraft.current = null;
+        if (mounted) context.go('/me');
+      } catch (_) {
+        if (mounted) setState(() => _error = 'تعذّر تغيير النظام. تحقق من الاتصال وأعد المحاولة.');
+      }
+      return;
+    }
     if (d == null || widget.links.hasHousehold) {
       if (mounted) context.go(widget.links.hasHousehold ? '/me' : '/new-house');
       return;

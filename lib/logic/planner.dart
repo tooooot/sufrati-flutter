@@ -82,7 +82,7 @@ List<Pick> pickWeekOptions(Program program, {Random? random, Map<String, Set<Str
   for (var day = 0; day < 7; day++) {
     final dayType = pattern?[day];
     for (final slot in program.slots) {
-      var pool = slot.options.where((o) => !hidden.contains(o.id)).toList();
+      var pool = slot.options.where((o) => !hidden.contains(o.id) && !o.isOut).toList();
       if (pool.isEmpty) pool = [...slot.options]; // لا نترك وجبة بلا خيارات مهما أخفت
       final options = [...pool, ...pool.where((o) => favorites.contains(o.id))]..shuffle(rnd); // المفضلة مرتان
       bool ok(MealOption o) {

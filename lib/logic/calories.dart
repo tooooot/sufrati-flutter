@@ -86,6 +86,7 @@ Plan? planFor(Profile p) {
 
 /// مجموع تغذية خيار وجبة لكل «حصة بالغ» × [portion]. المكوّنات غير المقدَّرة تُحصى في [missing].
 ({Nutri total, int missing}) optionNutri(Program prog, MealOption o, {double portion = 1}) {
+  if (o.isOut) return (total: o.kcal == null ? Nutri.zero : Nutri(o.kcal!, 0, 0, 0), missing: o.kcal == null ? 1 : 0);
   var t = Nutri.zero;
   var missing = 0;
   for (final (k, q) in o.items) {

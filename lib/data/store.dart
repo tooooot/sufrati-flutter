@@ -145,12 +145,26 @@ abstract class HouseholdStore extends ChangeNotifier {
     return _household({'custom': household.custom, 'hidden': household.hidden.toList(), 'favorites': household.favorites.toList()});
   }
 
+  /// وجبة من مطعم لهذا اليوم/الوجبة: تُنشأ كوجبة خاصة بلا مكوّنات (فلا تدخل المشتريات) وتُوضع في الخطة.
+  Future<void> setOutMeal(DateTime weekStart, int day, String slotId, String name, {double? kcal}) async {
+    final label = '🍽️ من مطعم: ${name.trim().isEmpty ? 'خارج البيت' : name.trim()}';
+    var c = household.custom.where((x) => x['out'] == true && x['label'] == label && x['slot'] == slotId).firstOrNull;
+    if (c == null) {
+      c = {'id': 'o_${DateTime.now().millisecondsSinceEpoch}', 'slot': slotId, 'label': label, 'items': <dynamic>[], 'out': true, 'kcal': kcal};
+      household.custom.add(c);
+    } else if (kcal != null) {
+      c['kcal'] = kcal;
+    }
+    await _household({'custom': household.custom});
+    await setOption(weekStart, day, slotId, c['id'] as String);
+  }
+
   /// «غيّريها»: بديل عشوائي لوجبة واحدة (من غير المخفي ولا الحالي).
   Future<void> replaceMeal(DateTime weekStart, int day, String slotId) async {
     final p = await program();
     final slot = p.slots.firstWhere((s) => s.id == slotId);
     final cur = (await week(weekStart)).days[day][slotId];
-    final pool = slot.options.where((o) => o.id != cur && !household.hidden.contains(o.id)).toList();
+    final pool = slot.options.where((o) => o.id != cur && !household.hidden.contains(o.id) && !o.isOut).toList();
     if (pool.isEmpty) return;
     final weighted = [...pool, ...pool.where((o) => household.favorites.contains(o.id))];
     await setOption(weekStart, day, slotId, weighted[Random().nextInt(weighted.length)].id);

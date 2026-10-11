@@ -181,6 +181,25 @@ class FirestoreLinkService extends LinkService {
   }
 
   @override
+  Future<void> applyJourney(String programId, int eaters, Map<String, dynamic> fields) async {
+    final hid = _ownerHid;
+    if (hid == null) throw StateError('لا بيت');
+    final ref = db.doc('households/$hid');
+    // خطط الأسابيع والمشتريات القديمة بمعرّفات وجبات النظام السابق: تُحذف لتُبنى من جديد
+    for (final sub in const ['weeks', 'shopping']) {
+      for (final d in (await ref.collection(sub).get()).docs) {
+        await d.reference.delete();
+      }
+    }
+    await ref.update({
+      'programId': programId, 'eaters': eaters, ...fields,
+      'hidden': <String>[], 'favorites': <String>[], 'custom': <dynamic>[], 'pantry': FieldValue.delete(),
+      if (!fields.containsKey('target')) 'target': FieldValue.delete(),
+      if (!fields.containsKey('profile')) 'profile': FieldValue.delete(),
+    });
+  }
+
+  @override
   Future<Invite> createInvite(Role role, {String? householdId}) async {
     final hid = householdId ?? _ownerHid;
     if (hid == null) throw StateError('لا بيت لإصدار دعوة منه');
