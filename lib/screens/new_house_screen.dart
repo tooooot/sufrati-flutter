@@ -5,6 +5,7 @@ import '../auth/session.dart';
 import '../data/growth.dart';
 import '../data/links.dart';
 import '../data/repository.dart';
+import '../logic/names.dart';
 import '../theme.dart';
 import '../widgets/common.dart';
 import '../widgets/medical_note.dart';
@@ -31,7 +32,7 @@ class _NewHouseScreenState extends State<NewHouseScreen> {
   String? _error;
 
   String _suggest() {
-    final n = (widget.session.user?.name ?? '').trim().split(' ').first;
+    final n = firstName(widget.session.user?.name ?? '');
     return n.isEmpty ? '' : 'بيت $n';
   }
 

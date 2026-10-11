@@ -12,6 +12,7 @@ import '../logic/shopping.dart';
 import '../theme.dart';
 import '../logic/dates.dart';
 import '../widgets/common.dart';
+import '../logic/names.dart';
 import '../widgets/meal_extras.dart';
 import 'home_controls.dart';
 import '../widgets/profile_button.dart';
@@ -51,7 +52,7 @@ class _PatientScreenState extends State<PatientScreen> {
     final now = saudiNow();
     final today = DateTime(now.year, now.month, now.day);
     final dayName = widget.library.dayNames[today.difference(weekStartFor(today)).inDays];
-    final first = widget.userName.trim().split(' ').first;
+    final first = firstName(widget.userName);
     final greeting = now.hour < 12 ? 'صباح الخير' : 'مساء الخير';
     return ListenableBuilder(
       listenable: store,
