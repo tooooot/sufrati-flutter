@@ -5,6 +5,8 @@ import 'package:url_launcher/url_launcher.dart';
 import '../auth/roles.dart';
 import '../auth/session.dart';
 import '../data/links.dart';
+import '../data/prefs.dart';
+import '../data/repository.dart';
 import '../routing.dart';
 import '../widgets/nav.dart';
 import '../theme.dart';
@@ -14,7 +16,9 @@ import '../widgets/common.dart';
 class ProfileScreen extends StatelessWidget {
   final Session session;
   final LinkService links;
-  const ProfileScreen({super.key, required this.session, required this.links});
+  final Library library;
+  final PrefsService prefs;
+  const ProfileScreen({super.key, required this.session, required this.links, required this.library, required this.prefs});
 
   Future<void> _switchTo(BuildContext context, Role r) async {
     if (r == Role.doctor && !links.isDoctor) {
@@ -53,6 +57,47 @@ class ProfileScreen extends StatelessWidget {
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(16, 16, 16, 32),
                 child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+                  // نظامي الحالي وتغييره
+                  if (links.hasHousehold) ...[
+                    const _GroupTitle('نظامي'),
+                    CardBox(
+                      child: Row(children: [
+                        Text(library.meta(links.programId)?.icon ?? '🍽️', style: const TextStyle(fontSize: 30)),
+                        const SizedBox(width: 12),
+                        Expanded(child: Text(library.meta(links.programId)?.label ?? '', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800))),
+                        OutlinedButton(onPressed: () => context.push('/journey?update=1'), child: const Text('غيّر نظامي')),
+                      ]),
+                    ),
+                    const SizedBox(height: 20),
+                  ],
+                  // المظهر: حجم الخط (يتبع الحساب على كل الأجهزة)
+                  const _GroupTitle('حجم الخط'),
+                  ListenableBuilder(
+                    listenable: prefs,
+                    builder: (_, _) => CardBox(
+                      child: Row(children: [
+                        for (final (l, v) in PrefsService.scales)
+                          Expanded(
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 3),
+                              child: GestureDetector(
+                                onTap: () => prefs.setFontScale(v),
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(vertical: 12),
+                                  decoration: BoxDecoration(
+                                    color: (prefs.fontScale - v).abs() < .01 ? Brand.green : Brand.green.withValues(alpha: .08),
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  child: Text(l, textAlign: TextAlign.center,
+                                      style: TextStyle(fontWeight: FontWeight.w800, color: (prefs.fontScale - v).abs() < .01 ? Colors.white : Brand.green)),
+                                ),
+                              ),
+                            ),
+                          ),
+                      ]),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
                   // تبديل الدور بنقرة
                   CardBox(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                     const Text('أنت الآن تستخدم سفرتي كـ', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w800, color: Brand.grey)),

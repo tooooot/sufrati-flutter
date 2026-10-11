@@ -16,6 +16,7 @@ import 'auth/roles.dart';
 import 'data/firestore_links.dart';
 import 'data/events.dart';
 import 'data/growth.dart';
+import 'data/prefs.dart';
 import 'notify/push_service.dart';
 import 'data/links.dart';
 import 'screens/admin_screen.dart';
@@ -93,7 +94,8 @@ Future<void> main() async {
   EventQueue.instance.configure(db, auth);
   final push = PushService(db, auth);
   fbAuth.beforeSignOut = push.unregister;
-  runApp(SufratiApp(library: library, i18n: i18n, auth: auth, links: links, db: db, growth: growth));
+  final prefs = PrefsService(db, auth);
+  runApp(SufratiApp(library: library, i18n: i18n, auth: auth, links: links, db: db, growth: growth, prefs: prefs));
 }
 
 /// شاشة عبور: تنقل المستخدم المسجَّل إلى وجهته (تحميل أو شاشة دوره) بعد أول إطار.
@@ -117,7 +119,8 @@ class SufratiApp extends StatelessWidget {
   final LinkService links;
   final FirebaseFirestore? db;
   final GrowthService growth;
-  SufratiApp({super.key, required this.library, required this.i18n, required this.auth, required this.links, required this.db, required this.growth});
+  final PrefsService prefs;
+  SufratiApp({super.key, required this.library, required this.i18n, required this.auth, required this.links, required this.db, required this.growth, required this.prefs});
 
   // الجلسة: الدخول أولاً (Google/Apple) ثم الدور المستنتج من الارتباطات. التصفح يبقى متاحاً بلا حساب.
   late final _session = Session(auth, links);
@@ -151,7 +154,7 @@ class SufratiApp extends StatelessWidget {
           builder: (_, st) => DoctorJoinScreen(session: _session, growth: growth, code: st.pathParameters['code']!)),
       GoRoute(path: '/doctor/profile', builder: (_, _) => DoctorProfileScreen(growth: growth, links: links)),
       GoRoute(path: '/household', builder: (_, _) => HouseholdScreen(links: links, library: library)),
-      GoRoute(path: '/profile', builder: (_, _) => ProfileScreen(session: _session, links: links)),
+      GoRoute(path: '/profile', builder: (_, _) => ProfileScreen(session: _session, links: links, library: library, prefs: prefs)),
       GoRoute(path: '/i/:code',
           builder: (_, st) => InviteJoinScreen(session: _session, links: links, code: st.pathParameters['code']!)),
       GoRoute(path: '/join/:role',
@@ -198,5 +201,13 @@ class SufratiApp extends StatelessWidget {
         supportedLocales: const [Locale('ar'), Locale('en')],
         localizationsDelegates: GlobalMaterialLocalizations.delegates,
         routerConfig: _router,
+        // حجم الخط من تفضيلات الحساب
+        builder: (context, child) => ListenableBuilder(
+          listenable: prefs,
+          builder: (_, _) => MediaQuery(
+            data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(prefs.fontScale)),
+            child: child!,
+          ),
+        ),
       );
 }

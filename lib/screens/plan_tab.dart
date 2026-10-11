@@ -69,6 +69,18 @@ class PlanTab extends StatelessWidget {
                 ),
               ],
             ] else ...[
+              if (!specialist) ...[
+                CardBox(
+                  onTap: () => context.push('/cook/me'),
+                  child: const Row(children: [
+                    Icon(Icons.alarm, color: Brand.honey, size: 28),
+                    SizedBox(width: 10),
+                    Expanded(child: Text('شاشة الطبخ والتنبيهات (فك الدجاج، نقع الأرز…)', style: TextStyle(fontWeight: FontWeight.w700, height: 1.5))),
+                    Icon(Icons.chevron_left, color: Brand.grey),
+                  ]),
+                ),
+                const SizedBox(height: 14),
+              ],
               HouseSettingsCard(store: store),
               const SizedBox(height: 14),
               HouseholdBody(links: links),

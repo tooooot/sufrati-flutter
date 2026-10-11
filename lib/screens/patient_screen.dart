@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 
 import '../data/household.dart';
 import '../data/models.dart';
@@ -18,9 +17,7 @@ import '../widgets/meal_extras.dart';
 import 'home_controls.dart';
 import '../widgets/tabs_scaffold.dart';
 import 'plan_tab.dart';
-import '../auth/roles.dart';
 import '../data/links.dart';
-import 'household_screen.dart';
 
 /// لوحة المريض/مدير البيت — نقل لـ user.html: الوجبات (اليوم/غداً) · المشتريات · الأسبوع القادم.
 class PatientScreen extends StatefulWidget {
@@ -110,49 +107,6 @@ class _TodayTab extends StatefulWidget {
   State<_TodayTab> createState() => _TodayTabState();
 }
 
-/// «ابدأ بهذه الخطوات»: بيتك جاهز ← ادعُ طاهيك ← راجع مشترياتك. تُغلق بنقرة وتختفي نهائياً حين ينضم الطاهي.
-class _FirstSteps extends StatefulWidget {
-  final LinkService links;
-  final TabsController tabs;
-  const _FirstSteps({required this.links, required this.tabs});
-  @override
-  State<_FirstSteps> createState() => _FirstStepsState();
-}
-
-class _FirstStepsState extends State<_FirstSteps> {
-  bool _hidden = false;
-
-  @override
-  Widget build(BuildContext context) {
-    if (_hidden) return const SizedBox.shrink();
-    final invited = widget.links.inviteFor(Role.cook) != null;
-    Widget row(bool done, String label, VoidCallback? onTap) => InkWell(
-          onTap: onTap,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 7),
-            child: Row(children: [
-              Icon(done ? Icons.check_circle : Icons.radio_button_unchecked, color: done ? Brand.green : Brand.honey, size: 24),
-              const SizedBox(width: 10),
-              Expanded(child: Text(label, style: TextStyle(fontWeight: black, fontSize: 15, decoration: done ? TextDecoration.lineThrough : null, color: done ? Brand.grey : null))),
-              if (onTap != null && !done) const Icon(Icons.chevron_left, color: Brand.grey),
-            ]),
-          ),
-        );
-    return CardBox(
-      child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-        Row(children: [
-          const Expanded(child: Text('ابدأ بهذه الخطوات', style: TextStyle(fontSize: 17, fontWeight: black, color: Brand.green))),
-          IconButton(visualDensity: VisualDensity.compact, icon: const Icon(Icons.close, size: 20), onPressed: () => setState(() => _hidden = true)),
-        ]),
-        row(true, 'أنشأت بيتك واخترت نظامك', null),
-        row(invited, invited ? 'أرسلتَ دعوة الطاهي — بانتظار دخوله' : 'ادعُ طاهيك برابط واتساب (يصله شرح بلغته)',
-            () => inviteFlow(context, widget.links, Role.cook)),
-        row(false, 'راجع قائمة مشتريات هذا الأسبوع', () => widget.tabs.select(1)),
-      ]),
-    );
-  }
-}
-
 class _TodayTabState extends State<_TodayTab> {
   bool tomorrow = false;
 
@@ -171,109 +125,59 @@ class _TodayTabState extends State<_TodayTab> {
         if (!snap.hasData) return const Padding(padding: EdgeInsets.all(40), child: Center(child: CircularProgressIndicator(color: Brand.green)));
         final (Program program, DayView day, List<ShoppingLine> lines) = snap.data!;
         final next = tomorrow ? null : _nextSlot(day, now);
-        final doneCount = day.slots.where((x) => x.prepared).length;
         final personal = widget.store.household.personal;
         final eaters = widget.store.household.eaters;
         final servings = widget.store.household.servings;
-        final tip = program.userTips.isEmpty ? null : program.userTips[_ordinal(now) % program.userTips.length];
         return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-          // خطوات البداية لمدير البيت الجديد: تختفي حين ينضم الطاهي
-          if (widget.canInvite && !personal && widget.links.joinedBy(Role.cook) == null) ...[
-            _FirstSteps(links: widget.links, tabs: widget.tabs),
-            const SizedBox(height: 14),
-          ],
           if (personal && widget.store.household.targetKcal > 0) ...[
             _DayRing(program: program, day: day, portion: widget.store.household.portion, target: widget.store.household.target!, tomorrow: tomorrow),
             const SizedBox(height: 14),
           ],
-          if (!tomorrow)
-            next != null
-                ? _NextMealHero(s: next, program: program, library: widget.library, eaters: eaters, now: now, portion: widget.store.household.portion)
-                : _DayDoneHero(done: doneCount, total: day.slots.length),
-          const SizedBox(height: 14),
-          Row(children: [
-            if (!personal) ...[
-              _Quick(Icons.person_add_alt_1, 'دعوة الطاهي', widget.canInvite ? () => inviteFlow(context, widget.links, Role.cook) : null),
-              const SizedBox(width: 10),
-            ],
-            _Quick(Icons.ios_share, 'شارك المشتريات', () => _shareShopping(program, lines)),
-            const SizedBox(width: 10),
-            _Quick(Icons.autorenew, 'تعديل الأسبوع', () => widget.tabs.select(2)),
-            if (personal) ...[
-              const SizedBox(width: 10),
-              _Quick(Icons.flag_outlined, 'هدفي', () => widget.tabs.select(3)),
-            ],
-          ]),
-          if (widget.canInvite && !personal) ...[
-            const SizedBox(height: 10),
-            CardBox(
-              onTap: () => context.push('/cook/me'),
-              child: const Row(children: [
-                Icon(Icons.alarm, color: Brand.honey, size: 28),
-                SizedBox(width: 10),
-                Expanded(child: Text('أطبخ بنفسي: افتح شاشة الطبخ والتنبيهات (فك الدجاج، نقع الأرز…)', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 14, height: 1.5))),
-                Icon(Icons.chevron_left, color: Brand.grey),
-              ]),
-            ),
-          ],
-          const SizedBox(height: 20),
-          Row(children: [
-            Expanded(child: Text(tomorrow ? 'وجبات الغد' : 'وجبات اليوم',
-                style: const TextStyle(fontSize: 19, fontWeight: black, color: Brand.green))),
-            if (!tomorrow)
-              Text(personal ? 'أكلتَ $doneCount من ${day.slots.length}' : 'حُضّرت $doneCount من ${day.slots.length}',
-                  style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w800, color: Brand.honey)),
-          ]),
-          const SizedBox(height: 8),
           Row(children: [
             for (final (t, label) in [(false, 'اليوم'), (true, 'غدًا')]) ...[
               Expanded(child: _BigToggle(label: label, selected: tomorrow == t, onTap: () => setState(() => tomorrow = t))),
               if (!t) const SizedBox(width: 10),
             ],
           ]),
-          const SizedBox(height: 12),
+          const SizedBox(height: 14),
           for (final s in day.slots) ...[
-            _MealRow(s: s, isNext: identical(s, next), onTap: () => _showMeal(context, s, program, servings, day),
-                kcal: personal && s.option != null ? optionNutri(program, s.option!, portion: widget.store.household.portion).total.kcal : null,
-                onToggle: personal && !tomorrow ? () => widget.store.setPrepared(day.weekStart, day.dayIndex, s.slot.id, !s.prepared) : null),
-            const SizedBox(height: 8),
-          ],
-          const SizedBox(height: 10),
-          _ShoppingSummary(lines: lines, onTap: () => widget.tabs.select(1)),
-          if (tip != null) ...[
-            const SizedBox(height: 14),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-              decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: Brand.green.withValues(alpha: .15))),
-              child: Row(children: [
-                Text(tip['icon'] ?? '💡', style: const TextStyle(fontSize: 22)),
-                const SizedBox(width: 8),
-                Expanded(child: Text(tip['text'] ?? '', style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: Color(0xFF374151), height: 1.5))),
-              ]),
+            _MealTile(
+              s: s, program: program, library: widget.library, isNext: identical(s, next), people: eaters,
+              onTap: () => _showMeal(context, s, program, servings, day),
+              kcal: personal && s.option != null ? optionNutri(program, s.option!, portion: widget.store.household.portion).total.kcal : null,
+              onToggle: personal && !tomorrow ? () => widget.store.setPrepared(day.weekStart, day.dayIndex, s.slot.id, !s.prepared) : null,
             ),
+            const SizedBox(height: 12),
           ],
         ]);
       },
     );
   }
 
-  void _showMeal(BuildContext context, SlotView s, Program program, double servings, DayView day) => showModalBottomSheet<void>(
-        context: context,
-        isScrollControlled: true,
-        showDragHandle: true,
-        backgroundColor: Brand.cream,
-        builder: (_) => SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(16, 0, 16, 28),
-          child: _MealCard(s: s, program: program, library: widget.library, servings: servings, portion: widget.store.household.portion,
-              actions: widget.canInvite && s.option != null
-                  ? MealActions(store: widget.store, weekStart: day.weekStart, day: day.dayIndex, slotId: s.slot.id, option: s.option!)
-                  : null),
+  /// الوجبة بصفحة كاملة: صورة كبيرة، المقادير، التذكيرات، طريقة التحضير، الفيديو.
+  void _showMeal(BuildContext context, SlotView s, Program program, double servings, DayView day) =>
+      Navigator.of(context).push(MaterialPageRoute<void>(
+        builder: (_) => Scaffold(
+          backgroundColor: Brand.cream,
+          appBar: AppBar(
+            backgroundColor: Brand.green, foregroundColor: Colors.white,
+            title: Text('${s.slot.icon} ${s.slot.name}', style: const TextStyle(fontWeight: FontWeight.w800)),
+          ),
+          body: Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 520),
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.fromLTRB(16, 16, 16, 32),
+                child: _MealCard(s: s, program: program, library: widget.library, servings: servings, portion: widget.store.household.portion, photoHeight: 240,
+                    actions: widget.canInvite && s.option != null
+                        ? MealActions(store: widget.store, weekStart: day.weekStart, day: day.dayIndex, slotId: s.slot.id, option: s.option!)
+                        : null),
+              ),
+            ),
+          ),
         ),
-      );
+      ));
 
-  Future<void> _shareShopping(Program program, List<ShoppingLine> lines) async =>
-      showShopShare(context, widget.store, weekStartFor(saudiNow()), program, lines, widget.store.pantryOf(program));
 }
 
 /// الوجبة القادمة: البطاقة الكبيرة الوحيدة في أعلى «اليوم».
@@ -354,99 +258,6 @@ class _DayRing extends StatelessWidget {
   }
 }
 
-class _NextMealHero extends StatelessWidget {
-  final SlotView s;
-  final Program program;
-  final Library library;
-  final int eaters;
-  final DateTime now;
-  final double portion;
-  const _NextMealHero({required this.s, required this.program, required this.library, required this.eaters, required this.now, this.portion = 1});
-
-  @override
-  Widget build(BuildContext context) {
-    final photo = s.option == null ? null : library.photoUrl(program.meta.id, s.option!.id);
-    final hm = s.time.split(':').map(int.parse).toList();
-    final diff = hm[0] * 60 + hm[1] - (now.hour * 60 + now.minute);
-    final when = diff <= 0 ? 'حان وقتها' : diff < 60 ? 'بعد $diff دقيقة' : 'بعد ${diff ~/ 60} ساعة';
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(26),
-        border: Border.all(color: Brand.honey, width: 2),
-        boxShadow: const [BoxShadow(color: Color(0x1F000000), blurRadius: 22, offset: Offset(0, 8))],
-      ),
-      clipBehavior: Clip.antiAlias,
-      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        if (photo != null) DishPhoto(photo, width: double.infinity, height: 150),
-        Padding(
-          padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
-          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Row(children: [
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 3),
-                decoration: BoxDecoration(color: Brand.honey, borderRadius: BorderRadius.circular(12)),
-                child: const Text('الوجبة القادمة', style: TextStyle(fontSize: 12, fontWeight: black, color: Colors.white)),
-              ),
-              const Spacer(),
-              Text('$when · ${ar12(s.time)}', style: const TextStyle(fontSize: 15, fontWeight: black, color: Brand.honey)),
-            ]),
-            const SizedBox(height: 8),
-            Text(s.option?.label ?? '—', style: const TextStyle(fontSize: 21, fontWeight: black)),
-            const SizedBox(height: 2),
-            Text('${s.slot.name} · ${forPeople(eaters)}', style: const TextStyle(fontSize: 14, color: Brand.grey)),
-            if (s.option != null) _NutriLine(program: program, option: s.option!, portion: portion),
-          ]),
-        ),
-      ]),
-    );
-  }
-}
-
-class _DayDoneHero extends StatelessWidget {
-  final int done, total;
-  const _DayDoneHero({required this.done, required this.total});
-  @override
-  Widget build(BuildContext context) => CardBox(
-        color: Brand.green,
-        child: Row(children: [
-          const Icon(Icons.check_circle, color: Colors.white, size: 38),
-          const SizedBox(width: 12),
-          Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            const Text('انتهت وجبات اليوم', style: TextStyle(color: Colors.white, fontSize: 19, fontWeight: black)),
-            Text('حُضّرت $done من $total — نراك غدًا', style: const TextStyle(color: Colors.white70, fontSize: 14)),
-          ])),
-        ]),
-      );
-}
-
-class _Quick extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final VoidCallback? onTap;
-  const _Quick(this.icon, this.label, this.onTap);
-  @override
-  Widget build(BuildContext context) => Expanded(
-        child: Opacity(
-          opacity: onTap == null ? .4 : 1,
-          child: CardBox(
-            onTap: onTap,
-            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 4),
-            child: Column(children: [
-              Container(
-                width: 40, height: 40,
-                decoration: BoxDecoration(color: Brand.green.withValues(alpha: .1), borderRadius: BorderRadius.circular(14)),
-                child: Icon(icon, color: Brand.green, size: 22),
-              ),
-              const SizedBox(height: 6),
-              Text(label, textAlign: TextAlign.center,
-                  style: const TextStyle(fontSize: 12.5, fontWeight: FontWeight.w800, color: Brand.green, height: 1.3)),
-            ]),
-          ),
-        ),
-      );
-}
-
 /// تقدير سعرات الفرد البالغ لهذه الوجبة بحصة بيته (تقدير حتى يعتمده الأخصائي).
 class _NutriLine extends StatelessWidget {
   final Program program;
@@ -466,78 +277,6 @@ class _NutriLine extends StatelessWidget {
   }
 }
 
-class _MealRow extends StatelessWidget {
-  final SlotView s;
-  final bool isNext;
-  final VoidCallback onTap;
-  /// للمستخدم الشخصي: سعرات الوجبة بحصته، وزر «أكلتها» يعلّمها.
-  final double? kcal;
-  final VoidCallback? onToggle;
-  const _MealRow({required this.s, required this.isNext, required this.onTap, this.kcal, this.onToggle});
-  @override
-  Widget build(BuildContext context) => CardBox(
-        onTap: onTap,
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-        border: isNext ? Border.all(color: Brand.honey, width: 2) : null,
-        child: Row(children: [
-          GestureDetector(
-            onTap: onToggle,
-            behavior: HitTestBehavior.opaque,
-            child: Container(
-              width: 40, height: 40,
-              decoration: BoxDecoration(shape: BoxShape.circle,
-                  color: s.prepared ? Brand.green : Brand.honey.withValues(alpha: .18)),
-              child: Icon(s.prepared ? Icons.check : (onToggle != null ? Icons.radio_button_unchecked : Icons.schedule), size: 20, color: s.prepared ? Colors.white : Brand.honey),
-            ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text(s.slot.name, style: const TextStyle(fontSize: 16, fontWeight: black)),
-            Text(s.option?.label ?? '—', maxLines: 1, overflow: TextOverflow.ellipsis,
-                style: const TextStyle(fontSize: 13, color: Brand.grey)),
-          ])),
-          Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
-            Text(ar12(s.time), style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w800, color: Brand.honey)),
-            if (kcal != null) Text('${kcal!.round()} سعرة', style: const TextStyle(fontSize: 12.5, color: Brand.grey)),
-          ]),
-          const SizedBox(width: 4),
-          const Icon(Icons.chevron_left, color: Colors.grey, size: 20),
-        ]),
-      );
-}
-
-class _ShoppingSummary extends StatelessWidget {
-  final List<ShoppingLine> lines;
-  final VoidCallback onTap;
-  const _ShoppingSummary({required this.lines, required this.onTap});
-  @override
-  Widget build(BuildContext context) {
-    final done = lines.where((l) => l.bought).length;
-    final total = lines.fold<double>(0, (a, l) => a + l.packs * l.unitPrice);
-    return CardBox(
-      onTap: onTap,
-      child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-        const Text('مشتريات هذا الأسبوع', style: TextStyle(fontSize: 17, fontWeight: black, color: Brand.green)),
-        const SizedBox(height: 10),
-        ClipRRect(
-          borderRadius: BorderRadius.circular(6),
-          child: LinearProgressIndicator(
-            value: lines.isEmpty ? 0 : done / lines.length, minHeight: 10,
-            color: Brand.green, backgroundColor: Brand.green.withValues(alpha: .12),
-          ),
-        ),
-        const SizedBox(height: 8),
-        Row(children: [
-          Text('اشتريت $done من ${lines.length}', style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w700, color: Brand.grey)),
-          const Spacer(),
-          Text('التكلفة التقديرية ${total.toStringAsFixed(0)} ر.س',
-              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w700, color: Brand.grey)),
-        ]),
-      ]),
-    );
-  }
-}
-
 /// الوجبة القادمة اليوم: أول وجبة وقتها لم يحن بعد وليست محضَّرة.
 SlotView? _nextSlot(DayView day, DateTime now) {
   for (final s in day.slots) {
@@ -547,8 +286,6 @@ SlotView? _nextSlot(DayView day, DateTime now) {
   }
   return null;
 }
-
-int _ordinal(DateTime d) => DateTime.utc(d.year, d.month, d.day).difference(DateTime.utc(1, 1, 1)).inDays + 1;
 
 class _BigToggle extends StatelessWidget {
   final String label;
@@ -572,13 +309,75 @@ class _BigToggle extends StatelessWidget {
       );
 }
 
+/// بطاقة وجبة في «اليوم»: صورة كبيرة واسم الوجبة ووقتها، وللشخصي سعراتها وزر «أكلتها».
+class _MealTile extends StatelessWidget {
+  final SlotView s;
+  final Program program;
+  final Library library;
+  final bool isNext;
+  final int people;
+  final VoidCallback onTap;
+  final double? kcal;
+  final VoidCallback? onToggle;
+  const _MealTile({required this.s, required this.program, required this.library, required this.isNext, required this.people, required this.onTap, this.kcal, this.onToggle});
+
+  @override
+  Widget build(BuildContext context) {
+    final photo = s.option == null ? null : library.photoUrl(program.meta.id, s.option!.id);
+    return CardBox(
+      onTap: onTap,
+      padding: EdgeInsets.zero,
+      border: isNext ? Border.all(color: Brand.honey, width: 2) : null,
+      child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+        if (photo != null) DishPhoto(photo, width: double.infinity, height: 150, radius: 14),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(14, 12, 14, 14),
+          child: Row(children: [
+            if (onToggle != null) ...[
+              GestureDetector(
+                onTap: onToggle,
+                behavior: HitTestBehavior.opaque,
+                child: Icon(s.prepared ? Icons.check_circle : Icons.radio_button_unchecked, size: 34, color: s.prepared ? Brand.green : Colors.black38),
+              ),
+              const SizedBox(width: 12),
+            ] else if (s.prepared) ...[
+              const Icon(Icons.check_circle, size: 28, color: Brand.green),
+              const SizedBox(width: 10),
+            ],
+            Expanded(
+              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                Row(children: [
+                  Text('${s.slot.icon} ${s.slot.name}', style: const TextStyle(fontSize: 13.5, color: Brand.grey, fontWeight: FontWeight.w700)),
+                  const SizedBox(width: 8),
+                  Text(ar12(s.time), style: const TextStyle(fontSize: 13.5, fontWeight: FontWeight.w800, color: Brand.honey)),
+                  if (isNext) ...[
+                    const SizedBox(width: 8),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                      decoration: BoxDecoration(color: Brand.honey, borderRadius: BorderRadius.circular(10)),
+                      child: const Text('التالية', style: TextStyle(fontSize: 11.5, color: Colors.white, fontWeight: FontWeight.w800)),
+                    ),
+                  ],
+                ]),
+                const SizedBox(height: 4),
+                Text(s.option?.label ?? '—', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w800, height: 1.35)),
+                if (kcal != null && kcal! > 0) Text('${kcal!.round()} سعرة', style: const TextStyle(fontSize: 13, color: Brand.grey)),
+              ]),
+            ),
+          ]),
+        ),
+      ]),
+    );
+  }
+}
+
 class _MealCard extends StatelessWidget {
   final SlotView s;
   final Program program;
   final Library library;
-  final double servings, portion;
+  final double servings, portion, photoHeight;
   final Widget? actions;
-  const _MealCard({required this.s, required this.program, required this.library, required this.servings, this.portion = 1, this.actions});
+  const _MealCard({required this.s, required this.program, required this.library, required this.servings, this.portion = 1, this.photoHeight = 160, this.actions});
 
   @override
   Widget build(BuildContext context) {
@@ -596,7 +395,7 @@ class _MealCard extends StatelessWidget {
           Text('🕐 ${ar12(s.time)}', style: const TextStyle(fontSize: 17, fontWeight: FontWeight.bold, color: Brand.honey)),
         ]),
         const SizedBox(height: 8),
-        if (photo != null) ...[DishPhoto(photo, width: double.infinity, height: 160), const SizedBox(height: 12)],
+        if (photo != null) ...[DishPhoto(photo, width: double.infinity, height: photoHeight), const SizedBox(height: 12)],
         Text(s.option?.label ?? '—', style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
         if (s.option != null) _NutriLine(program: program, option: s.option!, portion: portion),
         const SizedBox(height: 12),
@@ -670,6 +469,12 @@ class _ShoppingTab extends StatelessWidget {
             Text('يمكنك تعديل مشتريات هذا الأسبوع حتى مساء ${const ['السبت', 'الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة'][h.cutoffDay]} الساعة ${ar12(h.cutoffTime)}',
                 textAlign: TextAlign.center, style: const TextStyle(fontSize: 13, color: Brand.grey)),
           const SizedBox(height: 8),
+          OutlinedButton.icon(
+            icon: const Icon(Icons.ios_share),
+            label: const Text('أرسل القائمة للزوج أو السائق'),
+            onPressed: () => showShopShare(context, store, thisWeek, program, linesThis, store.pantryOf(program)),
+          ),
+          const SizedBox(height: 10),
           _ShoppingCard(title: '🛒 مشترياتك — هذا الأسبوع', week: thisWeek, lines: linesThis, locked: locked,
               program: program, store: store),
           const SizedBox(height: 24),
