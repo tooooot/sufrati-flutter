@@ -184,11 +184,13 @@ class FirebaseAuthService extends AuthService {
 
   @override
   Future<void> signOut() async {
+    // كل خطوة جانبية لها مهلة: كتابة Firestore بلا إنترنت أو رمز الإشعارات قد لا ترجع أبداً فيعلق الخروج.
+    // الخروج الفعلي من Firebase يجري دائماً مهما حدث.
     try {
-      await beforeSignOut?.call();
+      await beforeSignOut?.call().timeout(const Duration(seconds: 3));
     } catch (_) {}
     try {
-      await GoogleSignIn.instance.signOut();
+      await GoogleSignIn.instance.signOut().timeout(const Duration(seconds: 3));
     } catch (_) {}
     await _auth.signOut();
   }
