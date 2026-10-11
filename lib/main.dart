@@ -62,8 +62,10 @@ Future<void> main() async {
   final i18nF = CookI18n.load();
   // Firebase حقيقي على الجوال والويب. على الويب: لا Crashlytics ولا App Check ولا إشعارات محلية ولا دخول Apple.
   await Firebase.initializeApp(options: SufratiFirebase.current);
-  final nutriF = NutritionReview.loadOverrides(FirebaseFirestore.instance); // تقديرات الأخصائي المعتمدة تغلب الملفات
   final library = await libraryF;
+  // تقديرات الأخصائي المعتمدة تغلب الملفات: تُجلب في الخلفية فلا تؤخر أول شاشة (والأنظمة تُبنى من جديد عند وصولها)
+  NutritionReview.loadOverrides(FirebaseFirestore.instance).then((_) => library.clearCache());
+  library.refreshPhotos();
   final i18n = await i18nF;
   if (!kIsWeb) {
     // App Check: يثبت أن الطلبات من تطبيقنا الحقيقي (Play Integrity / App Attest) لا من سكربت بمفتاحنا.
@@ -87,7 +89,6 @@ Future<void> main() async {
   final LinkService links = FirestoreLinkService(db, auth);
   // نستعيد الجلسة المحفوظة قبل رسم أي شاشة: لا وميض لشاشة الدخول، ولا تضيع الروابط العميقة.
   await auth.initialized.timeout(const Duration(seconds: 6), onTimeout: () {});
-  await nutriF;
   final GrowthService growth = FirestoreGrowthService(db, auth, links);
   EventQueue.instance.configure(db, auth);
   final push = PushService(db, auth);

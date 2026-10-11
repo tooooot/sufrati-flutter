@@ -21,21 +21,28 @@ class Library {
     final index = jsonDecode(await rootBundle.loadString('assets/data/programs_index.json'));
     final photos = jsonDecode(await rootBundle.loadString('assets/data/photos.json')) as Map<String, dynamic>;
     final have = {for (final e in photos.entries) e.key: Set<String>.from(e.value)};
-    // الصور التي تُرفع من مصنع الصور تظهر فور نشرها: نجلب القائمة الحية من الخادم (مهلة قصيرة، وفشلها يُبقي القائمة المضمّنة)
-    try {
-      final r = await http.get(Uri.parse('https://maeda.wardyat.net/api/dish-photos')).timeout(const Duration(seconds: 3));
-      if (r.statusCode == 200) {
-        for (final e in (jsonDecode(r.body) as Map<String, dynamic>).entries) {
-          (have[e.key] ??= {}).addAll(List<String>.from(e.value as List));
-        }
-      }
-    } catch (_) {}
     return Library._(
       [for (final p in index['programs'] as List) ProgramMeta(p)],
       List<String>.from(index['day_names']),
       have,
     );
   }
+
+  /// الصور التي تُرفع من مصنع الصور تظهر فور نشرها: نجلب القائمة الحية في الخلفية بعد أول شاشة
+  /// (لا تُعطّل الإقلاع أبداً، وفشلها يُبقي القائمة المضمّنة).
+  Future<void> refreshPhotos() async {
+    try {
+      final r = await http.get(Uri.parse('https://maeda.wardyat.net/api/dish-photos')).timeout(const Duration(seconds: 8));
+      if (r.statusCode == 200) {
+        for (final e in (jsonDecode(r.body) as Map<String, dynamic>).entries) {
+          (_photos[e.key] ??= {}).addAll(List<String>.from(e.value as List));
+        }
+      }
+    } catch (_) {}
+  }
+
+  /// يُسقط الأنظمة المحمّلة (بعد وصول تقديرات الأخصائي) لتُبنى من جديد بها.
+  void clearCache() => _cache.clear();
 
   List<ProgramMeta> get active => programs.where((p) => p.active).toList();
   List<ProgramMeta> get comingSoon => programs.where((p) => !p.active).toList();
