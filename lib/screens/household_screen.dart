@@ -74,7 +74,7 @@ class HouseholdBody extends StatelessWidget {
               const SizedBox(height: 8),
             ],
             _Slot(links: links, role: Role.doctor, icon: '🩺', title: personal ? 'أخصائي التغذية أو الطبيب' : 'الطبيب',
-                empty: 'يتابع خطتك ويعدّل سعراتك'),
+                empty: personal ? 'يتابع خطتك ويعدّل سعراتك' : 'يتابع الخطة ويعدّلها'),
             const SizedBox(height: 8),
             _Slot(links: links, role: Role.owner, icon: '👫', title: personal ? 'شريك' : 'شريكي في إدارة البيت',
                 empty: personal ? 'شخص يرى خطتك ويعدّلها معك' : 'الزوج أو الزوجة: يرى الخطة نفسها ويعدّلها معك (بيت واحد، لا بيتان)'),
