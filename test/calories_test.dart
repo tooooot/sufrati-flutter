@@ -34,7 +34,7 @@ void main() {
   });
 
   test('كل مكوّنات برنامجي الأسرة والتنحيف لها تقدير غذائي', () {
-    for (final id in ['saudi_family', 'weight_loss_general']) {
+    for (final id in ['saudi_family', 'weight_loss_general', 'muscle_gain', 'cutting_gym', 'kidney_salama']) {
       final prog = load(id);
       for (final s in prog.slots) {
         for (final o in s.options) {
@@ -53,5 +53,19 @@ void main() {
     final por = portionFor(prog, 1600);
     expect(por, inInclusiveRange(0.6, 1.5));
     expect((day * por - 1600).abs() < 1 || por == 0.6 || por == 1.5, isTrue);
+  });
+  test('بناء العضل: فائض فوق الاحتياج وبروتين 1.8 وزمن الوصول، والتنشيف بروتين 2.2', () {
+    const g = Profile(sex: Sex.male, age: 25, heightCm: 178, weightKg: 70, activity: Activity.moderate, goalKg: 75, mode: Mode.gain);
+    final pl = planFor(g)!;
+    expect(pl.kcal, greaterThan(pl.tdee));
+    expect(pl.kcal - pl.tdee, lessThan(pl.tdee * 0.12));
+    expect(pl.proteinG, closeTo(126, 1));
+    expect(pl.weeks, inInclusiveRange(15, 40));
+    const noGoal = Profile(sex: Sex.male, age: 25, heightCm: 178, weightKg: 70, activity: Activity.moderate, mode: Mode.gain);
+    expect(planFor(noGoal)!.weeks, isNull);
+    const c = Profile(sex: Sex.male, age: 30, heightCm: 180, weightKg: 90, activity: Activity.high, goalKg: 82, mode: Mode.cut);
+    final pc = planFor(c)!;
+    expect(pc.kcal, lessThan(pc.tdee));
+    expect(pc.proteinG, closeTo(198, 1));
   });
 }

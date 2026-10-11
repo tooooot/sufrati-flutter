@@ -3,6 +3,9 @@ import '../data/models.dart';
 
 enum Sex { male, female }
 
+/// lose: تنحيف · cut: تنشيف (تنحيف مع بروتين أعلى) · gain: بناء عضل بفائض سعرات.
+enum Mode { lose, cut, gain }
+
 enum Activity { sedentary, light, moderate, high, athlete }
 
 const activityFactor = {
@@ -23,8 +26,9 @@ class Profile {
   final double paceKgWeek;
   /// حالات تُحوَّل للأخصائي بلا حساب: حمل/رضاعة، سكري، كلى، اضطراب أكل.
   final bool needsSpecialist;
+  final Mode mode;
   const Profile({required this.sex, required this.age, required this.heightCm, required this.weightKg, required this.activity,
-      this.goalKg, this.paceKgWeek = 0.5, this.needsSpecialist = false});
+      this.goalKg, this.paceKgWeek = 0.5, this.needsSpecialist = false, this.mode = Mode.lose});
 }
 
 class Plan {
@@ -49,7 +53,12 @@ Plan? planFor(Profile p) {
   double target = t;
   int? weeks;
   String? note;
-  if (goal != null && goal < p.weightKg) {
+  if (p.mode == Mode.gain) {
+    // فائض 5/10/15% من الاحتياج بحسب السرعة: بناء نظيف بلا تراكم دهون كثير
+    final surplus = t * (p.paceKgWeek.clamp(0.25, 0.75) / 5);
+    target = t + surplus;
+    if (goal != null && goal > p.weightKg) weeks = ((goal - p.weightKg) * 5500 / (surplus * 7)).ceil();
+  } else if (goal != null && goal < p.weightKg) {
     final pace = p.paceKgWeek.clamp(0.25, 1.0);
     // 1 كغ دهون ≈ 7700 سعرة
     var deficit = pace * 7700 / 7;
@@ -68,7 +77,8 @@ Plan? planFor(Profile p) {
     weeks = ((p.weightKg - goal) * 7700 / (realDeficit * 7)).ceil();
   }
   target = (target / 50).round() * 50.0;
-  final protein = ((goal != null && goal < p.weightKg) ? 2.0 : 1.6) * p.weightKg;
+  final perKg = switch (p.mode) { Mode.gain => 1.8, Mode.cut => 2.2, Mode.lose => (goal != null && goal < p.weightKg) ? 2.0 : 1.6 };
+  final protein = perKg * p.weightKg;
   final fat = target * 0.27 / 9;
   final carb = (target - protein * 4 - fat * 9) / 4;
   return Plan(bmr: b, tdee: t, kcal: target, proteinG: protein, fatG: fat, carbG: carb < 0 ? 0 : carb, bmi: bmi(p.weightKg, p.heightCm), weeks: weeks, note: note);

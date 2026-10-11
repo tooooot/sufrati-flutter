@@ -20,7 +20,7 @@ class JourneyScreen extends StatefulWidget {
   State<JourneyScreen> createState() => _JourneyScreenState();
 }
 
-enum _Step { goal, family, body, result }
+enum _Step { goal, family, body, medical, result }
 
 class _JourneyScreenState extends State<JourneyScreen> {
   _Step _step = _Step.goal;
@@ -30,7 +30,8 @@ class _JourneyScreenState extends State<JourneyScreen> {
   Activity _act = Activity.light;
   final _age = TextEditingController(), _h = TextEditingController(), _w = TextEditingController(), _goal = TextEditingController();
   double _pace = 0.5;
-  bool _special = false;
+  bool _special = false, _consent = false;
+  Mode _mode = Mode.lose; // lose | cut | gain
   JourneyDraft? _draft;
   Program? _prog;
   String? _error;
@@ -49,6 +50,7 @@ class _JourneyScreenState extends State<JourneyScreen> {
     setState(() {
       _error = null;
       _step = switch (_step) { _Step.result => _track == 'family' ? _Step.family : _Step.body, _ => _Step.goal };
+      _mode = _track == 'muscle' ? _mode : Mode.lose;
     });
   }
 
@@ -67,15 +69,16 @@ class _JourneyScreenState extends State<JourneyScreen> {
 
   Future<void> _computeBody() async {
     final age = _num(_age)?.round(), h = _num(_h), w = _num(_w), g = _num(_goal);
-    if (age == null || h == null || w == null || g == null) {
-      setState(() => _error = 'أكمل الحقول الأربعة (العمر والطول والوزن والوزن المستهدف).');
+    final gain = _mode == Mode.gain;
+    if (age == null || h == null || w == null || (g == null && !gain)) {
+      setState(() => _error = gain ? 'أكمل العمر والطول والوزن.' : 'أكمل الحقول الأربعة (العمر والطول والوزن والوزن المستهدف).');
       return;
     }
-    if (g >= w) {
-      setState(() => _error = 'الوزن المستهدف يجب أن يكون أقل من وزنك الحالي.');
+    if (g != null && (gain ? g <= w : g >= w)) {
+      setState(() => _error = gain ? 'الوزن المستهدف يجب أن يكون أعلى من وزنك الحالي.' : 'الوزن المستهدف يجب أن يكون أقل من وزنك الحالي.');
       return;
     }
-    final prof = Profile(sex: _sex, age: age, heightCm: h, weightKg: w, activity: _act, goalKg: g, paceKgWeek: _pace, needsSpecialist: _special);
+    final prof = Profile(sex: _sex, age: age, heightCm: h, weightKg: w, activity: _act, goalKg: g, paceKgWeek: _pace, needsSpecialist: _special, mode: _mode);
     final plan = planFor(prof);
     if (plan == null) {
       setState(() => _error = _special || age < 18
@@ -83,10 +86,11 @@ class _JourneyScreenState extends State<JourneyScreen> {
           : 'تحقق من الأرقام المدخلة (الطول بالسنتيمتر والوزن بالكيلو).');
       return;
     }
-    final prog = await widget.library.program('weight_loss_general');
+    final pid = switch (_mode) { Mode.gain => 'muscle_gain', Mode.cut => 'cutting_gym', Mode.lose => 'weight_loss_general' };
+    final prog = await widget.library.program(pid);
     setState(() {
       _prog = prog;
-      _draft = JourneyDraft(track: 'weight', programId: 'weight_loss_general', eaters: 1, profile: prof, plan: plan, portion: portionFor(prog, plan.kcal));
+      _draft = JourneyDraft(track: _track, programId: pid, eaters: 1, profile: prof, plan: plan, portion: portionFor(prog, plan.kcal));
       _error = null;
       _step = _Step.result;
     });
@@ -107,6 +111,7 @@ class _JourneyScreenState extends State<JourneyScreen> {
       _Step.goal => 'ما هدفك؟',
       _Step.family => 'أسرتك',
       _Step.body => 'عنك',
+      _Step.medical => 'حالتك الصحية',
       _Step.result => 'خطتك المقترحة',
     };
     return Scaffold(
@@ -129,6 +134,7 @@ class _JourneyScreenState extends State<JourneyScreen> {
         _Step.goal => _goalStep(),
         _Step.family => _familyStep(),
         _Step.body => _bodyStep(),
+        _Step.medical => _medicalStep(),
         _Step.result => _resultStep(),
       };
 
@@ -152,9 +158,9 @@ class _JourneyScreenState extends State<JourneyScreen> {
 
   Widget _goalStep() => Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
         _choice('👨‍👩‍👧‍👦', 'أدير غذاء أسرتي', 'قائمة سعودية أسبوعية بالمقادير ومشتريات جاهزة، والتذكيرات للطاهي.', () => setState(() { _track = 'family'; _step = _Step.family; })),
-        _choice('⚖️', 'أريد تنقيص وزني', 'نحسب سعراتك من طولك ووزنك، وتصلك وجبات بحصص مضبوطة.', () => setState(() { _track = 'weight'; _step = _Step.body; })),
-        _choice('🩺', 'عندي حالة صحية', 'سكري، كلى، ضغط… بإشراف أخصائي تغذية. تصفّح الأنظمة المتاحة.', () => context.push('/browse')),
-        _choice('💪', 'أريد بناء العضل', 'نظام عالي البروتين. تصفّحه الآن، والحساب الشخصي قادم.', () => context.push('/browse')),
+        _choice('⚖️', 'أريد تنقيص وزني', 'نحسب سعراتك من طولك ووزنك، وتصلك وجبات بحصص مضبوطة.', () => setState(() { _track = 'weight'; _mode = Mode.lose; _step = _Step.body; })),
+        _choice('🩺', 'عندي حالة صحية', 'كلى، سكري، ضغط، حمل… بنظام غذائي مبني على مرجع طبي.', () => setState(() { _track = 'medical'; _step = _Step.medical; })),
+        _choice('💪', 'أريد بناء العضل أو التنشيف', 'سعرات وبروتين حسب جسمك وتمرينك، لتضخيم نظيف أو تنشيف يحفظ العضل.', () => setState(() { _track = 'muscle'; _mode = Mode.gain; _step = _Step.body; })),
         Center(
           child: TextButton(onPressed: () => context.push('/login'), child: const Text('لدي حساب — دخول')),
         ),
@@ -212,12 +218,16 @@ class _JourneyScreenState extends State<JourneyScreen> {
       ]);
 
   Widget _bodyStep() => Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+        if (_track == 'muscle') ...[
+          _seg<Mode>(const [(Mode.gain, 'بناء عضل (تضخيم)'), (Mode.cut, 'تنشيف')], _mode, (v) => setState(() => _mode = v)),
+          const SizedBox(height: 14),
+        ],
         _seg<Sex>(const [(Sex.female, 'أنثى'), (Sex.male, 'ذكر')], _sex, (v) => setState(() => _sex = v)),
         const SizedBox(height: 14),
         _field('العمر (سنة)', _age, '30'),
         _field('الطول (سم)', _h, '165'),
         _field('الوزن الحالي (كجم)', _w, '85'),
-        _field('الوزن المستهدف (كجم)', _goal, '70'),
+        _field(_mode == Mode.gain ? 'الوزن المستهدف (كجم) — اختياري' : 'الوزن المستهدف (كجم)', _goal, '70'),
         const Text('نشاطك اليومي', style: TextStyle(fontWeight: black)),
         const SizedBox(height: 6),
         _seg<Activity>(const [
@@ -225,9 +235,9 @@ class _JourneyScreenState extends State<JourneyScreen> {
           (Activity.high, 'رياضة يومية'), (Activity.athlete, 'رياضي محترف'),
         ], _act, (v) => setState(() => _act = v)),
         const SizedBox(height: 14),
-        const Text('سرعة النزول', style: TextStyle(fontWeight: black)),
+        Text(_mode == Mode.gain ? 'سرعة البناء' : 'سرعة النزول', style: TextStyle(fontWeight: black)),
         const SizedBox(height: 6),
-        _seg<double>(const [(0.25, 'هادئ ٠٫٢٥ كجم/أسبوع'), (0.5, 'متوازن ٠٫٥'), (0.75, 'سريع ٠٫٧٥')], _pace, (v) => setState(() => _pace = v)),
+        _seg<double>(_mode == Mode.gain ? const [(0.25, 'هادئ (+٥٪)'), (0.5, 'متوازن (+١٠٪)'), (0.75, 'سريع (+١٥٪)')] : const [(0.25, 'هادئ ٠٫٢٥ كجم/أسبوع'), (0.5, 'متوازن ٠٫٥'), (0.75, 'سريع ٠٫٧٥')], _pace, (v) => setState(() => _pace = v)),
         CheckboxListTile(
           contentPadding: EdgeInsets.zero,
           value: _special,
@@ -241,6 +251,37 @@ class _JourneyScreenState extends State<JourneyScreen> {
           onPressed: _computeBody,
           child: const Text('احسب خطتي', style: TextStyle(fontSize: 17, fontWeight: black)),
         ),
+      ]);
+
+  Widget _medicalStep() => Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+        CardBox(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          const Text('🫘 مرضى الكلى', style: TextStyle(fontSize: 18, fontWeight: black, color: Brand.green)),
+          const SizedBox(height: 6),
+          const Text('نظام غذائي مبني على دليل غذائي طبي منشور، بوجبات قليلة البوتاسيوم والفوسفور والصوديوم. لا نحسب لك سعرات آلياً: القيم تحددها طبيبتك أو أخصائيك.',
+              style: TextStyle(fontSize: 13.5, height: 1.7)),
+          CheckboxListTile(
+            contentPadding: EdgeInsets.zero,
+            value: _consent,
+            onChanged: (v) => setState(() => _consent = v ?? false),
+            controlAffinity: ListTileControlAffinity.leading,
+            title: const Text('أفهم أن النظام ليس بديلاً عن طبيبي، وسأعرضه عليه قبل الالتزام به.', style: TextStyle(fontSize: 13, height: 1.6)),
+          ),
+          FilledButton(
+            style: FilledButton.styleFrom(backgroundColor: Brand.green, minimumSize: const Size.fromHeight(50)),
+            onPressed: _consent
+                ? () {
+                    _draft = const JourneyDraft(track: 'medical', programId: 'kidney_salama');
+                    _save();
+                  }
+                : null,
+            child: const Text('ابدأ بنظام الكلى', style: TextStyle(fontSize: 16, fontWeight: black)),
+          ),
+        ])),
+        const SizedBox(height: 10),
+        CardBox(child: const Text(
+            '🩸 السكري · 💓 الضغط · 🤰 الحمل — قيد الإعداد: لا نطلقها قبل مرجع طبي موثوق لكل حالة. عالجها مع طبيبك الآن، ويمكنك لاحقاً ربط أخصائي بخطتك من داخل التطبيق.',
+            style: TextStyle(fontSize: 13.5, height: 1.7, color: Brand.grey))),
+        TextButton(onPressed: () => context.push('/browse'), child: const Text('تصفّح الأنظمة المتاحة')),
       ]);
 
   Widget _macro(String l, String v) => Expanded(
@@ -258,7 +299,7 @@ class _JourneyScreenState extends State<JourneyScreen> {
     final rows = <Widget>[];
     for (final s in prog.slots) {
       if (s.options.isEmpty) continue;
-      final k = _draft!.track == 'weight' ? portion : 1.0;
+      final k = _draft!.plan != null ? portion : 1.0;
       // الخيار الأقرب لمتوسط الخانة: فيقرب مجموع اليوم المعروض من هدف السعرات بدل أن يصادف أثقل الخيارات
       final avg = s.options.map((x) => optionNutri(prog, x).total.kcal).reduce((a, b) => a + b) / s.options.length;
       final o = ([...s.options]..sort((a, b) => (optionNutri(prog, a).total.kcal - avg).abs().compareTo((optionNutri(prog, b).total.kcal - avg).abs()))).first;
@@ -291,7 +332,7 @@ class _JourneyScreenState extends State<JourneyScreen> {
     return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
       if (plan != null) ...[
         CardBox(child: Column(children: [
-          const Text('سعراتك اليومية المقترحة', style: TextStyle(color: Brand.grey)),
+          Text(_mode == Mode.gain ? 'سعراتك اليومية للبناء' : 'سعراتك اليومية المقترحة', style: TextStyle(color: Brand.grey)),
           Text('${plan.kcal.round()}', style: const TextStyle(fontSize: 44, fontWeight: black, color: Brand.green)),
           Row(children: [
             _macro('بروتين', '${plan.proteinG.round()} غ'),
