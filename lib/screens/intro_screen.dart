@@ -21,7 +21,7 @@ class IntroScreen extends StatefulWidget {
   final Widget? header;
   /// مدة اللقطة (أطول للغة الثانية).
   final Duration beatDuration;
-  IntroScreen({super.key, List<PitchBeat>? beats, this.greeting, this.ctaLabel = 'ابدأ الآن', this.ctaRoute = '/login',
+  IntroScreen({super.key, List<PitchBeat>? beats, this.greeting, this.ctaLabel = 'ابدأ رحلتك', this.ctaRoute = '/journey',
       this.skipLabel = 'تخطَّ', this.tapHint = 'المس الشاشة للتالي', this.showBrowse = true, this.header, this.beatDuration = const Duration(milliseconds: 5200)})
       : beats = beats ?? beatsFor('user');
 

@@ -41,6 +41,19 @@ class AdminScreen extends StatelessWidget {
                       Icon(Icons.chevron_left),
                     ]),
                   ),
+                  const SizedBox(height: 10),
+                  CardBox(
+                    onTap: () => context.push('/specialist/nutrition'),
+                    child: const Row(children: [
+                      Icon(Icons.science, color: Brand.green, size: 30),
+                      SizedBox(width: 12),
+                      Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                        Text('مراجعة التغذية', style: TextStyle(fontWeight: black, fontSize: 17)),
+                        Text('سعرات وماكروز المكوّنات: تقدير أولي بانتظار الاعتماد', style: TextStyle(fontSize: 12, color: Brand.grey)),
+                      ])),
+                      Icon(Icons.chevron_left),
+                    ]),
+                  ),
                   const SizedBox(height: 20),
                   const Text('طلبات تفعيل الأطباء', style: TextStyle(fontWeight: black, fontSize: 17)),
                   const SizedBox(height: 8),

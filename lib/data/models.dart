@@ -11,10 +11,15 @@ double parseQty(Object? v) {
   return double.parse('$v');
 }
 
+/// تقديرات اعتمدها الأخصائي (تُحمَّل من Firestore عند الإقلاع) وتغلب تقديرات الملفات: المفتاح «البرنامج__المكوّن».
+Map<String, Nutri> nutriOverrides = {};
+
 class Ingredient {
   final String key, label, name, icon, unit, buyUnit, category;
   final double buyQty, buyPrice;
-  Ingredient(this.key, Map<String, dynamic> j)
+  /// تقدير غذائي لوحدة واحدة (سعرات، بروتين، كربوهيدرات، دهون). null إن لم يُقدَّر.
+  final Nutri? nutri;
+  Ingredient(this.key, Map<String, dynamic> j, {Nutri? override})
       : label = j['label'] ?? key,
         // اسم المنتج للمشتريات والمخزن (label قد تحمل وحدة الطبخ مثل «غرام لحم غنم»)
         name = j['name'] ?? j['label'] ?? key,
@@ -23,7 +28,17 @@ class Ingredient {
         buyUnit = j['buy_unit'] ?? '',
         category = j['category'] ?? 'other',
         buyQty = parseQty(j['buy_qty'] ?? 1),
-        buyPrice = parseQty(j['buy_price'] ?? 0);
+        buyPrice = parseQty(j['buy_price'] ?? 0),
+        nutri = override ?? (j['kcal'] == null ? null : Nutri(parseQty(j['kcal']), parseQty(j['p'] ?? 0), parseQty(j['c'] ?? 0), parseQty(j['f'] ?? 0), reviewed: j['nutri'] == 'reviewed'));
+}
+
+class Nutri {
+  final double kcal, p, c, f;
+  final bool reviewed;
+  const Nutri(this.kcal, this.p, this.c, this.f, {this.reviewed = false});
+  Nutri operator *(double k) => Nutri(kcal * k, p * k, c * k, f * k, reviewed: reviewed);
+  Nutri operator +(Nutri o) => Nutri(kcal + o.kcal, p + o.p, c + o.c, f + o.f, reviewed: reviewed && o.reviewed);
+  static const zero = Nutri(0, 0, 0, 0, reviewed: true);
 }
 
 class MealOption {
@@ -97,7 +112,7 @@ class Program {
         pantryDefaults = {...List<String>.from(j['PANTRY_DEFAULT'] ?? const [])},
         slots = [for (final s in j['MEAL_SLOTS'] as List) MealSlot(s)],
         ingredients = {
-          for (final e in (j['INGREDIENTS'] as Map<String, dynamic>).entries) e.key: Ingredient(e.key, e.value)
+          for (final e in (j['INGREDIENTS'] as Map<String, dynamic>).entries) e.key: Ingredient(e.key, e.value, override: nutriOverrides['${meta.id}__${e.key}'])
         },
         recipes = Map<String, dynamic>.from(j['RECIPES'] ?? const {}),
         limits = {

@@ -25,6 +25,14 @@ service cloud.firestore {
       allow delete: if isAdmin() || (signedIn() && request.auth.uid == uid);
     }
 
+    // ---- تقديرات التغذية التي راجعها الأخصائي (تغلب تقديرات الملفات) ----
+    // قراءة عامة (لا بيانات شخصية)، وكتابة المدير أو الطبيب المعتمد فقط.
+    match /nutrition/{id} {
+      allow read: if true;
+      allow write: if isAdmin() || (signedIn()
+        && get(/databases/$(db)/documents/users/$(request.auth.uid)).data.get('isDoctor', false) == true);
+    }
+
     // ---- البيوت ----
     match /households/{hid} {
       allow read: if isAdmin() || isMember(hid);

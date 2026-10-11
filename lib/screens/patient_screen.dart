@@ -5,6 +5,7 @@ import '../data/household.dart';
 import '../data/models.dart';
 import '../data/repository.dart';
 import '../data/store.dart';
+import '../logic/calories.dart';
 import '../logic/day_view.dart';
 import '../logic/planner.dart';
 import '../logic/prayer.dart';
@@ -238,7 +239,7 @@ class _TodayTabState extends State<_TodayTab> {
         backgroundColor: Brand.cream,
         builder: (_) => SingleChildScrollView(
           padding: const EdgeInsets.fromLTRB(16, 0, 16, 28),
-          child: _MealCard(s: s, program: program, library: widget.library, servings: servings,
+          child: _MealCard(s: s, program: program, library: widget.library, servings: servings, portion: widget.store.household.portion,
               actions: widget.canInvite && s.option != null
                   ? MealActions(store: widget.store, weekStart: day.weekStart, day: day.dayIndex, slotId: s.slot.id, option: s.option!)
                   : null),
@@ -341,6 +342,25 @@ class _Quick extends StatelessWidget {
       );
 }
 
+/// تقدير سعرات الفرد البالغ لهذه الوجبة بحصة بيته (تقدير حتى يعتمده الأخصائي).
+class _NutriLine extends StatelessWidget {
+  final Program program;
+  final MealOption option;
+  final double portion;
+  const _NutriLine({required this.program, required this.option, required this.portion});
+  @override
+  Widget build(BuildContext context) {
+    final r = optionNutri(program, option, portion: portion);
+    if (r.total.kcal <= 0 || r.missing > 0) return const SizedBox.shrink();
+    final n = r.total;
+    return Padding(
+      padding: const EdgeInsets.only(top: 6),
+      child: Text('≈ ${n.kcal.round()} سعرة للفرد · بروتين ${n.p.round()} غ · كربوهيدرات ${n.c.round()} غ · دهون ${n.f.round()} غ${n.reviewed ? ' ✓' : ' (تقدير)'}',
+          style: const TextStyle(fontSize: 12.5, color: Brand.grey, height: 1.5)),
+    );
+  }
+}
+
 class _MealRow extends StatelessWidget {
   final SlotView s;
   final bool isNext;
@@ -441,9 +461,9 @@ class _MealCard extends StatelessWidget {
   final SlotView s;
   final Program program;
   final Library library;
-  final double servings;
+  final double servings, portion;
   final Widget? actions;
-  const _MealCard({required this.s, required this.program, required this.library, required this.servings, this.actions});
+  const _MealCard({required this.s, required this.program, required this.library, required this.servings, this.portion = 1, this.actions});
 
   @override
   Widget build(BuildContext context) {
@@ -463,6 +483,7 @@ class _MealCard extends StatelessWidget {
         const SizedBox(height: 8),
         if (photo != null) ...[DishPhoto(photo, width: double.infinity, height: 160), const SizedBox(height: 12)],
         Text(s.option?.label ?? '—', style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+        if (s.option != null) _NutriLine(program: program, option: s.option!, portion: portion),
         const SizedBox(height: 12),
         Wrap(spacing: 8, runSpacing: 8, children: [
           for (final it in scaledItems(s.option, servings, program.ingredients)) _Chip(it.icon, it.qtyLabel, it.label),

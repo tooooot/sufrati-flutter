@@ -3,7 +3,7 @@ import 'auth/roles.dart';
 import 'auth/session.dart';
 
 bool isPublicPath(String p) =>
-    p == '/login' || p == '/browse' || p == '/intro' || p.startsWith('/programs/') || p.startsWith('/p/') || p.startsWith('/s/') || p.startsWith('/pitch/') ||
+    p == '/login' || p == '/browse' || p == '/intro' || p == '/journey' || p.startsWith('/programs/') || p.startsWith('/p/') || p.startsWith('/s/') || p.startsWith('/pitch/') ||
     (p.startsWith('/dr/') && !p.endsWith('/join'));
 
 /// الشاشة الرئيسية لكل دور بعد الدخول.
@@ -22,7 +22,7 @@ bool _validNext(String? n) => n != null && n.startsWith('/') && !n.startsWith('/
 /// وجهات تُقبَل حتى لمن لم يختر دوراً بعد: روابط الدعوة (/i) وطبيب المتابعين (/dr) وختم التسويق (/r)
 /// وطلب الطبيب (/doctor/apply) والانضمام (/join). غيرها ← شاشة اختيار الدور أولاً.
 bool _roleless(String n) =>
-    n.startsWith('/i/') || n.startsWith('/dr/') || n.startsWith('/r/') || n.startsWith('/doctor/apply') || n.startsWith('/join/');
+    n.startsWith('/i/') || n.startsWith('/dr/') || n.startsWith('/r/') || n.startsWith('/doctor/apply') || n.startsWith('/join/') || n == '/journey/finish';
 
 /// [full] المسار مع الاستعلام (لحفظه عند التحويل للدخول)، [next] وجهة محفوظة من قبل.
 String? appRedirect(Session s, String p, {String? full, String? next, bool landingForGuests = false}) {
@@ -39,6 +39,6 @@ String? appRedirect(Session s, String p, {String? full, String? next, bool landi
   }
   if (p == '/admin' && !s.isAdmin) return landing(s);
   // الملف الشخصي متاح دائماً بعد الدخول (منه يُغيَّر الدور أو يُخرَج)، وما عداه يتطلب دوراً
-  if (s.needsRole && !isPublicPath(p) && p != '/role' && p != '/profile' && p != '/doctor-pending' && p != '/doctor/apply' && !p.startsWith('/i/') && !p.startsWith('/dr/') && !p.startsWith('/r/')) return '/role';
+  if (s.needsRole && !isPublicPath(p) && p != '/role' && p != '/profile' && p != '/doctor-pending' && p != '/doctor/apply' && !p.startsWith('/i/') && !p.startsWith('/dr/') && !p.startsWith('/r/') && p != '/journey/finish') return '/role';
   return null;
 }

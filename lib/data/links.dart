@@ -59,7 +59,7 @@ abstract class LinkService extends ChangeNotifier {
   Invite? inviteFor(Role r);
   Invite? joinedBy(Role r);
 
-  Future<void> createHousehold(String label, String programId, int eaters);
+  Future<void> createHousehold(String label, String programId, int eaters, {Map<String, dynamic>? extra});
   /// [householdId] اختياري: افتراضياً بيت مدير البيت الحالي (والطبيب يمرّر بيت مريضه).
   Future<Invite> createInvite(Role role, {String? householdId});
 
@@ -119,7 +119,7 @@ class MemoryLinkService extends LinkService {
   Invite? joinedBy(Role r) => invites.where((i) => i.role == r && i.used).firstOrNull;
 
   @override
-  Future<void> createHousehold(String label, String programId, int eaters) async {
+  Future<void> createHousehold(String label, String programId, int eaters, {Map<String, dynamic>? extra}) async {
     _label = label.trim();
     _programId = programId;
     notifyListeners();

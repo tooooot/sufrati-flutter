@@ -1371,7 +1371,12 @@
    "buy_unit": "دجاجة كاملة (≈1.2 كيلو)",
    "buy_qty": 1,
    "buy_price": 22,
-   "category": "meat"
+   "category": "meat",
+   "kcal": 1500,
+   "p": 140,
+   "c": 0,
+   "f": 100,
+   "nutri": "estimate"
   },
   "chicken_pieces": {
    "name": "أوراك/صدور دجاج",
@@ -1381,7 +1386,12 @@
    "buy_unit": "كيلو أوراك دجاج (≈4 قطع)",
    "buy_qty": 4,
    "buy_price": 18,
-   "category": "meat"
+   "category": "meat",
+   "kcal": 300,
+   "p": 35,
+   "c": 0,
+   "f": 17,
+   "nutri": "estimate"
   },
   "lamb": {
    "name": "لحم غنم",
@@ -1391,7 +1401,12 @@
    "buy_unit": "كيلو لحم غنم",
    "buy_qty": 1000,
    "buy_price": 65,
-   "category": "meat"
+   "category": "meat",
+   "kcal": 2.5,
+   "p": 0.17,
+   "c": 0,
+   "f": 0.2,
+   "nutri": "estimate"
   },
   "beef_mince": {
    "name": "لحم مفروم",
@@ -1401,7 +1416,12 @@
    "buy_unit": "كيلو لحم مفروم",
    "buy_qty": 1000,
    "buy_price": 42,
-   "category": "meat"
+   "category": "meat",
+   "kcal": 2.3,
+   "p": 0.18,
+   "c": 0,
+   "f": 0.17,
+   "nutri": "estimate"
   },
   "liver": {
    "name": "كبدة غنم",
@@ -1411,7 +1431,12 @@
    "buy_unit": "كيلو كبدة",
    "buy_qty": 1000,
    "buy_price": 35,
-   "category": "meat"
+   "category": "meat",
+   "kcal": 1.4,
+   "p": 0.2,
+   "c": 0.02,
+   "f": 0.05,
+   "nutri": "estimate"
   },
   "fish": {
    "name": "سمك",
@@ -1421,7 +1446,12 @@
    "buy_unit": "كيلو سمك",
    "buy_qty": 1000,
    "buy_price": 38,
-   "category": "meat"
+   "category": "meat",
+   "kcal": 1.2,
+   "p": 0.2,
+   "c": 0,
+   "f": 0.05,
+   "nutri": "estimate"
   },
   "shrimp": {
    "name": "روبيان",
@@ -1431,7 +1461,12 @@
    "buy_unit": "كيلو روبيان",
    "buy_qty": 1000,
    "buy_price": 55,
-   "category": "meat"
+   "category": "meat",
+   "kcal": 1.0,
+   "p": 0.2,
+   "c": 0,
+   "f": 0.01,
+   "nutri": "estimate"
   },
   "egg": {
    "name": "بيض",
@@ -1441,7 +1476,12 @@
    "buy_unit": "كرتون بيض (30 حبة)",
    "buy_qty": 30,
    "buy_price": 15,
-   "category": "dairy"
+   "category": "dairy",
+   "kcal": 72,
+   "p": 6.3,
+   "c": 0.4,
+   "f": 4.8,
+   "nutri": "estimate"
   },
   "yogurt": {
    "name": "لبن/زبادي",
@@ -1451,7 +1491,12 @@
    "buy_unit": "عبوة لبن (6 أكواب)",
    "buy_qty": 6,
    "buy_price": 7,
-   "category": "dairy"
+   "category": "dairy",
+   "kcal": 120,
+   "p": 9,
+   "c": 16,
+   "f": 3,
+   "nutri": "estimate"
   },
   "labneh": {
    "name": "لبنة",
@@ -1461,7 +1506,12 @@
    "buy_unit": "علبة لبنة (≈20 ملعقة)",
    "buy_qty": 20,
    "buy_price": 10,
-   "category": "dairy"
+   "category": "dairy",
+   "kcal": 30,
+   "p": 1,
+   "c": 0.8,
+   "f": 2.5,
+   "nutri": "estimate"
   },
   "white_cheese": {
    "name": "جبنة بيضاء",
@@ -1471,7 +1521,12 @@
    "buy_unit": "علبة جبنة (≈10 شرائح)",
    "buy_qty": 10,
    "buy_price": 12,
-   "category": "dairy"
+   "category": "dairy",
+   "kcal": 65,
+   "p": 4,
+   "c": 1,
+   "f": 5,
+   "nutri": "estimate"
   },
   "cheese_grated": {
    "name": "جبنة مبشورة",
@@ -1481,7 +1536,12 @@
    "buy_unit": "كيس جبنة مبشورة (≈10 حصص)",
    "buy_qty": 10,
    "buy_price": 14,
-   "category": "dairy"
+   "category": "dairy",
+   "kcal": 110,
+   "p": 7,
+   "c": 1,
+   "f": 9,
+   "nutri": "estimate"
   },
   "cream": {
    "name": "قشطة",
@@ -1491,7 +1551,12 @@
    "buy_unit": "علبة قشطة (≈10 ملاعق)",
    "buy_qty": 10,
    "buy_price": 6,
-   "category": "dairy"
+   "category": "dairy",
+   "kcal": 50,
+   "p": 0.5,
+   "c": 0.5,
+   "f": 5,
+   "nutri": "estimate"
   },
   "milk": {
    "name": "حليب",
@@ -1501,7 +1566,12 @@
    "buy_unit": "لتر حليب (4 أكواب)",
    "buy_qty": 4,
    "buy_price": 6,
-   "category": "dairy"
+   "category": "dairy",
+   "kcal": 100,
+   "p": 8,
+   "c": 12,
+   "f": 2,
+   "nutri": "estimate"
   },
   "ghee": {
    "name": "سمن",
@@ -1511,7 +1581,12 @@
    "buy_unit": "علبة سمن (≈30 ملعقة)",
    "buy_qty": 30,
    "buy_price": 25,
-   "category": "fat"
+   "category": "fat",
+   "kcal": 120,
+   "p": 0,
+   "c": 0,
+   "f": 14,
+   "nutri": "estimate"
   },
   "butter": {
    "name": "زبدة",
@@ -1521,7 +1596,12 @@
    "buy_unit": "علبة زبدة (≈30 ملعقة)",
    "buy_qty": 30,
    "buy_price": 22,
-   "category": "fat"
+   "category": "fat",
+   "kcal": 100,
+   "p": 0,
+   "c": 0,
+   "f": 11.5,
+   "nutri": "estimate"
   },
   "oil": {
    "name": "زيت طبخ",
@@ -1531,7 +1611,12 @@
    "buy_unit": "لتر زيت (≈60 ملعقة)",
    "buy_qty": 60,
    "buy_price": 12,
-   "category": "fat"
+   "category": "fat",
+   "kcal": 120,
+   "p": 0,
+   "c": 0,
+   "f": 13.5,
+   "nutri": "estimate"
   },
   "nuts": {
    "name": "مكسرات (لوز/فستق/زبيب)",
@@ -1541,7 +1626,12 @@
    "buy_unit": "كيس مكسرات (≈20 ملعقة)",
    "buy_qty": 20,
    "buy_price": 25,
-   "category": "fat"
+   "category": "fat",
+   "kcal": 60,
+   "p": 1.8,
+   "c": 2.5,
+   "f": 5,
+   "nutri": "estimate"
   },
   "tomato": {
    "name": "طماطم",
@@ -1551,7 +1641,12 @@
    "buy_unit": "كيلو طماطم (≈6 حبات)",
    "buy_qty": 6,
    "buy_price": 5,
-   "category": "veg"
+   "category": "veg",
+   "kcal": 30,
+   "p": 1.5,
+   "c": 6.5,
+   "f": 0.3,
+   "nutri": "estimate"
   },
   "onion": {
    "name": "بصل",
@@ -1561,7 +1656,12 @@
    "buy_unit": "كيس بصل (≈8 حبات)",
    "buy_qty": 8,
    "buy_price": 5,
-   "category": "veg"
+   "category": "veg",
+   "kcal": 66,
+   "p": 1.8,
+   "c": 15,
+   "f": 0.1,
+   "nutri": "estimate"
   },
   "potato": {
    "name": "بطاطس",
@@ -1571,7 +1671,12 @@
    "buy_unit": "كيلو بطاطس (≈5 حبات)",
    "buy_qty": 5,
    "buy_price": 5,
-   "category": "veg"
+   "category": "veg",
+   "kcal": 130,
+   "p": 3.3,
+   "c": 30,
+   "f": 0.2,
+   "nutri": "estimate"
   },
   "carrot": {
    "name": "جزر",
@@ -1581,7 +1686,12 @@
    "buy_unit": "كيلو جزر (≈6 حبات)",
    "buy_qty": 6,
    "buy_price": 4,
-   "category": "veg"
+   "category": "veg",
+   "kcal": 40,
+   "p": 1,
+   "c": 9,
+   "f": 0.2,
+   "nutri": "estimate"
   },
   "cucumber": {
    "name": "خيار",
@@ -1591,7 +1701,12 @@
    "buy_unit": "كيلو خيار (≈6 حبات)",
    "buy_qty": 6,
    "buy_price": 5,
-   "category": "veg"
+   "category": "veg",
+   "kcal": 18,
+   "p": 1,
+   "c": 4,
+   "f": 0,
+   "nutri": "estimate"
   },
   "lettuce": {
    "name": "خس",
@@ -1601,7 +1716,12 @@
    "buy_unit": "حبة خس (≈4 حصص)",
    "buy_qty": 4,
    "buy_price": 4,
-   "category": "veg"
+   "category": "veg",
+   "kcal": 10,
+   "p": 1,
+   "c": 2,
+   "f": 0,
+   "nutri": "estimate"
   },
   "zucchini": {
    "name": "كوسة",
@@ -1611,7 +1731,12 @@
    "buy_unit": "كيلو كوسة (≈5 حبات)",
    "buy_qty": 5,
    "buy_price": 6,
-   "category": "veg"
+   "category": "veg",
+   "kcal": 28,
+   "p": 2,
+   "c": 5,
+   "f": 0.5,
+   "nutri": "estimate"
   },
   "eggplant": {
    "name": "باذنجان",
@@ -1621,7 +1746,12 @@
    "buy_unit": "كيلو باذنجان (≈3 حبات)",
    "buy_qty": 3,
    "buy_price": 6,
-   "category": "veg"
+   "category": "veg",
+   "kcal": 50,
+   "p": 2,
+   "c": 12,
+   "f": 0.3,
+   "nutri": "estimate"
   },
   "green_pepper": {
    "name": "فلفل أخضر",
@@ -1631,7 +1761,12 @@
    "buy_unit": "كيلو فلفل (≈10 حبات)",
    "buy_qty": 10,
    "buy_price": 7,
-   "category": "veg"
+   "category": "veg",
+   "kcal": 20,
+   "p": 1,
+   "c": 4.5,
+   "f": 0.2,
+   "nutri": "estimate"
   },
   "okra": {
    "name": "بامية",
@@ -1641,7 +1776,12 @@
    "buy_unit": "كيلو بامية (≈6 حصص)",
    "buy_qty": 6,
    "buy_price": 10,
-   "category": "veg"
+   "category": "veg",
+   "kcal": 33,
+   "p": 2,
+   "c": 7,
+   "f": 0.2,
+   "nutri": "estimate"
   },
   "molokhia": {
    "name": "ملوخية",
@@ -1651,7 +1791,12 @@
    "buy_unit": "كيس ملوخية مجمّدة (≈6 حصص)",
    "buy_qty": 6,
    "buy_price": 8,
-   "category": "veg"
+   "category": "veg",
+   "kcal": 40,
+   "p": 4,
+   "c": 6,
+   "f": 0.5,
+   "nutri": "estimate"
   },
   "green_beans": {
    "name": "فاصوليا خضراء",
@@ -1661,7 +1806,12 @@
    "buy_unit": "كيلو فاصوليا (≈6 حصص)",
    "buy_qty": 6,
    "buy_price": 9,
-   "category": "veg"
+   "category": "veg",
+   "kcal": 35,
+   "p": 2,
+   "c": 8,
+   "f": 0.2,
+   "nutri": "estimate"
   },
   "garlic": {
    "name": "ثوم",
@@ -1671,7 +1821,12 @@
    "buy_unit": "كيس ثوم (≈40 فصاً)",
    "buy_qty": 40,
    "buy_price": 4,
-   "category": "veg"
+   "category": "veg",
+   "kcal": 4,
+   "p": 0.2,
+   "c": 1,
+   "f": 0,
+   "nutri": "estimate"
   },
   "lemon": {
    "name": "ليمون",
@@ -1681,7 +1836,12 @@
    "buy_unit": "كيلو ليمون (≈8 حبات)",
    "buy_qty": 8,
    "buy_price": 7,
-   "category": "veg"
+   "category": "veg",
+   "kcal": 17,
+   "p": 0.6,
+   "c": 5,
+   "f": 0.2,
+   "nutri": "estimate"
   },
   "mint": {
    "name": "نعناع",
@@ -1691,7 +1851,12 @@
    "buy_unit": "ربطة نعناع (≈6 حزم)",
    "buy_qty": 6,
    "buy_price": 2,
-   "category": "veg"
+   "category": "veg",
+   "kcal": 2,
+   "p": 0.2,
+   "c": 0.4,
+   "f": 0,
+   "nutri": "estimate"
   },
   "banana": {
    "name": "موز",
@@ -1701,7 +1866,12 @@
    "buy_unit": "كيلو موز (≈6 حبات)",
    "buy_qty": 6,
    "buy_price": 7,
-   "category": "fruit"
+   "category": "fruit",
+   "kcal": 105,
+   "p": 1.3,
+   "c": 27,
+   "f": 0.4,
+   "nutri": "estimate"
   },
   "apple": {
    "name": "فاكهة موسمية",
@@ -1711,7 +1881,12 @@
    "buy_unit": "كيلو فاكهة (≈5 حبات)",
    "buy_qty": 5,
    "buy_price": 8,
-   "category": "fruit"
+   "category": "fruit",
+   "kcal": 95,
+   "p": 0.5,
+   "c": 25,
+   "f": 0.3,
+   "nutri": "estimate"
   },
   "dates": {
    "name": "تمر",
@@ -1721,7 +1896,12 @@
    "buy_unit": "علبة تمر (≈40 حبة)",
    "buy_qty": 40,
    "buy_price": 25,
-   "category": "fruit"
+   "category": "fruit",
+   "kcal": 23,
+   "p": 0.2,
+   "c": 6,
+   "f": 0,
+   "nutri": "estimate"
   },
   "rice": {
    "name": "أرز بسمتي",
@@ -1731,7 +1911,12 @@
    "buy_unit": "كيس أرز بسمتي كيلو (≈5 أكواب نيّئة)",
    "buy_qty": 5,
    "buy_price": 12,
-   "category": "grain"
+   "category": "grain",
+   "kcal": 650,
+   "p": 13,
+   "c": 142,
+   "f": 1.2,
+   "nutri": "estimate"
   },
   "jareesh": {
    "name": "جريش",
@@ -1741,7 +1926,12 @@
    "buy_unit": "كيس جريش كيلو (≈5 أكواب)",
    "buy_qty": 5,
    "buy_price": 10,
-   "category": "grain"
+   "category": "grain",
+   "kcal": 340,
+   "p": 10,
+   "c": 70,
+   "f": 2,
+   "nutri": "estimate"
   },
   "flour": {
    "name": "دقيق",
@@ -1751,7 +1941,12 @@
    "buy_unit": "كيس دقيق كيلو (≈8 أكواب)",
    "buy_qty": 8,
    "buy_price": 5,
-   "category": "grain"
+   "category": "grain",
+   "kcal": 455,
+   "p": 13,
+   "c": 95,
+   "f": 1.2,
+   "nutri": "estimate"
   },
   "semolina": {
    "name": "سميد",
@@ -1761,7 +1956,12 @@
    "buy_unit": "كيس سميد (كيلو ≈ 6 أكواب)",
    "buy_qty": 6,
    "buy_price": 6,
-   "category": "grain"
+   "category": "grain",
+   "kcal": 600,
+   "p": 21,
+   "c": 122,
+   "f": 2,
+   "nutri": "estimate"
   },
   "pasta": {
    "name": "معكرونة",
@@ -1771,7 +1971,12 @@
    "buy_unit": "كيس معكرونة 500غ (≈5 أكواب)",
    "buy_qty": 5,
    "buy_price": 5,
-   "category": "grain"
+   "category": "grain",
+   "kcal": 350,
+   "p": 12,
+   "c": 72,
+   "f": 1.5,
+   "nutri": "estimate"
   },
   "lentils": {
    "name": "عدس",
@@ -1781,7 +1986,12 @@
    "buy_unit": "كيس عدس (كيلو ≈ 12 حصة)",
    "buy_qty": 12,
    "buy_price": 8,
-   "category": "grain"
+   "category": "grain",
+   "kcal": 230,
+   "p": 18,
+   "c": 40,
+   "f": 0.8,
+   "nutri": "estimate"
   },
   "foul": {
    "name": "فول مدمس",
@@ -1791,7 +2001,12 @@
    "buy_unit": "علبة فول (≈3 حصص)",
    "buy_qty": 3,
    "buy_price": 4,
-   "category": "grain"
+   "category": "grain",
+   "kcal": 150,
+   "p": 10,
+   "c": 22,
+   "f": 3,
+   "nutri": "estimate"
   },
   "tameez": {
    "name": "خبز تميس",
@@ -1801,7 +2016,12 @@
    "buy_unit": "كيس خبز تميس (≈6 أرغفة)",
    "buy_qty": 6,
    "buy_price": 8,
-   "category": "grain"
+   "category": "grain",
+   "kcal": 270,
+   "p": 9,
+   "c": 52,
+   "f": 2,
+   "nutri": "estimate"
   },
   "samouli": {
    "name": "خبز صامولي",
@@ -1811,7 +2031,12 @@
    "buy_unit": "كيس صامولي (10 حبات)",
    "buy_qty": 10,
    "buy_price": 8,
-   "category": "grain"
+   "category": "grain",
+   "kcal": 250,
+   "p": 8,
+   "c": 48,
+   "f": 2.5,
+   "nutri": "estimate"
   },
   "arabic_bread": {
    "name": "خبز عربي",
@@ -1821,7 +2046,12 @@
    "buy_unit": "ربطة خبز عربي (5 أرغفة)",
    "buy_qty": 5,
    "buy_price": 3,
-   "category": "grain"
+   "category": "grain",
+   "kcal": 200,
+   "p": 6.5,
+   "c": 40,
+   "f": 1,
+   "nutri": "estimate"
   },
   "dough": {
    "name": "عجينة فطير جاهزة",
@@ -1831,7 +2061,12 @@
    "buy_unit": "عجينة فطير (≈6 حصص)",
    "buy_qty": 6,
    "buy_price": 9,
-   "category": "grain"
+   "category": "grain",
+   "kcal": 250,
+   "p": 6,
+   "c": 40,
+   "f": 7,
+   "nutri": "estimate"
   },
   "thin_dough": {
    "name": "عجينة سمبوسة",
@@ -1841,7 +2076,12 @@
    "buy_unit": "عجين رقيق (20 ورقة)",
    "buy_qty": 20,
    "buy_price": 9,
-   "category": "grain"
+   "category": "grain",
+   "kcal": 50,
+   "p": 1.5,
+   "c": 9,
+   "f": 1,
+   "nutri": "estimate"
   },
   "kabsa_spice": {
    "name": "بهارات كبسة",
@@ -1851,7 +2091,12 @@
    "buy_unit": "علبة بهارات كبسة (≈20 حصة)",
    "buy_qty": 20,
    "buy_price": 10,
-   "category": "other"
+   "category": "other",
+   "kcal": 10,
+   "p": 0.4,
+   "c": 2,
+   "f": 0.3,
+   "nutri": "estimate"
   },
   "tomato_paste": {
    "name": "معجون طماطم",
@@ -1861,7 +2106,12 @@
    "buy_unit": "علبة معجون (≈15 ملعقة)",
    "buy_qty": 15,
    "buy_price": 4,
-   "category": "other"
+   "category": "other",
+   "kcal": 13,
+   "p": 0.7,
+   "c": 3,
+   "f": 0,
+   "nutri": "estimate"
   },
   "zaatar": {
    "name": "زعتر",
@@ -1871,7 +2121,12 @@
    "buy_unit": "علبة زعتر (≈30 ملعقة)",
    "buy_qty": 30,
    "buy_price": 8,
-   "category": "other"
+   "category": "other",
+   "kcal": 15,
+   "p": 0.6,
+   "c": 2,
+   "f": 0.6,
+   "nutri": "estimate"
   },
   "honey": {
    "name": "عسل",
@@ -1881,7 +2136,12 @@
    "buy_unit": "عبوة عسل (≈20 ملعقة)",
    "buy_qty": 20,
    "buy_price": 25,
-   "category": "other"
+   "category": "other",
+   "kcal": 64,
+   "p": 0,
+   "c": 17,
+   "f": 0,
+   "nutri": "estimate"
   },
   "sugar": {
    "name": "سكر",
@@ -1891,7 +2151,12 @@
    "buy_unit": "كيس سكر (≈100 ملعقة)",
    "buy_qty": 100,
    "buy_price": 5,
-   "category": "other"
+   "category": "other",
+   "kcal": 40,
+   "p": 0,
+   "c": 10,
+   "f": 0,
+   "nutri": "estimate"
   },
   "tea": {
    "name": "شاهي",
@@ -1901,7 +2166,12 @@
    "buy_unit": "علبة شاهي (≈100 كوب)",
    "buy_qty": 100,
    "buy_price": 18,
-   "category": "other"
+   "category": "other",
+   "kcal": 2,
+   "p": 0,
+   "c": 0.4,
+   "f": 0,
+   "nutri": "estimate"
   },
   "qahwa": {
    "name": "قهوة سعودية",
@@ -1911,7 +2181,12 @@
    "buy_unit": "كيس قهوة سعودية (≈40 فنجاناً)",
    "buy_qty": 40,
    "buy_price": 30,
-   "category": "other"
+   "category": "other",
+   "kcal": 2,
+   "p": 0,
+   "c": 0.3,
+   "f": 0,
+   "nutri": "estimate"
   },
   "kleija": {
    "name": "كليجا",
@@ -1921,7 +2196,12 @@
    "buy_unit": "علبة كليجا (≈20 قطعة)",
    "buy_qty": 20,
    "buy_price": 25,
-   "category": "other"
+   "category": "other",
+   "kcal": 120,
+   "p": 2,
+   "c": 17,
+   "f": 5,
+   "nutri": "estimate"
   },
   "maamoul": {
    "name": "معمول",
@@ -1931,7 +2211,12 @@
    "buy_unit": "علبة معمول (≈20 قطعة)",
    "buy_qty": 20,
    "buy_price": 22,
-   "category": "other"
+   "category": "other",
+   "kcal": 140,
+   "p": 2,
+   "c": 20,
+   "f": 6,
+   "nutri": "estimate"
   }
  },
  "RECIPES": {

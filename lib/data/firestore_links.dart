@@ -168,13 +168,13 @@ class FirestoreLinkService extends LinkService {
   Invite? joinedBy(Role r) => _invitesOf(_ownerHid).where((i) => i.role == r && i.used).firstOrNull;
 
   @override
-  Future<void> createHousehold(String label, String programId, int eaters) async {
+  Future<void> createHousehold(String label, String programId, int eaters, {Map<String, dynamic>? extra}) async {
     final ref = db.collection('households').doc();
     final b = db.batch();
     b.set(ref, {
       'label': label.trim(), 'programId': programId, 'eaters': eaters, 'city': 'Jeddah', 'cookName': '',
       'cutoffDay': 5, 'cutoffTime': '20:00', 'members': {_me: Role.owner.name}, 'inviteCodes': <String>[],
-      'createdAt': FieldValue.serverTimestamp(),
+      'createdAt': FieldValue.serverTimestamp(), ...?extra,
     });
     b.set(db.doc('users/$_me'), {'hids': FieldValue.arrayUnion([ref.id])}, SetOptions(merge: true));
     await b.commit();

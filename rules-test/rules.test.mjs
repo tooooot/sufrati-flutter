@@ -269,3 +269,13 @@ test('شريك الإدارة: مدير البيت يدعو مديراً ثان�
   b.update(doc(sdb, 'households/h1'), { 'members.spouse': 'owner', lastInvite: 'PART1' });
   await assertSucceeds(b.commit());
 });
+
+test('تقديرات التغذية: قراءة عامة، وكتابة الطبيب المعتمد والمدير فقط', async () => {
+  const body = { program: 'saudi_family', key: 'rice', kcal: 205, p: 4.2, c: 45, f: 0.4, status: 'reviewed' };
+  await assertSucceeds(setDoc(doc(as('doc'), 'nutrition/saudi_family__rice'), body));
+  await assertSucceeds(setDoc(doc(as('adm', { admin: true }), 'nutrition/saudi_family__egg'), { ...body, key: 'egg' }));
+  await assertFails(setDoc(doc(as('new'), 'nutrition/saudi_family__rice'), body));
+  await assertFails(setDoc(doc(as('own'), 'nutrition/saudi_family__rice'), body));
+  await assertFails(setDoc(doc(anon(), 'nutrition/saudi_family__rice'), body));
+  await assertSucceeds(getDoc(doc(anon(), 'nutrition/saudi_family__rice')));
+});

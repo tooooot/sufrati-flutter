@@ -25,12 +25,15 @@ import 'screens/doctor_pending_screen.dart';
 import 'screens/doctor_profile_screen.dart';
 import 'screens/doctor_public_screen.dart';
 import 'screens/marketing_screen.dart';
+import 'screens/nutrition_review_screen.dart';
+import 'data/nutrition_review.dart';
 import 'screens/pitch_screen.dart';
 import 'screens/shop_link_screen.dart';
 import 'screens/house_create_screen.dart';
 import 'screens/household_screen.dart';
 import 'screens/invite_join_screen.dart';
 import 'screens/join_screen.dart';
+import 'screens/journey_screen.dart';
 import 'screens/new_house_screen.dart';
 import 'screens/profile_screen.dart';
 
@@ -59,6 +62,7 @@ Future<void> main() async {
   final i18nF = CookI18n.load();
   // Firebase حقيقي على الجوال والويب. على الويب: لا Crashlytics ولا App Check ولا إشعارات محلية ولا دخول Apple.
   await Firebase.initializeApp(options: SufratiFirebase.current);
+  final nutriF = NutritionReview.loadOverrides(FirebaseFirestore.instance); // تقديرات الأخصائي المعتمدة تغلب الملفات
   final library = await libraryF;
   final i18n = await i18nF;
   if (!kIsWeb) {
@@ -83,6 +87,7 @@ Future<void> main() async {
   final LinkService links = FirestoreLinkService(db, auth);
   // نستعيد الجلسة المحفوظة قبل رسم أي شاشة: لا وميض لشاشة الدخول، ولا تضيع الروابط العميقة.
   await auth.initialized.timeout(const Duration(seconds: 6), onTimeout: () {});
+  await nutriF;
   final GrowthService growth = FirestoreGrowthService(db, auth, links);
   EventQueue.instance.configure(db, auth);
   final push = PushService(db, auth);
@@ -127,6 +132,8 @@ class SufratiApp extends StatelessWidget {
       GoRoute(path: '/doctor-pending', builder: (_, _) => DoctorPendingScreen(session: _session)),
       GoRoute(path: '/admin', builder: (_, _) => AdminScreen(db: db)),
       GoRoute(path: '/browse', builder: (_, _) => StartScreen(library: library)),
+      GoRoute(path: '/journey', builder: (_, _) => JourneyScreen(library: library, session: _session)),
+      GoRoute(path: '/journey/finish', builder: (_, _) => JourneyFinishScreen(links: links, session: _session)),
       GoRoute(path: '/intro', builder: (_, _) => ExitGuard(child: IntroScreen())),
       GoRoute(path: '/new-house',
           builder: (_, st) => NewHouseScreen(library: library, links: links, session: _session, growth: growth, doctorCode: st.uri.queryParameters['dr'])),
@@ -134,6 +141,9 @@ class SufratiApp extends StatelessWidget {
       GoRoute(path: '/pitch/:kind', builder: (_, st) => PitchScreen(growth: growth, kind: st.pathParameters['kind'], lang: st.uri.queryParameters['lang'])),
       GoRoute(path: '/s/:token', builder: (_, st) => ShopLinkScreen(db: db, token: st.pathParameters['token']!)),
       GoRoute(path: '/r/:token', builder: (_, st) => RegisteredStamp(growth: growth, session: _session, token: st.pathParameters['token']!)),
+      GoRoute(path: '/specialist/nutrition',
+          builder: (_, _) => NutritionReviewScreen(library: library, review: NutritionReview(db!),
+              allowed: _session.isAdmin || links.isDoctor, who: _session.user?.name ?? 'أخصائي')),
       GoRoute(path: '/admin/marketing', builder: (_, _) => MarketingScreen(db: db, growth: growth)),
       GoRoute(path: '/dr/:code', builder: (_, st) => DoctorPublicScreen(growth: growth, code: st.pathParameters['code']!)),
       GoRoute(path: '/dr/:code/join',

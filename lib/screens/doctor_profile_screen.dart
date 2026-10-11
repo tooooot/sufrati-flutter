@@ -102,6 +102,18 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
               child: _loading
                   ? const Padding(padding: EdgeInsets.all(40), child: Center(child: CircularProgressIndicator(color: Brand.green)))
                   : Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+                      if (p?.verified == true) ...[
+                        CardBox(
+                          onTap: () => context.push('/specialist/nutrition'),
+                          child: const Row(children: [
+                            Icon(Icons.science, color: Brand.green),
+                            SizedBox(width: 10),
+                            Expanded(child: Text('مراجعة سعرات المكوّنات وتعديلها', style: TextStyle(fontWeight: black))),
+                            Icon(Icons.chevron_left),
+                          ]),
+                        ),
+                        const SizedBox(height: 10),
+                      ],
                       CardBox(
                         child: Row(children: [
                           Icon(p?.verified == true ? Icons.verified : Icons.hourglass_top, color: p?.verified == true ? Brand.honey : Brand.grey),
