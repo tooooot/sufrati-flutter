@@ -26,10 +26,10 @@ class _GoalCardState extends State<GoalCard> {
   Future<void> _save() async {
     final k = _kcal!;
     setState(() => _busy = true);
-    final prog = await widget.store.program();
     final t = targetForKcal(k, (_t['proteinG'] as num?)?.toInt() ?? 100, weeks: (_t['weeks'] as num?)?.toInt(),
         status: widget.isSpecialist ? 'reviewed' : 'custom', by: widget.isSpecialist ? widget.who : null);
-    await widget.store.setTarget(t, portion: portionFor(prog, k));
+    await widget.store.setTarget(t);
+    await widget.store.calibrateToTarget();
     if (mounted) setState(() { _kcal = null; _busy = false; });
   }
 
@@ -58,10 +58,8 @@ class _GoalCardState extends State<GoalCard> {
       if (mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('تحقق من الوزن المدخل')));
       return;
     }
-    final prog = await widget.store.program();
-    await widget.store.setTarget(targetMapOf(plan), portion: portionFor(prog, plan.kcal), profile: {
-      ...?widget.store.household.profile, 'weightKg': w,
-    });
+    await widget.store.setTarget(targetMapOf(plan), profile: {...?widget.store.household.profile, 'weightKg': w});
+    await widget.store.calibrateToTarget();
     if (mounted) setState(() => _kcal = null);
   }
 

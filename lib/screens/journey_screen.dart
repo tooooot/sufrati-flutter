@@ -399,6 +399,10 @@ class _JourneyFinishScreenState extends State<JourneyFinishScreen> {
       final name = widget.session.user?.name.split(' ').first ?? '';
       await widget.links.createHousehold(name.isEmpty ? 'بيتي' : 'بيت $name', d.programId, d.eaters, extra: d.toHousehold());
       JourneyDraft.current = null;
+      // ننتظر وصول البيت من Firestore قبل الانتقال، وإلا رأى الجهاز «بلا دور» لحظة وفُتحت شاشة اختيار الدور
+      for (var i = 0; i < 40 && !widget.links.hasHousehold; i++) {
+        await Future.delayed(const Duration(milliseconds: 250));
+      }
       if (mounted) context.go('/me');
     } catch (_) {
       if (mounted) setState(() => _error = 'تعذّر حفظ الخطة. تحقق من الاتصال وأعد المحاولة.');

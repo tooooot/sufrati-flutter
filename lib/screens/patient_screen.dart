@@ -41,6 +41,16 @@ class _PatientScreenState extends State<PatientScreen> {
   final _tabs = TabsController();
 
   @override
+  void initState() {
+    super.initState();
+    // أول فتح لخطة شخصية: نعاير الحصة على أسبوعه الفعلي ليوافق مجموع يومه هدفه (مرة واحدة)
+    final h = widget.store.household;
+    if (widget.showHome && h.personal && h.target != null && h.target!['calibrated'] != true) {
+      widget.store.calibrateToTarget().catchError((_) {});
+    }
+  }
+
+  @override
   void dispose() {
     _tabs.dispose();
     super.dispose();

@@ -4,6 +4,8 @@ import 'dart:math';
 
 import 'package:flutter/foundation.dart';
 
+import '../logic/calories.dart';
+import '../logic/day_view.dart' show saudiNow;
 import '../logic/planner.dart';
 import '../logic/shopping.dart';
 import 'household.dart';
@@ -85,6 +87,26 @@ abstract class HouseholdStore extends ChangeNotifier {
     if (portion != null) household.portion = portion;
     if (profile != null) household.profile = profile;
     return _household({'target': target, 'portion': ?portion, 'profile': ?profile}, reflow: portion != null);
+  }
+
+  /// يعاير حجم الحصة على أسبوع الشخص الفعلي (لا على متوسط خيارات النظام) فيقترب مجموع أيامه من هدف السعرات.
+  Future<void> calibrateToTarget() async {
+    final goal = household.targetKcal;
+    if (goal <= 0) return;
+    final prog = await program();
+    final w = await week(weekStartFor(saudiNow()));
+    var sum = 0.0, days = 0;
+    for (final day in w.days) {
+      var d = 0.0;
+      for (final e in day.entries) {
+        final o = prog.slots.where((s) => s.id == e.key).expand((s) => s.options).where((o) => o.id == e.value).firstOrNull;
+        if (o != null) d += optionNutri(prog, o).total.kcal;
+      }
+      if (d > 0) { sum += d; days++; }
+    }
+    if (days == 0) return;
+    final por = double.parse((goal / (sum / days)).clamp(0.6, 1.5).toStringAsFixed(2));
+    await setTarget({...household.target!, 'calibrated': true}, portion: (por - household.portion).abs() > 0.02 ? por : null);
   }
 
   /// «عندي في البيت»: لا يدخل المشتريات.
