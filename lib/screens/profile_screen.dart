@@ -127,6 +127,18 @@ class ProfileScreen extends StatelessWidget {
                   ])),
                   ],
                   const SizedBox(height: 20),
+                  // أدوار أخرى: ظاهرة لكل مستخدم (الطاهي يسجّل بدعوة، والأخصائي بطلب)
+                  const _GroupTitle('أدوار أخرى'),
+                  CardBox(
+                    padding: EdgeInsets.zero,
+                    child: Column(children: [
+                      _Row(Icons.soup_kitchen_outlined, 'أنا طاهٍ — لدي رمز دعوة', () => context.push('/join/cook')),
+                      const Divider(height: 1),
+                      _Row(Icons.medical_services_outlined, links.isDoctor ? 'ملفي كطبيب (معتمد)' : (links.doctorRequested ? 'طلبي كطبيب قيد المراجعة' : 'أنا طبيب أو أخصائي تغذية'),
+                          () => context.push(links.isDoctor ? '/doctor/profile' : (links.doctorRequested ? '/doctor-pending' : '/doctor/apply'))),
+                    ]),
+                  ),
+                  const SizedBox(height: 20),
                   const _GroupTitle('بيوتي'),
                   if (links.memberships.isEmpty)
                     const CardBox(child: Text('لست مرتبطاً ببيت بعد. اختر دورك لتبدأ.', style: TextStyle(color: Brand.grey)))

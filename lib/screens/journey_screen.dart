@@ -242,6 +242,37 @@ class _JourneyScreenState extends State<JourneyScreen> {
             ]),
           ),
         ),
+      const SizedBox(height: 6),
+      // طريق ظاهر للطاهي والأخصائي (لا يسجّلان بالرحلة): الطاهي بدعوة، والأخصائي بطلب يراجعه المدير
+      const Padding(
+        padding: EdgeInsets.fromLTRB(4, 14, 4, 8),
+        child: Text('هل أنت طاهٍ أو أخصائي؟', style: TextStyle(fontSize: 18, fontWeight: black, color: Brand.green)),
+      ),
+      CardBox(
+        onTap: () => context.push('/join/cook'),
+        child: const Row(children: [
+          Text('👨‍🍳', style: TextStyle(fontSize: 32)),
+          SizedBox(width: 12),
+          Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Text('أنا طاهٍ — عندي رمز دعوة', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800, color: Brand.green)),
+            Text('يدعوك مدير البيت برمز أو رابط، فتدخل وترى وجبات اليوم فقط.', style: TextStyle(fontSize: 13, color: Brand.grey, height: 1.5)),
+          ])),
+          Icon(Icons.chevron_left, color: Brand.grey),
+        ]),
+      ),
+      const SizedBox(height: 10),
+      CardBox(
+        onTap: () => context.push('/doctor/apply'),
+        child: const Row(children: [
+          Text('🩺', style: TextStyle(fontSize: 32)),
+          SizedBox(width: 12),
+          Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Text('أنا طبيب أو أخصائي تغذية', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800, color: Brand.green)),
+            Text('قدّم بياناتك المهنية وتُراجَع مرة واحدة قبل اعتماد حسابك.', style: TextStyle(fontSize: 13, color: Brand.grey, height: 1.5)),
+          ])),
+          Icon(Icons.chevron_left, color: Brand.grey),
+        ]),
+      ),
       if (!widget.session.signedIn)
         Center(child: TextButton(onPressed: () => context.push('/login'), child: const Text('لدي حساب — دخول'))),
     ]);
