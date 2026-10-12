@@ -38,18 +38,9 @@ class ProfileScreen extends StatelessWidget {
       body: ListenableBuilder(
         listenable: Listenable.merge([session, links]),
         builder: (context, _) => ListView(padding: EdgeInsets.zero, children: [
-          GreenHeader(
-            icon: '👤', title: name, subtitle: u?.email,
-            leading: Row(children: [
-              IconButton(icon: const Icon(Icons.arrow_back, color: Colors.white),
-                  onPressed: () => context.back(landing(session))),
-              const Spacer(),
-              TextButton.icon(
-                icon: const Icon(Icons.logout, color: Colors.white, size: 20),
-                label: const Text('خروج', style: TextStyle(color: Colors.white, fontWeight: black)),
-                onPressed: () => _signOut(context),
-              ),
-            ]),
+          CompactHeader(
+            title: name, subtitle: u?.email,
+            leading: IconButton(icon: const Icon(Icons.arrow_forward, color: Colors.white), onPressed: () => context.back(landing(session))),
           ),
           Center(
             child: ConstrainedBox(
@@ -98,7 +89,8 @@ class ProfileScreen extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 20),
-                  // تبديل الدور بنقرة
+                  // تبديل الدور: يظهر فقط لمن له أكثر من دور فعلي (مدير سفرتي، طبيب، أو عضو في بيت غيره). الدور يُشتق من الارتباطات لا يُختار
+                  if (session.isAdmin || links.isDoctor || links.memberships.any((m) => m.role != Role.owner)) ...[
                   CardBox(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                     const Text('أنت الآن تستخدم سفرتي كـ', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w800, color: Brand.grey)),
                     const SizedBox(height: 8),
@@ -131,8 +123,9 @@ class ProfileScreen extends StatelessWidget {
                       Role.cook => 'ترى وجبات اليوم ومكوّناتها فقط وتضغط «حُضّرت».',
                       Role.doctor => 'ترى خطط من ربطوك بهم فقط. يعتمد مدير سفرتي حسابك.',
                       _ => 'اختر دورك للبدء.',
-                    }, style: const TextStyle(fontSize: 12.5, color: Brand.grey, height: 1.7)),
+                    }, style: const TextStyle(fontSize: 13, color: Brand.grey, height: 1.7)),
                   ])),
+                  ],
                   const SizedBox(height: 20),
                   const _GroupTitle('بيوتي'),
                   if (links.memberships.isEmpty)
@@ -152,7 +145,7 @@ class ProfileScreen extends StatelessWidget {
                               Container(
                                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                                 decoration: BoxDecoration(color: Brand.cream, borderRadius: BorderRadius.circular(20)),
-                                child: Text(roleName(m.role), style: const TextStyle(fontSize: 12, fontWeight: black, color: Brand.green)),
+                                child: Text(roleName(m.role), style: const TextStyle(fontSize: 13, fontWeight: black, color: Brand.green)),
                               ),
                             ]),
                           ),

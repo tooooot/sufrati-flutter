@@ -110,7 +110,7 @@ class _Member extends StatelessWidget {
           const SizedBox(width: 12),
           Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Text(title, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 16)),
-            Text(sub, style: const TextStyle(fontSize: 12, color: Brand.grey)),
+            Text(sub, style: const TextStyle(fontSize: 13, color: Brand.grey)),
           ])),
           ?trailing,
           if (done) const Icon(Icons.check_circle, color: Brand.green),
@@ -138,7 +138,7 @@ class _Slot extends StatelessWidget {
         const SizedBox(width: 12),
         Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Text(title, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 16)),
-          Text(pending == null ? empty : 'بانتظار أن يدخل الرمز', style: const TextStyle(fontSize: 12, color: Brand.grey)),
+          Text(pending == null ? empty : 'بانتظار أن يدخل الرمز', style: const TextStyle(fontSize: 13, color: Brand.grey)),
         ])),
         if (pending != null)
           IconButton(
@@ -179,7 +179,7 @@ Future<void> inviteFlow(BuildContext context, LinkService links, Role role) asyn
         ),
         const SizedBox(height: 6),
         const Text('يعمل مرة واحدة · ينتهي بعد 7 أيام', textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 12, color: Brand.grey)),
+            style: TextStyle(fontSize: 13, color: Brand.grey)),
         const SizedBox(height: 16),
         FilledButton.icon(
           style: FilledButton.styleFrom(backgroundColor: const Color(0xFF25D366), minimumSize: const Size.fromHeight(50)),

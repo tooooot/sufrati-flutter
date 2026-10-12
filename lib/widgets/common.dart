@@ -38,8 +38,8 @@ class GreenHeader extends StatelessWidget {
 class CompactHeader extends StatelessWidget {
   final String title;
   final String? subtitle;
-  final Widget? trailing;
-  const CompactHeader({super.key, required this.title, this.subtitle, this.trailing});
+  final Widget? trailing, leading;
+  const CompactHeader({super.key, required this.title, this.subtitle, this.trailing, this.leading});
 
   @override
   Widget build(BuildContext context) => Container(
@@ -47,7 +47,7 @@ class CompactHeader extends StatelessWidget {
         decoration: const BoxDecoration(color: Brand.green, boxShadow: [BoxShadow(color: Colors.black26, blurRadius: 6)]),
         padding: EdgeInsets.fromLTRB(12, MediaQuery.paddingOf(context).top + 8, 12, 12),
         child: Row(children: [
-          const ProfileButton(),
+          leading ?? const ProfileButton(),
           const SizedBox(width: 10),
           Expanded(
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -98,7 +98,8 @@ class DishPhoto extends StatelessWidget {
   Widget build(BuildContext context) => ClipRRect(
         borderRadius: BorderRadius.circular(radius),
         child: Image.network(url, width: width, height: height, fit: BoxFit.cover,
-            errorBuilder: (_, _, _) => Container(width: width, height: height, color: Brand.cream),
+            // لا نترك مستطيلاً فارغاً إن فشلت الصورة: تنكمش المساحة
+            errorBuilder: (_, _, _) => const SizedBox.shrink(),
             loadingBuilder: (c, child, p) =>
                 p == null ? child : Container(width: width, height: height, color: Brand.cream)),
       );

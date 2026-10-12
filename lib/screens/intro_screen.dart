@@ -13,6 +13,8 @@ class IntroScreen extends StatefulWidget {
   final String? greeting;
   final String ctaLabel;
   final String ctaRoute;
+  /// وجهة «تخطَّ»: الرحلة مباشرة (أسرع من شاشة الدخول).
+  final String skipRoute;
   /// نصوص الإطار (تخطَّ، المس للتالي): تتغير مع لغة العرض (عرض الطاهي بثلاث لغات).
   final String skipLabel, tapHint;
   /// تصفّح الأنظمة وروابط الخصوصية في الختام (تُخفى في عرض الطاهي).
@@ -21,7 +23,7 @@ class IntroScreen extends StatefulWidget {
   final Widget? header;
   /// مدة اللقطة (أطول للغة الثانية).
   final Duration beatDuration;
-  IntroScreen({super.key, List<PitchBeat>? beats, this.greeting, this.ctaLabel = 'ابدأ رحلتك', this.ctaRoute = '/journey',
+  IntroScreen({super.key, List<PitchBeat>? beats, this.greeting, this.ctaLabel = 'ابدأ رحلتك', this.ctaRoute = '/journey', this.skipRoute = '/journey',
       this.skipLabel = 'تخطَّ', this.tapHint = 'المس الشاشة للتالي', this.showBrowse = true, this.header, this.beatDuration = const Duration(milliseconds: 5200)})
       : beats = beats ?? beatsFor('user');
 
@@ -126,7 +128,7 @@ class _IntroScreenState extends State<IntroScreen> with SingleTickerProviderStat
                     ]),
                   ),
                   TextButton(
-                    onPressed: () => context.go('/login'),
+                    onPressed: () => context.go(widget.skipRoute),
                     child: Text(widget.skipLabel, style: const TextStyle(color: Brand.cream, fontWeight: black, fontSize: 15)),
                   ),
                 ]),

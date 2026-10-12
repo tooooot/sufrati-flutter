@@ -102,7 +102,7 @@ class _TabsScaffoldState extends State<TabsScaffold> {
                         child: Icon(t.icon, size: 24, color: n == i ? Brand.green : const Color(0xFF6B7280)),
                       ),
                       const SizedBox(height: 2),
-                      Text(t.label, style: TextStyle(fontSize: 12.5, fontWeight: FontWeight.w800,
+                      Text(t.label, style: TextStyle(fontSize: 13, fontWeight: FontWeight.w800,
                           color: n == i ? Brand.green : const Color(0xFF6B7280))),
                     ]),
                   ),

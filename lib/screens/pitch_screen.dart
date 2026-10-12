@@ -18,6 +18,7 @@ class PitchScreen extends StatefulWidget {
 
 class _PitchScreenState extends State<PitchScreen> {
   static const _cta = {'doctor': 'ابدأ بملفي المهني', 'group': 'ابدأ بملفي المهني'};
+  static const _goalKinds = {'weight', 'muscle', 'medical', 'withcook'};
   late String _lang = pitchLangs.containsKey(widget.lang) ? widget.lang! : 'ar';
 
   @override
@@ -45,7 +46,9 @@ class _PitchScreenState extends State<PitchScreen> {
       ctaLabel: cook ? c.cta : (_cta[kind] ?? 'ابدأ الآن'),
       // الرابط الشخصي يُختم «سجّل» بعد الدخول عبر /r/<رمز>؛ الطاهي بعد الدخول يدخل رمز دعوته
       ctaRoute: cook ? '/login?next=${Uri.encodeComponent('/join/cook')}'
+          : _goalKinds.contains(kind) ? '/journey?goal=$kind'
           : (widget.token == null ? '/login' : '/login?next=${Uri.encodeComponent('/r/${widget.token}')}'),
+      skipRoute: cook ? '/login' : (_goalKinds.contains(kind) ? '/journey?goal=$kind' : '/journey'),
       skipLabel: c.skip,
       tapHint: c.tap,
       showBrowse: !cook,

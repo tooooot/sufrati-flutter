@@ -202,7 +202,7 @@ class LocalStore extends HouseholdStore {
     final hit = _weeks[weekStart];
     if (hit != null) return hit;
     final p = await program();
-    final picks = pickWeekOptions(p, random: _rnd, hidden: household.hidden, favorites: household.favorites);
+    final picks = (household.personal ? pickBalancedWeek(p, random: _rnd, hidden: household.hidden, favorites: household.favorites) : pickWeekOptions(p, random: _rnd, hidden: household.hidden, favorites: household.favorites));
     final days = List.generate(7, (_) => <String, String>{});
     for (final pick in picks) {
       days[pick.day][pick.slotId] = pick.option.id;

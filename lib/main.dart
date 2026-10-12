@@ -136,7 +136,7 @@ class SufratiApp extends StatelessWidget {
       GoRoute(path: '/doctor-pending', builder: (_, _) => DoctorPendingScreen(session: _session)),
       GoRoute(path: '/admin', builder: (_, _) => AdminScreen(db: db)),
       GoRoute(path: '/browse', builder: (_, _) => StartScreen(library: library)),
-      GoRoute(path: '/journey', builder: (_, st) => JourneyScreen(library: library, session: _session, update: st.uri.queryParameters['update'] == '1')),
+      GoRoute(path: '/journey', builder: (_, st) => JourneyScreen(library: library, session: _session, update: st.uri.queryParameters['update'] == '1', goal: st.uri.queryParameters['goal'])),
       GoRoute(path: '/journey/finish', builder: (_, st) => JourneyFinishScreen(links: links, session: _session, update: st.uri.queryParameters['update'] == '1')),
       GoRoute(path: '/intro', builder: (_, _) => ExitGuard(child: IntroScreen())),
       GoRoute(path: '/new-house',

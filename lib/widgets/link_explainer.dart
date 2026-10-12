@@ -23,7 +23,7 @@ class LinkExplainer extends StatelessWidget {
               padding: const EdgeInsets.only(bottom: 6),
               child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 CircleAvatar(radius: 11, backgroundColor: Brand.green,
-                    child: Text(n, style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: black))),
+                    child: Text(n, style: const TextStyle(color: Colors.white, fontSize: 13, fontWeight: black))),
                 const SizedBox(width: 8),
                 Expanded(child: Text(t, style: const TextStyle(fontSize: 13, height: 1.5))),
               ]),
@@ -31,7 +31,7 @@ class LinkExplainer extends StatelessWidget {
           const Divider(height: 20),
           const Text('الطاهي يرى وجبات اليوم ومكوّناتها فقط، ولا يرى أي بيانات صحية. '
               'الطبيب يتابع مرضاه الذين ربطهم بحسابه. الرمز يعمل مرة واحدة وينتهي بعد 7 أيام.',
-              style: TextStyle(fontSize: 12, color: Brand.grey, height: 1.6)),
+              style: TextStyle(fontSize: 13, color: Brand.grey, height: 1.6)),
         ]),
       );
 }

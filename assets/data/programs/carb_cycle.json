@@ -70,6 +70,148 @@
        1
       ]
      ]
+    },
+    {
+     "id": "c1o5",
+     "label": "أومليت جبنة وفطر (يوم منخفض)",
+     "tags": [
+      "egg"
+     ],
+     "items": [
+      [
+       "egg",
+       3
+      ],
+      [
+       "cheddar",
+       1
+      ],
+      [
+       "mushroom",
+       1
+      ]
+     ],
+     "photo_prompt": "Cheese and mushroom omelette. Served on a plain white ceramic plate, overhead 45-degree angle, warm natural light, appetizing home-style presentation, photorealistic. No text, no watermark.",
+     "day_type": "low"
+    },
+    {
+     "id": "c1o6",
+     "label": "زبادي يوناني بالمكسرات والشيا (يوم منخفض)",
+     "tags": [
+      "dairy"
+     ],
+     "items": [
+      [
+       "greek_yogurt",
+       1
+      ],
+      [
+       "walnuts",
+       4
+      ],
+      [
+       "chia_seeds",
+       1
+      ]
+     ],
+     "photo_prompt": "Greek yogurt with walnuts and chia seeds. Served on a plain white ceramic plate, overhead 45-degree angle, warm natural light, appetizing home-style presentation, photorealistic. No text, no watermark.",
+     "day_type": "low"
+    },
+    {
+     "id": "c1o7",
+     "label": "بيض مسلوق وأفوكادو (يوم منخفض)",
+     "tags": [
+      "egg"
+     ],
+     "items": [
+      [
+       "egg",
+       2
+      ],
+      [
+       "avocado",
+       1
+      ]
+     ],
+     "photo_prompt": "Two boiled eggs with sliced avocado. Served on a plain white ceramic plate, overhead 45-degree angle, warm natural light, appetizing home-style presentation, photorealistic. No text, no watermark.",
+     "day_type": "low"
+    },
+    {
+     "id": "c1o8",
+     "label": "فطائر شوفان بالبيض والموز (يوم عالي)",
+     "tags": [
+      "egg"
+     ],
+     "items": [
+      [
+       "oats",
+       1
+      ],
+      [
+       "egg",
+       3
+      ],
+      [
+       "banana",
+       1
+      ],
+      [
+       "peanut_butter",
+       1
+      ]
+     ],
+     "photo_prompt": "Protein oat pancakes with banana and peanut butter. Served on a plain white ceramic plate, overhead 45-degree angle, warm natural light, appetizing home-style presentation, photorealistic. No text, no watermark.",
+     "day_type": "high"
+    },
+    {
+     "id": "c1o9",
+     "label": "بيض وخبز أسمر وأفوكادو (يوم عالي)",
+     "tags": [
+      "egg"
+     ],
+     "items": [
+      [
+       "egg",
+       4
+      ],
+      [
+       "whole_bread",
+       3
+      ],
+      [
+       "avocado",
+       0.5
+      ]
+     ],
+     "photo_prompt": "Four-egg scramble with whole-grain toast and avocado. Served on a plain white ceramic plate, overhead 45-degree angle, warm natural light, appetizing home-style presentation, photorealistic. No text, no watermark.",
+     "day_type": "high"
+    },
+    {
+     "id": "c1o10",
+     "label": "زبادي يوناني بالشوفان واللوز (يوم عالي)",
+     "tags": [
+      "dairy"
+     ],
+     "items": [
+      [
+       "greek_yogurt",
+       2
+      ],
+      [
+       "oats",
+       1
+      ],
+      [
+       "banana",
+       1
+      ],
+      [
+       "almonds",
+       8
+      ]
+     ],
+     "photo_prompt": "Greek yogurt bowl with oats, banana and almonds. Served on a plain white ceramic plate, overhead 45-degree angle, warm natural light, appetizing home-style presentation, photorealistic. No text, no watermark.",
+     "day_type": "high"
     }
    ]
   },
@@ -178,6 +320,160 @@
        1
       ]
      ]
+    },
+    {
+     "id": "c2o5",
+     "label": "دجاج مشوي وبروكلي بالزبدة (يوم منخفض)",
+     "tags": [
+      "poultry"
+     ],
+     "items": [
+      [
+       "chicken_breast",
+       1
+      ],
+      [
+       "broccoli",
+       2
+      ],
+      [
+       "butter",
+       1
+      ]
+     ],
+     "photo_prompt": "Grilled chicken with buttery broccoli. Served on a plain white ceramic plate, overhead 45-degree angle, warm natural light, appetizing home-style presentation, photorealistic. No text, no watermark.",
+     "day_type": "low"
+    },
+    {
+     "id": "c2o6",
+     "label": "سلمون بالليمون مع سلطة (يوم منخفض)",
+     "tags": [
+      "seafood"
+     ],
+     "items": [
+      [
+       "salmon",
+       1
+      ],
+      [
+       "mixed_salad",
+       2
+      ],
+      [
+       "lemon",
+       1
+      ],
+      [
+       "olive_oil",
+       1
+      ]
+     ],
+     "photo_prompt": "Lemon salmon fillet with a large green salad. Served on a plain white ceramic plate, overhead 45-degree angle, warm natural light, appetizing home-style presentation, photorealistic. No text, no watermark.",
+     "day_type": "low"
+    },
+    {
+     "id": "c2o7",
+     "label": "لحم مفروم بالكوسة (يوم منخفض)",
+     "tags": [
+      "red_meat"
+     ],
+     "items": [
+      [
+       "beef",
+       1
+      ],
+      [
+       "zucchini",
+       2
+      ],
+      [
+       "onion",
+       0.5
+      ],
+      [
+       "tomato",
+       1
+      ]
+     ],
+     "photo_prompt": "Minced beef sauteed with zucchini and tomato. Served on a plain white ceramic plate, overhead 45-degree angle, warm natural light, appetizing home-style presentation, photorealistic. No text, no watermark.",
+     "day_type": "low"
+    },
+    {
+     "id": "c2o8",
+     "label": "دجاج وأرز وخضار (يوم عالي)",
+     "tags": [
+      "poultry"
+     ],
+     "items": [
+      [
+       "chicken_breast",
+       2
+      ],
+      [
+       "rice",
+       1.5
+      ],
+      [
+       "broccoli",
+       1
+      ],
+      [
+       "olive_oil",
+       1
+      ]
+     ],
+     "photo_prompt": "Large plate of grilled chicken, rice and broccoli. Served on a plain white ceramic plate, overhead 45-degree angle, warm natural light, appetizing home-style presentation, photorealistic. No text, no watermark.",
+     "day_type": "high"
+    },
+    {
+     "id": "c2o9",
+     "label": "لحم بقري مع بطاطس (يوم عالي)",
+     "tags": [
+      "red_meat"
+     ],
+     "items": [
+      [
+       "beef",
+       1.5
+      ],
+      [
+       "potato",
+       2
+      ],
+      [
+       "mixed_salad",
+       1
+      ]
+     ],
+     "photo_prompt": "Beef steak strips with roasted potatoes and salad. Served on a plain white ceramic plate, overhead 45-degree angle, warm natural light, appetizing home-style presentation, photorealistic. No text, no watermark.",
+     "day_type": "high"
+    },
+    {
+     "id": "c2o10",
+     "label": "سلمون مع كينوا (يوم عالي)",
+     "tags": [
+      "seafood"
+     ],
+     "items": [
+      [
+       "salmon",
+       1
+      ],
+      [
+       "quinoa",
+       1.5
+      ],
+      [
+       "spinach",
+       1
+      ],
+      [
+       "olive_oil",
+       1
+      ]
+     ],
+     "photo_prompt": "Salmon fillet with quinoa and spinach. Served on a plain white ceramic plate, overhead 45-degree angle, warm natural light, appetizing home-style presentation, photorealistic. No text, no watermark.",
+     "day_type": "high"
     }
    ]
   },
@@ -229,6 +525,128 @@
        1
       ]
      ]
+    },
+    {
+     "id": "c3o5",
+     "label": "لوز وجبنة شيدر (يوم منخفض)",
+     "tags": [
+      "dairy"
+     ],
+     "items": [
+      [
+       "almonds",
+       12
+      ],
+      [
+       "cheddar",
+       1
+      ]
+     ],
+     "photo_prompt": "A handful of almonds with cheddar slices. Served on a plain white ceramic plate, overhead 45-degree angle, warm natural light, appetizing home-style presentation, photorealistic. No text, no watermark.",
+     "day_type": "low"
+    },
+    {
+     "id": "c3o6",
+     "label": "خيار بالجبنة القريش (يوم منخفض)",
+     "tags": [
+      "dairy"
+     ],
+     "items": [
+      [
+       "cottage_cheese",
+       1
+      ],
+      [
+       "cucumber",
+       1
+      ]
+     ],
+     "photo_prompt": "Cucumber slices with cottage cheese. Served on a plain white ceramic plate, overhead 45-degree angle, warm natural light, appetizing home-style presentation, photorealistic. No text, no watermark.",
+     "day_type": "low"
+    },
+    {
+     "id": "c3o7",
+     "label": "زبادي يوناني وشيا (يوم منخفض)",
+     "tags": [
+      "dairy"
+     ],
+     "items": [
+      [
+       "greek_yogurt",
+       1
+      ],
+      [
+       "chia_seeds",
+       1
+      ],
+      [
+       "almonds",
+       5
+      ]
+     ],
+     "photo_prompt": "Greek yogurt with chia and almonds. Served on a plain white ceramic plate, overhead 45-degree angle, warm natural light, appetizing home-style presentation, photorealistic. No text, no watermark.",
+     "day_type": "low"
+    },
+    {
+     "id": "c3o8",
+     "label": "موز وزبدة فول سوداني (يوم عالي)",
+     "tags": [],
+     "items": [
+      [
+       "banana",
+       2
+      ],
+      [
+       "peanut_butter",
+       2
+      ]
+     ],
+     "photo_prompt": "Two bananas with peanut butter. Served on a plain white ceramic plate, overhead 45-degree angle, warm natural light, appetizing home-style presentation, photorealistic. No text, no watermark.",
+     "day_type": "high"
+    },
+    {
+     "id": "c3o9",
+     "label": "شيك بروتين مع شوفان (يوم عالي)",
+     "tags": [],
+     "items": [
+      [
+       "protein_powder",
+       1
+      ],
+      [
+       "whole_milk",
+       1.5
+      ],
+      [
+       "oats",
+       0.5
+      ]
+     ],
+     "photo_prompt": "Protein shake with oats in a shaker. Served on a plain white ceramic plate, overhead 45-degree angle, warm natural light, appetizing home-style presentation, photorealistic. No text, no watermark.",
+     "day_type": "high"
+    },
+    {
+     "id": "c3o10",
+     "label": "زبادي يوناني بالتوت والشوفان (يوم عالي)",
+     "tags": [
+      "dairy"
+     ],
+     "items": [
+      [
+       "greek_yogurt",
+       2
+      ],
+      [
+       "berries",
+       1
+      ],
+      [
+       "oats",
+       0.5
+      ]
+     ],
+     "photo_prompt": "Greek yogurt with berries and oats. Served on a plain white ceramic plate, overhead 45-degree angle, warm natural light, appetizing home-style presentation, photorealistic. No text, no watermark.",
+     "day_type": "high"
     }
    ]
   },
@@ -311,6 +729,148 @@
        1
       ]
      ]
+    },
+    {
+     "id": "c4o5",
+     "label": "سلطة دجاج بالجبنة بلا خبز (يوم منخفض)",
+     "tags": [
+      "poultry"
+     ],
+     "items": [
+      [
+       "chicken_breast",
+       1
+      ],
+      [
+       "lettuce",
+       2
+      ],
+      [
+       "cheddar",
+       1
+      ],
+      [
+       "olive_oil",
+       1
+      ]
+     ],
+     "photo_prompt": "Chicken Caesar-style salad without croutons. Served on a plain white ceramic plate, overhead 45-degree angle, warm natural light, appetizing home-style presentation, photorealistic. No text, no watermark.",
+     "day_type": "low"
+    },
+    {
+     "id": "c4o6",
+     "label": "أومليت سبانخ وجبنة (يوم منخفض)",
+     "tags": [
+      "egg"
+     ],
+     "items": [
+      [
+       "egg",
+       3
+      ],
+      [
+       "spinach",
+       1
+      ],
+      [
+       "cheddar",
+       1
+      ]
+     ],
+     "photo_prompt": "Spinach and cheese omelette. Served on a plain white ceramic plate, overhead 45-degree angle, warm natural light, appetizing home-style presentation, photorealistic. No text, no watermark.",
+     "day_type": "low"
+    },
+    {
+     "id": "c4o7",
+     "label": "سمك مشوي مع كوسة (يوم منخفض)",
+     "tags": [
+      "seafood"
+     ],
+     "items": [
+      [
+       "salmon",
+       1
+      ],
+      [
+       "zucchini",
+       2
+      ],
+      [
+       "olive_oil",
+       1
+      ]
+     ],
+     "photo_prompt": "Baked salmon with grilled zucchini. Served on a plain white ceramic plate, overhead 45-degree angle, warm natural light, appetizing home-style presentation, photorealistic. No text, no watermark.",
+     "day_type": "low"
+    },
+    {
+     "id": "c4o8",
+     "label": "دجاج مشوي مع بطاطا حلوة (يوم عالي)",
+     "tags": [
+      "poultry"
+     ],
+     "items": [
+      [
+       "chicken_breast",
+       1.5
+      ],
+      [
+       "sweet_potato",
+       2
+      ],
+      [
+       "broccoli",
+       1
+      ]
+     ],
+     "photo_prompt": "Grilled chicken with baked sweet potato and broccoli. Served on a plain white ceramic plate, overhead 45-degree angle, warm natural light, appetizing home-style presentation, photorealistic. No text, no watermark.",
+     "day_type": "high"
+    },
+    {
+     "id": "c4o9",
+     "label": "لحم مع أرز (يوم عالي)",
+     "tags": [
+      "red_meat"
+     ],
+     "items": [
+      [
+       "beef",
+       1.5
+      ],
+      [
+       "rice",
+       1.5
+      ],
+      [
+       "tomato",
+       1
+      ]
+     ],
+     "photo_prompt": "Beef and rice with tomato. Served on a plain white ceramic plate, overhead 45-degree angle, warm natural light, appetizing home-style presentation, photorealistic. No text, no watermark.",
+     "day_type": "high"
+    },
+    {
+     "id": "c4o10",
+     "label": "سلمون مع بطاطس (يوم عالي)",
+     "tags": [
+      "seafood"
+     ],
+     "items": [
+      [
+       "salmon",
+       1
+      ],
+      [
+       "potato",
+       2
+      ],
+      [
+       "spinach",
+       1
+      ]
+     ],
+     "photo_prompt": "Salmon with roasted potatoes and spinach. Served on a plain white ceramic plate, overhead 45-degree angle, warm natural light, appetizing home-style presentation, photorealistic. No text, no watermark.",
+     "day_type": "high"
     }
    ]
   }

@@ -70,7 +70,7 @@ class _PatientScreenState extends State<PatientScreen> {
         final chip = Container(
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
           decoration: BoxDecoration(color: Colors.white24, borderRadius: BorderRadius.circular(14)),
-          child: Text(meta.label, style: const TextStyle(color: Colors.white, fontSize: 12.5, fontWeight: FontWeight.w700)),
+          child: Text(meta.label, style: const TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w700)),
         );
         final planLabel = personal ? 'خطتي' : 'بيتي';
         return TabsScaffold(
@@ -206,53 +206,51 @@ class _DayRing extends StatelessWidget {
     final left = goal - shown.kcal;
     final bars = [
       ('بروتين', shown.p, (target['proteinG'] as num?)?.toDouble() ?? 0),
-      ('كربوهيدرات', shown.c, (target['carbG'] as num?)?.toDouble() ?? 0),
+      ('كارب', shown.c, (target['carbG'] as num?)?.toDouble() ?? 0),
       ('دهون', shown.f, (target['fatG'] as num?)?.toDouble() ?? 0),
     ];
     return CardBox(
+      padding: const EdgeInsets.all(14),
       child: Column(children: [
         Row(children: [
           SizedBox(
-            width: 104, height: 104,
+            width: 68, height: 68,
             child: Stack(alignment: Alignment.center, children: [
               SizedBox(
-                width: 104, height: 104,
-                child: CircularProgressIndicator(value: (shown.kcal / goal).clamp(0, 1).toDouble(), strokeWidth: 10,
+                width: 68, height: 68,
+                child: CircularProgressIndicator(value: (shown.kcal / goal).clamp(0, 1).toDouble(), strokeWidth: 8,
                     backgroundColor: Brand.green.withValues(alpha: .1), color: left < 0 ? Brand.honey : Brand.green),
               ),
-              Column(mainAxisSize: MainAxisSize.min, children: [
-                Text('${shown.kcal.round()}', style: const TextStyle(fontSize: 24, fontWeight: black, height: 1.1)),
-                Text('من ${goal.round()}', style: const TextStyle(fontSize: 12.5, color: Brand.grey)),
-              ]),
+              Text('${shown.kcal.round()}', style: const TextStyle(fontSize: 16, fontWeight: black)),
             ]),
           ),
-          const SizedBox(width: 16),
+          const SizedBox(width: 14),
           Expanded(
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text(tomorrow ? 'خطة الغد' : (left >= 0 ? 'متبقٍّ ${left.round()} سعرة' : 'تجاوزتَ بـ${(-left).round()} سعرة'),
-                  style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w800, color: Brand.green)),
-              const SizedBox(height: 4),
-              Text(tomorrow ? 'مجموع وجبات الغد المخطط' : 'مخطط اليوم كله ≈ ${planned.kcal.round()} سعرة',
-                  style: const TextStyle(fontSize: 13, color: Brand.grey, height: 1.5)),
+              Text(tomorrow ? 'خطة الغد ≈ ${planned.kcal.round()} سعرة' : (left >= 0 ? 'متبقٍّ ${left.round()} من ${goal.round()} سعرة' : 'تجاوزتَ بـ${(-left).round()} سعرة'),
+                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800, color: Brand.green)),
+              if (!tomorrow) Text('مخطط اليوم كله ≈ ${planned.kcal.round()}', style: const TextStyle(fontSize: 13, color: Brand.grey)),
             ]),
           ),
         ]),
-        const SizedBox(height: 12),
-        for (final (l, v, g) in bars)
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 3),
-            child: Row(children: [
-              SizedBox(width: 86, child: Text(l, style: const TextStyle(fontSize: 13))),
-              Expanded(
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(4),
-                  child: LinearProgressIndicator(value: g <= 0 ? 0 : (v / g).clamp(0, 1).toDouble(), minHeight: 8,
-                      backgroundColor: Brand.green.withValues(alpha: .1), color: Brand.honey),
-                ),
+        const SizedBox(height: 10),
+        Row(children: [
+          for (final (l, v, g) in bars)
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 4),
+                child: Column(children: [
+                  Text('$l ${v.round()}/${g.round()}', style: const TextStyle(fontSize: 13, color: Brand.grey)),
+                  const SizedBox(height: 3),
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(4),
+                    child: LinearProgressIndicator(value: g <= 0 ? 0 : (v / g).clamp(0, 1).toDouble(), minHeight: 6,
+                        backgroundColor: Brand.green.withValues(alpha: .1), color: Brand.honey),
+                  ),
+                ]),
               ),
-              SizedBox(width: 78, child: Text('${v.round()}/${g.round()} غ', textAlign: TextAlign.end, style: const TextStyle(fontSize: 12.5, color: Brand.grey))),
-            ]),
-          ),
+            ),
+        ]),
       ]),
     );
   }
@@ -272,7 +270,7 @@ class _NutriLine extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(top: 6),
       child: Text('≈ ${n.kcal.round()} سعرة للفرد · بروتين ${n.p.round()} غ · كربوهيدرات ${n.c.round()} غ · دهون ${n.f.round()} غ${n.reviewed ? ' ✓' : ' (تقدير)'}',
-          style: const TextStyle(fontSize: 12.5, color: Brand.grey, height: 1.5)),
+          style: const TextStyle(fontSize: 13, color: Brand.grey, height: 1.5)),
     );
   }
 }
@@ -333,6 +331,15 @@ class _MealTile extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.fromLTRB(14, 12, 14, 14),
           child: Row(children: [
+            if (photo == null) ...[
+              // بلا صورة: أيقونة الوجبة بدل مستطيل فارغ
+              Container(
+                width: 46, height: 46,
+                decoration: BoxDecoration(color: Brand.green.withValues(alpha: .1), shape: BoxShape.circle),
+                child: Icon(switch (s.slot.id) { 'meal1' => Icons.wb_twilight, 'meal2' => Icons.wb_sunny_outlined, 'meal3' => Icons.coffee_outlined, _ => Icons.nights_stay_outlined }, color: Brand.green),
+              ),
+              const SizedBox(width: 12),
+            ],
             if (onToggle != null) ...[
               GestureDetector(
                 onTap: onToggle,
@@ -355,7 +362,7 @@ class _MealTile extends StatelessWidget {
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                       decoration: BoxDecoration(color: Brand.honey, borderRadius: BorderRadius.circular(10)),
-                      child: const Text('التالية', style: TextStyle(fontSize: 11.5, color: Colors.white, fontWeight: FontWeight.w800)),
+                      child: const Text('التالية', style: TextStyle(fontSize: 13, color: Colors.white, fontWeight: FontWeight.w800)),
                     ),
                   ],
                 ]),
@@ -475,10 +482,10 @@ class _ShoppingTab extends StatelessWidget {
             onPressed: () => showShopShare(context, store, thisWeek, program, linesThis, store.pantryOf(program)),
           ),
           const SizedBox(height: 10),
-          _ShoppingCard(title: '🛒 مشترياتك — هذا الأسبوع', week: thisWeek, lines: linesThis, locked: locked,
+          _ShoppingCard(title: 'هذا الأسبوع', week: thisWeek, lines: linesThis, locked: locked,
               program: program, store: store),
           const SizedBox(height: 24),
-          _ShoppingCard(title: '🛒 مشترياتك — الأسبوع القادم', week: nextWeek, lines: linesNext, locked: false,
+          _ShoppingCard(title: 'الأسبوع القادم', week: nextWeek, lines: linesNext, locked: false,
               program: program, store: store),
           const SizedBox(height: 14),
           CardBox(
@@ -512,7 +519,7 @@ class _ShoppingCard extends StatelessWidget {
         padding: const EdgeInsets.all(20),
         border: Border.all(color: Brand.honey.withValues(alpha: .3), width: 2),
         child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-          Text(title, style: const TextStyle(fontSize: 22, fontWeight: black, color: Brand.green)),
+          Text(title, style: const TextStyle(fontSize: 20, fontWeight: black, color: Brand.green)),
           if (locked)
             Container(
               margin: const EdgeInsets.only(top: 8),
@@ -525,7 +532,7 @@ class _ShoppingCard extends StatelessWidget {
           Builder(builder: (_) {
             final total = lines.fold<double>(0, (a, l) => a + l.packs * l.unitPrice);
             final done = lines.where((l) => l.bought).length;
-            return Text('اشتريت $done من ${lines.length} · التكلفة التقديرية ${total.toStringAsFixed(0)} ر.س',
+            return Text('اشتريت $done من ${lines.length} · ≈ ${total.toStringAsFixed(0)} ر.س (أسعار تقريبية)',
                 style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: Brand.grey));
           }),
           const SizedBox(height: 4),
@@ -566,14 +573,24 @@ class _ShoppingCard extends StatelessWidget {
       );
 }
 
-class _NextWeekTab extends StatelessWidget {
+class _NextWeekTab extends StatefulWidget {
   final HouseholdStore store;
   final Library library;
   const _NextWeekTab({required this.store, required this.library});
 
   @override
+  State<_NextWeekTab> createState() => _NextWeekTabState();
+}
+
+class _NextWeekTabState extends State<_NextWeekTab> {
+  bool _next = false; // يبدأ بأسبوعه الحالي ليراه كاملاً
+  HouseholdStore get store => widget.store;
+  Library get library => widget.library;
+
+  @override
   Widget build(BuildContext context) {
-    final nextWeek = weekStartFor(saudiNow()).add(const Duration(days: 7));
+    final thisWeekStart = weekStartFor(saudiNow());
+    final nextWeek = _next ? thisWeekStart.add(const Duration(days: 7)) : thisWeekStart;
     return FutureBuilder(
       future: () async {
         return (await store.program(), await store.week(nextWeek));
@@ -585,9 +602,15 @@ class _NextWeekTab extends StatelessWidget {
           padding: const EdgeInsets.all(20),
           border: Border.all(color: Brand.honey.withValues(alpha: .3), width: 2),
           child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-            const Text('📝 تعديل خطة الأسبوع القادم',
-                style: TextStyle(fontSize: 22, fontWeight: black, color: Brand.green)),
-            Text('اضغط على اليوم لتغيير أي وجبة. تُقفل المشتريات مساء ${const ['السبت', 'الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة'][store.household.cutoffDay]} الساعة ${ar12(store.household.cutoffTime)}.',
+            Row(children: [
+              for (final (n, l) in [(false, 'هذا الأسبوع'), (true, 'الأسبوع القادم')]) ...[
+                Expanded(child: _BigToggle(label: l, selected: _next == n, onTap: () => setState(() => _next = n))),
+                if (!n) const SizedBox(width: 10),
+              ],
+            ]),
+            const SizedBox(height: 14),
+            Text(_next ? 'خطة الأسبوع القادم' : 'خطة هذا الأسبوع', style: const TextStyle(fontSize: 22, fontWeight: black, color: Brand.green)),
+            Text('اضغط على اليوم لتغيير أي وجبة.${_next ? ' تُقفل المشتريات مساء ${const ['السبت', 'الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة'][store.household.cutoffDay]} الساعة ${ar12(store.household.cutoffTime)}.' : ''}',
                 style: const TextStyle(fontSize: 13, color: Brand.grey, height: 1.6)),
             const SizedBox(height: 10),
             Row(children: [
@@ -599,7 +622,7 @@ class _NextWeekTab extends StatelessWidget {
                     final ok = await showDialog<bool>(
                       context: context,
                       builder: (c) => AlertDialog(
-                        title: const Text('إعادة توليد الأسبوع القادم؟'),
+                        title: Text(_next ? 'إعادة توليد الأسبوع القادم؟' : 'إعادة توليد هذا الأسبوع؟'),
                         content: const Text('تُستبدل كل وجبات الأسبوع القادم بوجبات جديدة تتجنب ما قُدّم هذا الأسبوع وتحترم ما أخفيتِه وما فضّلتِه. المشتريات تُحسب من جديد.'),
                         actions: [
                           TextButton(onPressed: () => Navigator.pop(c, false), child: const Text('إلغاء')),
@@ -629,7 +652,7 @@ class _NextWeekTab extends StatelessWidget {
                         slot.options.where((o) => o.id == plan.days[d][slot.id]).firstOrNull?.label ?? '',
                     ].where((t) => t.isNotEmpty).join(' · '),
                         maxLines: 2, overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(fontSize: 12, color: Brand.grey)),
+                        style: const TextStyle(fontSize: 13, color: Brand.grey)),
                     childrenPadding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
                     children: [
                       for (final slot in program.slots)

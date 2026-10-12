@@ -72,6 +72,130 @@
        1
       ]
      ]
+    },
+    {
+     "id": "w1o4",
+     "label": "شوفان بالحليب والموز والجوز",
+     "tags": [],
+     "items": [
+      [
+       "oats",
+       0.5
+      ],
+      [
+       "whole_milk",
+       1
+      ],
+      [
+       "banana",
+       1
+      ],
+      [
+       "walnuts",
+       3
+      ]
+     ],
+     "photo_prompt": "Oatmeal with milk, sliced banana and walnuts. Served on a plain white ceramic plate, overhead 45-degree angle, warm natural light, appetizing home-style presentation, photorealistic. No text, no watermark."
+    },
+    {
+     "id": "w1o5",
+     "label": "أومليت بالسبانخ والفطر مع خبز أسمر",
+     "tags": [
+      "egg"
+     ],
+     "items": [
+      [
+       "egg",
+       2
+      ],
+      [
+       "spinach",
+       1
+      ],
+      [
+       "mushroom",
+       0.5
+      ],
+      [
+       "whole_bread",
+       1
+      ]
+     ],
+     "photo_prompt": "Spinach and mushroom omelette with a slice of whole-grain toast. Served on a plain white ceramic plate, overhead 45-degree angle, warm natural light, appetizing home-style presentation, photorealistic. No text, no watermark."
+    },
+    {
+     "id": "w1o6",
+     "label": "زبادي يوناني بالتوت والمكسرات",
+     "tags": [
+      "dairy"
+     ],
+     "items": [
+      [
+       "greek_yogurt",
+       1
+      ],
+      [
+       "berries",
+       0.5
+      ],
+      [
+       "almonds",
+       8
+      ],
+      [
+       "chia_seeds",
+       1
+      ]
+     ],
+     "photo_prompt": "Greek yogurt bowl with mixed berries, almonds and chia seeds. Served on a plain white ceramic plate, overhead 45-degree angle, warm natural light, appetizing home-style presentation, photorealistic. No text, no watermark."
+    },
+    {
+     "id": "w1o7",
+     "label": "خبز أسمر بالأفوكادو والبيض",
+     "tags": [
+      "egg"
+     ],
+     "items": [
+      [
+       "whole_bread",
+       2
+      ],
+      [
+       "avocado",
+       0.5
+      ],
+      [
+       "egg",
+       1
+      ]
+     ],
+     "photo_prompt": "Whole-grain toast with smashed avocado and a boiled egg. Served on a plain white ceramic plate, overhead 45-degree angle, warm natural light, appetizing home-style presentation, photorealistic. No text, no watermark."
+    },
+    {
+     "id": "w1o8",
+     "label": "فطائر شوفان بالموز وزبدة الفول",
+     "tags": [
+      "egg"
+     ],
+     "items": [
+      [
+       "oats",
+       0.5
+      ],
+      [
+       "egg",
+       1
+      ],
+      [
+       "banana",
+       1
+      ],
+      [
+       "peanut_butter",
+       1
+      ]
+     ],
+     "photo_prompt": "Oat banana pancakes with a spoon of peanut butter. Served on a plain white ceramic plate, overhead 45-degree angle, warm natural light, appetizing home-style presentation, photorealistic. No text, no watermark."
     }
    ]
   },
@@ -152,6 +276,140 @@
        1
       ]
      ]
+    },
+    {
+     "id": "w2o4",
+     "label": "دجاج مشوي مع بطاطا حلوة وبروكلي",
+     "tags": [
+      "poultry"
+     ],
+     "items": [
+      [
+       "chicken_breast",
+       1
+      ],
+      [
+       "sweet_potato",
+       1
+      ],
+      [
+       "broccoli",
+       1
+      ],
+      [
+       "olive_oil",
+       1
+      ]
+     ],
+     "photo_prompt": "Grilled chicken breast with baked sweet potato and steamed broccoli. Served on a plain white ceramic plate, overhead 45-degree angle, warm natural light, appetizing home-style presentation, photorealistic. No text, no watermark."
+    },
+    {
+     "id": "w2o5",
+     "label": "تونة بالخضار مع أرز بني",
+     "tags": [
+      "seafood"
+     ],
+     "items": [
+      [
+       "tuna",
+       1
+      ],
+      [
+       "brown_rice",
+       0.5
+      ],
+      [
+       "mixed_salad",
+       1
+      ],
+      [
+       "olive_oil",
+       1
+      ],
+      [
+       "lemon",
+       0.5
+      ]
+     ],
+     "photo_prompt": "Tuna salad with brown rice, mixed greens and lemon. Served on a plain white ceramic plate, overhead 45-degree angle, warm natural light, appetizing home-style presentation, photorealistic. No text, no watermark."
+    },
+    {
+     "id": "w2o6",
+     "label": "شوربة عدس مع سلطة",
+     "tags": [
+      "legume"
+     ],
+     "items": [
+      [
+       "lentils",
+       1
+      ],
+      [
+       "onion",
+       0.5
+      ],
+      [
+       "tomato",
+       1
+      ],
+      [
+       "mixed_salad",
+       1
+      ]
+     ],
+     "photo_prompt": "Lentil soup in a bowl with a side salad. Served on a plain white ceramic plate, overhead 45-degree angle, warm natural light, appetizing home-style presentation, photorealistic. No text, no watermark."
+    },
+    {
+     "id": "w2o7",
+     "label": "روبيان مشوي مع كينوا وكوسة",
+     "tags": [
+      "seafood"
+     ],
+     "items": [
+      [
+       "shrimp",
+       1
+      ],
+      [
+       "quinoa",
+       0.75
+      ],
+      [
+       "zucchini",
+       1
+      ],
+      [
+       "olive_oil",
+       1
+      ]
+     ],
+     "photo_prompt": "Grilled shrimp with quinoa and sauteed zucchini. Served on a plain white ceramic plate, overhead 45-degree angle, warm natural light, appetizing home-style presentation, photorealistic. No text, no watermark."
+    },
+    {
+     "id": "w2o8",
+     "label": "لحم بقري قليل الدهن مع خضار وأرز بني",
+     "tags": [
+      "red_meat"
+     ],
+     "items": [
+      [
+       "beef",
+       1
+      ],
+      [
+       "brown_rice",
+       0.5
+      ],
+      [
+       "bell_pepper",
+       1
+      ],
+      [
+       "broccoli",
+       1
+      ]
+     ],
+     "photo_prompt": "Lean beef strips with colorful peppers, broccoli and brown rice. Served on a plain white ceramic plate, overhead 45-degree angle, warm natural light, appetizing home-style presentation, photorealistic. No text, no watermark."
     }
    ]
   },
@@ -197,6 +455,94 @@
        10
       ]
      ]
+    },
+    {
+     "id": "w3o4",
+     "label": "تفاحة بزبدة الفول السوداني",
+     "tags": [],
+     "items": [
+      [
+       "apple",
+       1
+      ],
+      [
+       "peanut_butter",
+       1
+      ]
+     ],
+     "photo_prompt": "Apple slices with a small bowl of peanut butter. Served on a plain white ceramic plate, overhead 45-degree angle, warm natural light, appetizing home-style presentation, photorealistic. No text, no watermark."
+    },
+    {
+     "id": "w3o5",
+     "label": "زبادي يوناني وتوت",
+     "tags": [
+      "dairy"
+     ],
+     "items": [
+      [
+       "greek_yogurt",
+       1
+      ],
+      [
+       "berries",
+       0.5
+      ]
+     ],
+     "photo_prompt": "Small bowl of Greek yogurt with berries. Served on a plain white ceramic plate, overhead 45-degree angle, warm natural light, appetizing home-style presentation, photorealistic. No text, no watermark."
+    },
+    {
+     "id": "w3o6",
+     "label": "لوز وموزة",
+     "tags": [],
+     "items": [
+      [
+       "almonds",
+       10
+      ],
+      [
+       "banana",
+       1
+      ]
+     ],
+     "photo_prompt": "A handful of almonds and a banana. Served on a plain white ceramic plate, overhead 45-degree angle, warm natural light, appetizing home-style presentation, photorealistic. No text, no watermark."
+    },
+    {
+     "id": "w3o7",
+     "label": "جبنة قريش مع خيار",
+     "tags": [
+      "dairy"
+     ],
+     "items": [
+      [
+       "cottage_cheese",
+       1
+      ],
+      [
+       "cucumber",
+       1
+      ]
+     ],
+     "photo_prompt": "Cottage cheese with sliced cucumber. Served on a plain white ceramic plate, overhead 45-degree angle, warm natural light, appetizing home-style presentation, photorealistic. No text, no watermark."
+    },
+    {
+     "id": "w3o8",
+     "label": "شيك بروتين بالموز",
+     "tags": [],
+     "items": [
+      [
+       "protein_powder",
+       1
+      ],
+      [
+       "whole_milk",
+       1
+      ],
+      [
+       "banana",
+       0.5
+      ]
+     ],
+     "photo_prompt": "Protein shake with banana in a glass. Served on a plain white ceramic plate, overhead 45-degree angle, warm natural light, appetizing home-style presentation, photorealistic. No text, no watermark."
     }
    ]
   },
@@ -272,6 +618,133 @@
        1
       ]
      ]
+    },
+    {
+     "id": "w4o4",
+     "label": "سلطة دجاج مشوي كبيرة",
+     "tags": [
+      "poultry"
+     ],
+     "items": [
+      [
+       "chicken_breast",
+       1
+      ],
+      [
+       "mixed_salad",
+       2
+      ],
+      [
+       "avocado",
+       0.5
+      ],
+      [
+       "olive_oil",
+       1
+      ]
+     ],
+     "photo_prompt": "Large grilled chicken salad with avocado and olive oil. Served on a plain white ceramic plate, overhead 45-degree angle, warm natural light, appetizing home-style presentation, photorealistic. No text, no watermark."
+    },
+    {
+     "id": "w4o5",
+     "label": "سلمون مع سبانخ",
+     "tags": [
+      "seafood"
+     ],
+     "items": [
+      [
+       "salmon",
+       1
+      ],
+      [
+       "spinach",
+       2
+      ],
+      [
+       "lemon",
+       0.5
+      ],
+      [
+       "olive_oil",
+       1
+      ]
+     ],
+     "photo_prompt": "Baked salmon fillet with sauteed spinach and lemon. Served on a plain white ceramic plate, overhead 45-degree angle, warm natural light, appetizing home-style presentation, photorealistic. No text, no watermark."
+    },
+    {
+     "id": "w4o6",
+     "label": "أومليت خضار",
+     "tags": [
+      "egg"
+     ],
+     "items": [
+      [
+       "egg",
+       3
+      ],
+      [
+       "bell_pepper",
+       1
+      ],
+      [
+       "onion",
+       0.5
+      ],
+      [
+       "tomato",
+       1
+      ]
+     ],
+     "photo_prompt": "Vegetable omelette with peppers, onion and tomato. Served on a plain white ceramic plate, overhead 45-degree angle, warm natural light, appetizing home-style presentation, photorealistic. No text, no watermark."
+    },
+    {
+     "id": "w4o7",
+     "label": "كوسة بالجبنة القريش",
+     "tags": [
+      "dairy"
+     ],
+     "items": [
+      [
+       "zucchini",
+       2
+      ],
+      [
+       "cottage_cheese",
+       1
+      ],
+      [
+       "tomato",
+       1
+      ],
+      [
+       "garlic",
+       2
+      ]
+     ],
+     "photo_prompt": "Zucchini boats filled with cottage cheese and tomato. Served on a plain white ceramic plate, overhead 45-degree angle, warm natural light, appetizing home-style presentation, photorealistic. No text, no watermark."
+    },
+    {
+     "id": "w4o8",
+     "label": "تونة وحمص مع سلطة",
+     "tags": [
+      "seafood",
+      "legume"
+     ],
+     "items": [
+      [
+       "tuna",
+       1
+      ],
+      [
+       "chickpeas",
+       0.5
+      ],
+      [
+       "mixed_salad",
+       1
+      ]
+     ],
+     "photo_prompt": "Tuna and chickpea salad with fresh vegetables. Served on a plain white ceramic plate, overhead 45-degree angle, warm natural light, appetizing home-style presentation, photorealistic. No text, no watermark."
     }
    ]
   }

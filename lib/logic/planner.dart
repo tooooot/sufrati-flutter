@@ -2,6 +2,7 @@
 import 'dart:math';
 
 import '../data/models.dart';
+import 'calories.dart';
 
 const _glyphs = {(1, 4): '¼', (1, 3): '⅓', (1, 2): '½', (2, 3): '⅔', (3, 4): '¾'};
 
@@ -78,6 +79,7 @@ List<Pick> pickWeekOptions(Program program, {Random? random, Map<String, Set<Str
   final tagCounts = {for (final t in program.limits.keys) t: 0};
   final last = <String, String?>{for (final s in program.slots) s.id: null};
   final picks = <Pick>[];
+  final use = {for (final s in program.slots) s.id: <String, int>{}}; // كم مرة استُعمل كل خيار هذا الأسبوع
 
   for (var day = 0; day < 7; day++) {
     final dayType = pattern?[day];
@@ -98,7 +100,11 @@ List<Pick> pickWeekOptions(Program program, {Random? random, Map<String, Set<Str
       if (candidates.isEmpty) candidates = options.where((o) => ok(o) && o.id != last[slot.id]).toList();
       if (candidates.isEmpty) candidates = options.where(ok).toList();
       if (candidates.isEmpty) candidates = options;
-      final chosen = candidates[rnd.nextInt(candidates.length)];
+      // نفضّل الأقل استعمالاً هذا الأسبوع فلا تتكرر وجبة بينما بدائلها لم تُقدَّم بعد
+      final minUse = candidates.map((o) => use[slot.id]![o.id] ?? 0).reduce(min);
+      final fresh = candidates.where((o) => (use[slot.id]![o.id] ?? 0) == minUse).toList();
+      final chosen = fresh[rnd.nextInt(fresh.length)];
+      use[slot.id]![chosen.id] = (use[slot.id]![chosen.id] ?? 0) + 1;
       last[slot.id] = chosen.id;
       for (final tag in chosen.tags) {
         if (tagCounts.containsKey(tag)) tagCounts[tag] = tagCounts[tag]! + 1;
@@ -134,6 +140,32 @@ List<Pick> pickWeekOptions(Program program, {Random? random, Map<String, Set<Str
     }
   }
   return picks;
+}
+
+/// أسبوع متوازن السعرات للخطة الشخصية: نولّد [tries] أسابيع قانونية (حدود/تنويع) ونختار الأقل تفاوتاً بين مجاميع الأيام،
+/// فإذا عُوير حجم الحصة على متوسطها اقترب كل يوم من هدف السعرات (±10٪ غالباً).
+List<Pick> pickBalancedWeek(Program program,
+    {int tries = 300, Random? random, Map<String, Set<String>>? avoid, Set<String> hidden = const {}, Set<String> favorites = const {}}) {
+  final rnd = random ?? Random();
+  // كارب سايكل: تفاوت الأيام مقصود (منخفض/عالٍ) والهدف متوسط الأسبوع
+  if (program.dayTypePattern != null) return pickWeekOptions(program, random: rnd, avoid: avoid, hidden: hidden, favorites: favorites);
+  List<Pick>? best;
+  var bestScore = double.infinity;
+  for (var i = 0; i < tries; i++) {
+    final picks = pickWeekOptions(program, random: rnd, avoid: avoid, hidden: hidden, favorites: favorites);
+    final days = List<double>.filled(7, 0);
+    for (final p in picks) {
+      days[p.day] += optionNutri(program, p.option).total.kcal;
+    }
+    final mean = days.reduce((a, b) => a + b) / 7;
+    if (mean <= 0) return picks; // بلا تغذية مقدَّرة: لا موازنة
+    final score = days.map((d) => (d - mean).abs() / mean).reduce(max);
+    if (score < bestScore) {
+      bestScore = score;
+      best = picks;
+    }
+  }
+  return best!;
 }
 
 class PlannedSlot {

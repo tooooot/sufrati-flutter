@@ -11,7 +11,9 @@ class GoalCard extends StatefulWidget {
   /// الأخصائي المعتمد: تعديله يصير «معتمداً» باسمه.
   final bool isSpecialist;
   final String who;
-  const GoalCard({super.key, required this.store, this.isSpecialist = false, this.who = ''});
+  /// أخصائي مرتبط بهذا البيت (فتصير الشارة «بانتظار مراجعته» بدل «لم يُراجع»).
+  final bool hasSpecialist;
+  const GoalCard({super.key, required this.store, this.isSpecialist = false, this.who = '', this.hasSpecialist = false});
 
   @override
   State<GoalCard> createState() => _GoalCardState();
@@ -74,7 +76,7 @@ class _GoalCardState extends State<GoalCard> {
           final chip = switch (status) {
             'reviewed' => ('اعتمده ${t['reviewedBy'] ?? 'الأخصائي'} ✓', Brand.green),
             'custom' => ('عدّلتَه بنفسك', Brand.honey),
-            _ => ('تقدير آلي — يراجعه أخصائي', Brand.grey),
+            _ => (widget.hasSpecialist ? 'بانتظار مراجعة أخصائيك' : 'تقدير آلي — لم يُراجع بعد', Brand.grey),
           };
           final prot = (t['proteinG'] as num?)?.toInt() ?? 0;
           final f = _kcal == null ? (t['fatG'] as num?)?.toInt() ?? 0 : (kcal * .27 / 9).round();
@@ -87,23 +89,24 @@ class _GoalCardState extends State<GoalCard> {
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                   decoration: BoxDecoration(color: chip.$2.withValues(alpha: .12), borderRadius: BorderRadius.circular(20)),
-                  child: Text(chip.$1, style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: chip.$2)),
+                  child: Text(chip.$1, style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: chip.$2)),
                 ),
               ]),
               const SizedBox(height: 6),
+              // في الواجهة العربية الصف يبدأ من اليمين: نضع «−» أولاً ليظهر على اليسار و«+» أخيراً على اليمين كما في الأرقام
               Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                IconButton(onPressed: () => setState(() => _kcal = (kcal - 50).clamp(1000, 5000)), icon: const Icon(Icons.remove_circle_outline, color: Brand.green, size: 32)),
+                IconButton(onPressed: () => setState(() => _kcal = (kcal + 50).clamp(1000, 5000)), icon: const Icon(Icons.add_circle_outline, color: Brand.green, size: 34)),
                 Column(children: [
                   Text('${kcal.round()}', style: const TextStyle(fontSize: 44, fontWeight: black, color: Brand.green, height: 1.1)),
                   const Text('سعرة في اليوم', style: TextStyle(fontSize: 13, color: Brand.grey)),
                 ]),
-                IconButton(onPressed: () => setState(() => _kcal = (kcal + 50).clamp(1000, 5000)), icon: const Icon(Icons.add_circle_outline, color: Brand.green, size: 32)),
+                IconButton(onPressed: () => setState(() => _kcal = (kcal - 50).clamp(1000, 5000)), icon: const Icon(Icons.remove_circle_outline, color: Brand.green, size: 34)),
               ]),
               Row(children: [
                 for (final (l, v) in [('بروتين', prot), ('كربوهيدرات', c), ('دهون', f)])
                   Expanded(child: Column(children: [
                     Text('$v غ', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w800)),
-                    Text(l, style: const TextStyle(fontSize: 12.5, color: Brand.grey)),
+                    Text(l, style: const TextStyle(fontSize: 13, color: Brand.grey)),
                   ])),
               ]),
               if (t['weeks'] != null)
@@ -117,7 +120,7 @@ class _GoalCardState extends State<GoalCard> {
                     style: FilledButton.styleFrom(backgroundColor: Brand.green),
                     onPressed: _busy ? null : _save, child: const Text('احفظ الهدف'))),
                 ]),
-                const Padding(padding: EdgeInsets.only(top: 6), child: Text('الحصص في وجباتك تُعاد معايرتها لتناسب هدفك الجديد.', style: TextStyle(fontSize: 12.5, color: Brand.grey))),
+                const Padding(padding: EdgeInsets.only(top: 6), child: Text('الحصص في وجباتك تُعاد معايرتها لتناسب هدفك الجديد.', style: TextStyle(fontSize: 13, color: Brand.grey))),
               ] else if (prof != null) ...[
                 const SizedBox(height: 8),
                 OutlinedButton.icon(onPressed: _updateWeight, icon: const Icon(Icons.monitor_weight_outlined), label: Text('تحديث وزني (الآن ${prof.weightKg.toStringAsFixed(prof.weightKg == prof.weightKg.roundToDouble() ? 0 : 1)} كجم)')),

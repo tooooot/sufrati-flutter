@@ -24,7 +24,9 @@ class JourneyScreen extends StatefulWidget {
   final Session session;
   /// تغيير نظام بيت قائم (لا إنشاء بيت جديد).
   final bool update;
-  const JourneyScreen({super.key, required this.library, required this.session, this.update = false});
+  /// من إعلان لهدف محدد: يتخطى شاشة الأنظمة (weight/muscle/medical/withcook/family).
+  final String? goal;
+  const JourneyScreen({super.key, required this.library, required this.session, this.update = false, this.goal});
 
   @override
   State<JourneyScreen> createState() => _JourneyScreenState();
@@ -34,6 +36,13 @@ enum _Flow { catalog, help1, help2, reco, q }
 
 class _JourneyScreenState extends State<JourneyScreen> {
   _Flow _flow = _Flow.catalog;
+
+  @override
+  void initState() {
+    super.initState();
+    final pid = const {'weight': 'weight_loss_general', 'muscle': 'muscle_gain', 'medical': 'kidney_salama', 'withcook': 'saudi_family', 'family': 'saudi_family'}[widget.goal];
+    if (pid != null) WidgetsBinding.instance.addPostFrameCallback((_) => mounted ? _select(pid) : null);
+  }
   // الاختيار
   String? _pid;
   String _track = 'family';
@@ -211,7 +220,7 @@ class _JourneyScreenState extends State<JourneyScreen> {
         style: FilledButton.styleFrom(backgroundColor: Brand.honey, minimumSize: const Size.fromHeight(54), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16))),
         onPressed: () => setState(() => _flow = _Flow.help1),
         icon: const Icon(Icons.auto_awesome),
-        label: const Text('ساعدني في اختيار النظام', style: TextStyle(fontSize: 17, fontWeight: black)),
+        label: const Text('ساعدني في الاختيار — اختر لي', style: TextStyle(fontSize: 17, fontWeight: black)),
       ),
       const SizedBox(height: 14),
       for (final p in progs)
@@ -226,24 +235,13 @@ class _JourneyScreenState extends State<JourneyScreen> {
                 child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                   Text(p.label, style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w800, color: Brand.green)),
                   const SizedBox(height: 2),
-                  Text(p.blurb, maxLines: 2, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 12.5, color: Brand.grey, height: 1.5)),
+                  Text(p.blurb, maxLines: 2, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 13, color: Brand.grey, height: 1.5)),
                 ]),
               ),
               TextButton(onPressed: () => context.push('/programs/${p.id}'), child: const Text('معاينة')),
             ]),
           ),
         ),
-      CardBox(
-        color: Brand.amber50,
-        border: Border.all(color: Brand.honey, width: 1.5),
-        onTap: () => setState(() => _flow = _Flow.help1),
-        child: const Row(children: [
-          Text('✨', style: TextStyle(fontSize: 34)),
-          SizedBox(width: 12),
-          Expanded(child: Text('اختر لي', style: TextStyle(fontSize: 18, fontWeight: black, color: Brand.honey))),
-          Icon(Icons.chevron_left, color: Brand.honey),
-        ]),
-      ),
       if (!widget.session.signedIn)
         Center(child: TextButton(onPressed: () => context.push('/login'), child: const Text('لدي حساب — دخول'))),
     ]);
@@ -497,7 +495,7 @@ class _JourneyScreenState extends State<JourneyScreen> {
   Widget _macro(String l, String v) => Expanded(
         child: Column(children: [
           Text(v, style: const TextStyle(fontSize: 20, fontWeight: black, color: Brand.green)),
-          Text(l, style: const TextStyle(fontSize: 12, color: Brand.grey)),
+          Text(l, style: const TextStyle(fontSize: 13, color: Brand.grey)),
         ]),
       );
 
@@ -553,7 +551,7 @@ class _JourneyScreenState extends State<JourneyScreen> {
           Text('مؤشر كتلة الجسم ${plan.bmi.toStringAsFixed(1)}'
               '${plan.weeks != null ? ' · نحو ${plan.weeks} أسبوعاً للوصول لهدفك' : ''}',
               textAlign: TextAlign.center, style: const TextStyle(fontSize: 13, color: Brand.grey)),
-          if (plan.note != null) Padding(padding: const EdgeInsets.only(top: 6), child: Text(plan.note!, style: const TextStyle(fontSize: 12, color: Brand.honey))),
+          if (plan.note != null) Padding(padding: const EdgeInsets.only(top: 6), child: Text(plan.note!, style: const TextStyle(fontSize: 13, color: Brand.honey))),
         ])),
         const SizedBox(height: 12),
       ] else
@@ -568,7 +566,7 @@ class _JourneyScreenState extends State<JourneyScreen> {
         decoration: BoxDecoration(color: Brand.amber50, borderRadius: BorderRadius.circular(12)),
         child: const Text(
             'أرقام تقديرية بدقة نحو ±١٠٪ وليست وصفة طبية. يراجعها أخصائي التغذية ويعدّلها إن لزم، ومن لديه حالة مرضية يستشير طبيبه أولاً.',
-            style: TextStyle(fontSize: 12, height: 1.7)),
+            style: TextStyle(fontSize: 13, height: 1.7)),
       ),
       const SizedBox(height: 16),
       FilledButton(

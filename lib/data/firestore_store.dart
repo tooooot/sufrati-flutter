@@ -145,7 +145,7 @@ class FirestoreStore extends HouseholdStore {
     }
     final p = await program();
     final days = List.generate(7, (_) => <String, String>{});
-    for (final pick in pickWeekOptions(p, avoid: avoid, hidden: household.hidden, favorites: household.favorites)) {
+    for (final pick in (household.personal ? pickBalancedWeek(p, avoid: avoid, hidden: household.hidden, favorites: household.favorites) : pickWeekOptions(p, avoid: avoid, hidden: household.hidden, favorites: household.favorites))) {
       days[pick.day][pick.slotId] = pick.option.id;
     }
     _weeks[id] = WeekPlan(weekStart, days);
@@ -153,6 +153,7 @@ class FirestoreStore extends HouseholdStore {
     _shopping.remove(id);
     await _saveShopping(weekStart, await _build(weekStart, previous: _prevLines[id]));
     notifyListeners();
+    if (household.personal && household.targetKcal > 0) await calibrateToTarget();
   }
 
   @override
@@ -170,7 +171,7 @@ class FirestoreStore extends HouseholdStore {
     for (final d in prev?.days ?? const <Map<String, String>>[]) {
       d.forEach((slot, opt) => (avoid[slot] ??= {}).add(opt));
     }
-    for (final pick in pickWeekOptions(p, avoid: avoid, hidden: household.hidden, favorites: household.favorites)) {
+    for (final pick in (household.personal ? pickBalancedWeek(p, avoid: avoid, hidden: household.hidden, favorites: household.favorites) : pickWeekOptions(p, avoid: avoid, hidden: household.hidden, favorites: household.favorites))) {
       days[pick.day][pick.slotId] = pick.option.id;
     }
     final plan = WeekPlan(weekStart, days);

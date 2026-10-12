@@ -62,7 +62,7 @@ class HouseSettingsCard extends StatelessWidget {
               const Padding(
                 padding: EdgeInsets.only(top: 6),
                 child: Text('الكميات تقديرية من وصفات شائعة لأسرة 4–5؛ إن كان أهلك يأكلون أكثر أو أقل فغيّر الحجم والقائمة تتبعه.',
-                    style: TextStyle(fontSize: 12.5, color: Brand.grey, height: 1.6)),
+                    style: TextStyle(fontSize: 13, color: Brand.grey, height: 1.6)),
               ),
               const SizedBox(height: 10),
               Row(children: [
@@ -110,7 +110,7 @@ class MealActions extends StatelessWidget {
                     onPressed: f,
                     child: Column(mainAxisSize: MainAxisSize.min, children: [
                       Icon(i, color: c ?? Brand.green, size: 22),
-                      Text(l, style: TextStyle(fontSize: 12.5, fontWeight: black, color: c ?? Brand.green)),
+                      Text(l, style: TextStyle(fontSize: 13, fontWeight: black, color: c ?? Brand.green)),
                     ]),
                   ),
                 ),
@@ -154,7 +154,7 @@ Future<bool> showOutMealDialog(BuildContext context, HouseholdStore store, DateT
         TextField(controller: kcal, keyboardType: TextInputType.number,
             decoration: const InputDecoration(labelText: 'سعرات تقريبية (اختياري)', suffixText: 'سعرة', border: OutlineInputBorder())),
         const SizedBox(height: 6),
-        const Text('لا تدخل هذه الوجبة قائمة المشتريات.', style: TextStyle(fontSize: 12.5, color: Brand.grey)),
+        const Text('لا تدخل هذه الوجبة قائمة المشتريات.', style: TextStyle(fontSize: 13, color: Brand.grey)),
       ]),
       actions: [
         TextButton(onPressed: () => Navigator.pop(d, false), child: const Text('إلغاء')),
@@ -191,7 +191,7 @@ void showMealsManager(BuildContext context, HouseholdStore store) => showModalBo
                     return ListView(controller: scroll, padding: const EdgeInsets.fromLTRB(16, 0, 16, 28), children: [
                       const Text('إدارة وجباتي', style: TextStyle(fontSize: 22, fontWeight: black, color: Brand.green)),
                       const Text('⭐ تظهر أكثر · 👁 إخفاء (لا تظهر في خططك الجديدة) · ➕ وجبتك الخاصة',
-                          style: TextStyle(fontSize: 12.5, color: Brand.grey, height: 1.7)),
+                          style: TextStyle(fontSize: 13, color: Brand.grey, height: 1.7)),
                       for (final slot in prog.slots) ...[
                         const SizedBox(height: 14),
                         Row(children: [
@@ -212,7 +212,7 @@ void showMealsManager(BuildContext context, HouseholdStore store) => showModalBo
                               child: ListTile(
                                 dense: true,
                                 title: Text(o.label, style: TextStyle(fontWeight: FontWeight.w800, decoration: h.hidden.contains(o.id) ? TextDecoration.lineThrough : null)),
-                                subtitle: o.id.startsWith('c_') ? const Text('وجبتك الخاصة', style: TextStyle(fontSize: 12, color: Brand.honey)) : null,
+                                subtitle: o.id.startsWith('c_') ? const Text('وجبتك الخاصة', style: TextStyle(fontSize: 13, color: Brand.honey)) : null,
                                 trailing: Row(mainAxisSize: MainAxisSize.min, children: [
                                   IconButton(
                                     tooltip: 'مفضلة',
@@ -260,7 +260,7 @@ Future<void> _addCustom(BuildContext context, HouseholdStore store, Program prog
               Wrap(spacing: 6, runSpacing: 6, children: [
                 for (final e in prog.ingredients.entries)
                   FilterChip(
-                    label: Text('${e.value.icon} ${e.value.name}', style: const TextStyle(fontSize: 12.5)),
+                    label: Text('${e.value.icon} ${e.value.name}', style: const TextStyle(fontSize: 13)),
                     selected: picked.contains(e.key),
                     onSelected: (v) => set(() => v ? picked.add(e.key) : picked.remove(e.key)),
                   ),
@@ -297,7 +297,7 @@ void showPantrySheet(BuildContext context, HouseholdStore store) => showModalBot
                 final at = store.pantryOf(p);
                 return ListView(controller: scroll, padding: const EdgeInsets.fromLTRB(16, 0, 16, 28), children: [
                   const Text('عندي في البيت', style: TextStyle(fontSize: 22, fontWeight: black, color: Brand.green)),
-                  const Text('ما تفعّلينه هنا لا يدخل قائمة المشتريات. ألغي التفعيل متى نفد.', style: TextStyle(fontSize: 12.5, color: Brand.grey, height: 1.7)),
+                  const Text('ما تفعّلينه هنا لا يدخل قائمة المشتريات. ألغي التفعيل متى نفد.', style: TextStyle(fontSize: 13, color: Brand.grey, height: 1.7)),
                   const SizedBox(height: 8),
                   for (final e in shopCategories.entries) ...[
                     if (p.ingredients.values.any((i) => i.category == e.key))

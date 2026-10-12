@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../auth/roles.dart';
 import '../data/links.dart';
 import '../data/store.dart';
 import '../theme.dart';
@@ -30,7 +31,7 @@ class PlanTab extends StatelessWidget {
                   const Icon(Icons.swap_horiz, color: Brand.green),
                   const SizedBox(width: 10),
                   Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                    const Text('نظامي الحالي', style: TextStyle(fontSize: 12.5, color: Brand.grey)),
+                    const Text('النظام', style: TextStyle(fontSize: 13, color: Brand.grey)),
                     Text(programLabel, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700)),
                   ])),
                   OutlinedButton(onPressed: () => context.push('/journey?update=1'), child: const Text('غيّر نظامي')),
@@ -39,7 +40,7 @@ class PlanTab extends StatelessWidget {
               const SizedBox(height: 14),
             ],
             if (h.personal) ...[
-              GoalCard(store: store, isSpecialist: specialist, who: who),
+              GoalCard(store: store, isSpecialist: specialist, who: who, hasSpecialist: links.joinedBy(Role.doctor) != null),
               const SizedBox(height: 14),
               CardBox(
                 child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
@@ -61,7 +62,7 @@ class PlanTab extends StatelessWidget {
                     decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(16)),
                     child: ExpansionTile(
                       title: const Text('ربط أخصائي أو شريك أو طاهٍ', style: TextStyle(fontWeight: FontWeight.w700)),
-                      subtitle: const Text('اختياري', style: TextStyle(fontSize: 12.5)),
+                      subtitle: const Text('اختياري', style: TextStyle(fontSize: 13)),
                       childrenPadding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
                       children: [HouseholdBody(links: links, personal: true)],
                     ),

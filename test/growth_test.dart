@@ -46,9 +46,11 @@ void main() {
   });
 
   test('لقطات العرض: 4–5 لكل دور (الطبيب/الجروب دور واحد)، وكلها ببنية سليمة', () {
-    for (final k in ['user', 'home', 'doctor', 'group', 'cook', 'غير معروف']) {
+    for (final k in ['user', 'weight', 'muscle', 'medical', 'withcook', 'home', 'doctor', 'group', 'cook', 'غير معروف']) {
       final b = beatsFor(k, name: 'د. خالد');
-      expect(b.length, anyOf(4, 5), reason: k);
+      // عروض الأهداف والعرض العام ثلاث لقطات (ألم ← حل ← راحة)، والأدوار الأخرى 4–5
+      const short = {'user', 'weight', 'muscle', 'medical', 'withcook', 'غير معروف'};
+      expect(b.length, short.contains(k) ? 3 : anyOf(4, 5), reason: k);
       for (final x in b) {
         expect(x.title, isNotEmpty);
         expect(x.sub, isNotEmpty);

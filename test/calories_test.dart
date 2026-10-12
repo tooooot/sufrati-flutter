@@ -52,7 +52,7 @@ void main() {
     expect(day, inInclusiveRange(1000, 2600));
     final por = portionFor(prog, 1600);
     expect(por, inInclusiveRange(0.6, 1.5));
-    expect((day * por - 1600).abs() < 1 || por == 0.6 || por == 1.5, isTrue);
+    expect((day * por - 1600).abs() < 15 || por == 0.6 || por == 1.5, isTrue); // الحصة مقرَّبة لخانتين
   });
   test('بناء العضل: فائض فوق الاحتياج وبروتين 1.8 وزمن الوصول، والتنشيف بروتين 2.2', () {
     const g = Profile(sex: Sex.male, age: 25, heightCm: 178, weightKg: 70, activity: Activity.moderate, goalKg: 75, mode: Mode.gain);
