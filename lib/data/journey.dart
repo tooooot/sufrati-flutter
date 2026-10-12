@@ -23,7 +23,7 @@ class JourneyDraft {
         if (profile != null && plan != null)
           'profile': {
             'sex': profile!.sex.name, 'age': profile!.age, 'heightCm': profile!.heightCm, 'weightKg': profile!.weightKg,
-            'activity': profile!.activity.name, 'mode': profile!.mode.name, 'goalKg': profile!.goalKg, 'paceKgWeek': profile!.paceKgWeek,
+            'approx': true, 'activity': profile!.activity.name, 'mode': profile!.mode.name, 'goalKg': profile!.goalKg, 'paceKgWeek': profile!.paceKgWeek,
           },
         if (plan != null)
           'target': {

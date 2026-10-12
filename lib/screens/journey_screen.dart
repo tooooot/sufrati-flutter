@@ -528,7 +528,7 @@ class _JourneyScreenState extends State<JourneyScreen> {
       ...rows,
       const Divider(),
       Row(children: [
-        const Expanded(child: Text('المجموع التقريبي', style: TextStyle(fontWeight: black))),
+        const Expanded(child: Text('المجموع التقريبي (الأيام تتفاوت قليلاً حول هدفك)', style: TextStyle(fontWeight: black, fontSize: 13))),
         Text('${total.kcal.round()} سعرة', style: const TextStyle(fontWeight: black)),
       ]),
     ]));
@@ -572,7 +572,7 @@ class _JourneyScreenState extends State<JourneyScreen> {
       FilledButton(
         style: FilledButton.styleFrom(backgroundColor: Brand.honey, minimumSize: const Size.fromHeight(56)),
         onPressed: _save,
-        child: const Text('احفظ خطتي', style: TextStyle(fontSize: 18, fontWeight: black)),
+        child: Text(widget.session.signedIn ? 'ابدأ خطتي' : 'ابدأ خطتي (سنطلب الدخول لحفظها)', style: const TextStyle(fontSize: 18, fontWeight: black)),
       ),
     ]);
   }

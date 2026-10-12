@@ -83,6 +83,7 @@ List<Pick> pickWeekOptions(Program program, {Random? random, Map<String, Set<Str
 
   for (var day = 0; day < 7; day++) {
     final dayType = pattern?[day];
+    final dayMain = <String>{}; // المكوّنات الرئيسية المختارة اليوم
     for (final slot in program.slots) {
       var pool = slot.options.where((o) => !hidden.contains(o.id) && !o.isOut).toList();
       if (pool.isEmpty) pool = [...slot.options]; // لا نترك وجبة بلا خيارات مهما أخفت
@@ -96,15 +97,33 @@ List<Pick> pickWeekOptions(Program program, {Random? random, Map<String, Set<Str
         return true;
       }
 
-      var candidates = options.where((o) => ok(o) && o.id != last[slot.id] && !(avoid?[slot.id]?.contains(o.id) ?? false)).toList();
-      if (candidates.isEmpty) candidates = options.where((o) => ok(o) && o.id != last[slot.id]).toList();
-      if (candidates.isEmpty) candidates = options.where(ok).toList();
-      if (candidates.isEmpty) candidates = options;
-      // نفضّل الأقل استعمالاً هذا الأسبوع فلا تتكرر وجبة بينما بدائلها لم تُقدَّم بعد
-      final minUse = candidates.map((o) => use[slot.id]![o.id] ?? 0).reduce(min);
-      final fresh = candidates.where((o) => (use[slot.id]![o.id] ?? 0) == minUse).toList();
-      final chosen = fresh[rnd.nextInt(fresh.length)];
+      // ترتيب بالنقاط (الأقل أفضل): استعمال هذا الأسبوع ثم «قُدِّم الأسبوع الماضي» (تفضيل لا شرط، وإلا لم يبقَ بديل مع ٨ خيارات)
+      // ثم تكرار المكوّن الرئيسي في اليوم نفسه (زبادي في الفطور والسناك). المخالف للحدود أو المتتالي يُستبعد ما أمكن.
+      double score(MealOption o) {
+        var v = (use[slot.id]![o.id] ?? 0) * 2.0;
+        if (avoid?[slot.id]?.contains(o.id) ?? false) v += 1.0;
+        if (o.id == last[slot.id]) v += 100;
+        if (!ok(o)) v += 1000;
+        final main = o.items.isEmpty ? null : o.items.first.$1;
+        if (main != null && dayMain.contains(main)) v += 0.6;
+        if (favorites.contains(o.id)) v -= 0.3;
+        return v;
+      }
+      final uniq = {for (final o in options) o.id: o}.values.toList();
+      var best = double.infinity;
+      var tied = <MealOption>[];
+      for (final o in uniq) {
+        final v = score(o);
+        if (v < best - 1e-9) {
+          best = v;
+          tied = [o];
+        } else if ((v - best).abs() < 1e-9) {
+          tied.add(o);
+        }
+      }
+      final chosen = tied[rnd.nextInt(tied.length)];
       use[slot.id]![chosen.id] = (use[slot.id]![chosen.id] ?? 0) + 1;
+      if (chosen.items.isNotEmpty) dayMain.add(chosen.items.first.$1);
       last[slot.id] = chosen.id;
       for (final tag in chosen.tags) {
         if (tagCounts.containsKey(tag)) tagCounts[tag] = tagCounts[tag]! + 1;

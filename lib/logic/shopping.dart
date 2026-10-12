@@ -25,10 +25,10 @@ List<ShoppingLine> buildShopping(Program program, WeekPlan plan, double servings
         final ing = program.ingredients[key]!;
         final computed = (totals[key]! / ing.buyQty).ceil().clamp(1, 1 << 30);
         final p = prev[key];
-        if (p == null) return ShoppingLine(key, computed, ing.buyPrice, false, computed);
+        if (p == null) return ShoppingLine(key, computed, ing.buyPrice, false, computed, totals[key]!);
         // عدّلها المستخدم يدوياً (packs ≠ المحسوب سابقاً) ← نحفظ تعديله؛ وإلا نحدّثها مع الخطة والعدد والحصة
         final edited = p.auto != null && p.packs != p.auto;
-        return ShoppingLine(key, edited ? p.packs : computed, p.unitPrice, p.bought, computed);
+        return ShoppingLine(key, edited ? p.packs : computed, p.unitPrice, p.bought, computed, totals[key]!);
       }(),
   ];
 }

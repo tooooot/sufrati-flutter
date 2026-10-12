@@ -53,7 +53,7 @@ class ProfileScreen extends StatelessWidget {
                     const _GroupTitle('نظامي'),
                     CardBox(
                       child: Row(children: [
-                        Text(library.meta(links.programId)?.icon ?? '🍽️', style: const TextStyle(fontSize: 30)),
+                        const Icon(Icons.restaurant_menu, color: Brand.green, size: 30),
                         const SizedBox(width: 12),
                         Expanded(child: Text(library.meta(links.programId)?.label ?? '', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800))),
                         OutlinedButton(onPressed: () => context.push('/journey?update=1'), child: const Text('غيّر نظامي')),

@@ -60,7 +60,7 @@ class _GoalCardState extends State<GoalCard> {
       if (mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('تحقق من الوزن المدخل')));
       return;
     }
-    await widget.store.setTarget(targetMapOf(plan), profile: {...?widget.store.household.profile, 'weightKg': w});
+    await widget.store.setTarget(targetMapOf(plan), profile: {...?widget.store.household.profile, 'weightKg': w, 'approx': false});
     await widget.store.calibrateToTarget();
     if (mounted) setState(() => _kcal = null);
   }
@@ -123,7 +123,7 @@ class _GoalCardState extends State<GoalCard> {
                 const Padding(padding: EdgeInsets.only(top: 6), child: Text('الحصص في وجباتك تُعاد معايرتها لتناسب هدفك الجديد.', style: TextStyle(fontSize: 13, color: Brand.grey))),
               ] else if (prof != null) ...[
                 const SizedBox(height: 8),
-                OutlinedButton.icon(onPressed: _updateWeight, icon: const Icon(Icons.monitor_weight_outlined), label: Text('تحديث وزني (الآن ${prof.weightKg.toStringAsFixed(prof.weightKg == prof.weightKg.roundToDouble() ? 0 : 1)} كجم)')),
+                OutlinedButton.icon(onPressed: _updateWeight, icon: const Icon(Icons.monitor_weight_outlined), label: Text(widget.store.household.profile?['approx'] == true ? 'أدخل وزنك الفعلي (تقدير ≈${prof.weightKg.round()} كجم)' : 'تحديث وزني (الآن ${prof.weightKg.toStringAsFixed(prof.weightKg == prof.weightKg.roundToDouble() ? 0 : 1)} كجم)')),
               ],
             ]),
           );

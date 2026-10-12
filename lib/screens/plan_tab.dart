@@ -25,20 +25,6 @@ class PlanTab extends StatelessWidget {
         builder: (context, _) {
           final h = store.household;
           return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-            if (!specialist) ...[
-              CardBox(
-                child: Row(children: [
-                  const Icon(Icons.swap_horiz, color: Brand.green),
-                  const SizedBox(width: 10),
-                  Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                    const Text('النظام', style: TextStyle(fontSize: 13, color: Brand.grey)),
-                    Text(programLabel, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700)),
-                  ])),
-                  OutlinedButton(onPressed: () => context.push('/journey?update=1'), child: const Text('غيّر نظامي')),
-                ]),
-              ),
-              const SizedBox(height: 14),
-            ],
             if (h.personal) ...[
               GoalCard(store: store, isSpecialist: specialist, who: who, hasSpecialist: links.joinedBy(Role.doctor) != null),
               const SizedBox(height: 14),
@@ -85,6 +71,20 @@ class PlanTab extends StatelessWidget {
               HouseSettingsCard(store: store),
               const SizedBox(height: 14),
               HouseholdBody(links: links),
+            ],
+            const SizedBox(height: 14),
+            if (!specialist) ...[
+              CardBox(
+                child: Row(children: [
+                  const Icon(Icons.swap_horiz, color: Brand.green),
+                  const SizedBox(width: 10),
+                  Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                    const Text('النظام', style: TextStyle(fontSize: 13, color: Brand.grey)),
+                    Text(programLabel, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700)),
+                  ])),
+                  OutlinedButton(onPressed: () => context.push('/journey?update=1'), child: const Text('غيّر نظامي')),
+                ]),
+              ),
             ],
           ]);
         },

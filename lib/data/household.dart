@@ -53,5 +53,7 @@ class ShoppingLine {
   bool bought;
   /// العدد المحسوب آلياً آخر مرة: إن اختلف packs عنه فقد عدّله المستخدم يدوياً فنحفظ تعديله، وإلا نعيد الحساب عند تغيّر الخطة/العدد.
   int? auto;
-  ShoppingLine(this.key, this.packs, this.unitPrice, [this.bought = false, this.auto]);
+  /// المطلوب فعلياً هذا الأسبوع بوحدات الطبخ (لعرض «تكفي ≈ N أسابيع» حين تكون العبوة أكبر من حاجتك).
+  double need;
+  ShoppingLine(this.key, this.packs, this.unitPrice, [this.bought = false, this.auto, this.need = 0]);
 }

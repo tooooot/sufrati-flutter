@@ -55,4 +55,32 @@ void main() {
       expect(good, greaterThanOrEqualTo(runs * 0.8), reason: id);
     }
   });
+  test('أسابيع متتالية: «تجنب الأسبوع الماضي» لا يسبب تكراراً، ولا مكوّن رئيسي مكرر في اليوم غالباً', () {
+    final rnd = Random(11);
+    for (final id in personal.where((x) => x != 'carb_cycle')) {
+      final p = load(id);
+      Map<String, Set<String>> avoid = {};
+      var dupDays = 0, days = 0;
+      for (var w = 0; w < 6; w++) {
+        final picks = pickBalancedWeek(p, random: rnd, avoid: avoid);
+        final next = <String, Set<String>>{};
+        for (final s in p.slots) {
+          final ids = [for (final k in picks.where((k) => k.slotId == s.id)) k.option.id];
+          for (final o in ids.toSet()) {
+            expect(ids.where((x) => x == o).length, lessThanOrEqualTo(2), reason: '$id أسبوع $w ${s.id} $o');
+          }
+          next[s.id] = ids.toSet();
+        }
+        for (var d = 0; d < 7; d++) {
+          final mains = [for (final k in picks.where((k) => k.day == d)) k.option.items.isEmpty ? '' : k.option.items.first.$1];
+          days++;
+          if (mains.toSet().length < mains.length) dupDays++;
+        }
+        avoid = next;
+      }
+      // ignore: avoid_print
+      print('$id: أيام بمكوّن رئيسي مكرر: $dupDays/$days');
+      expect(dupDays / days, lessThan(.35), reason: id);
+    }
+  });
 }

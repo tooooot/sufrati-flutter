@@ -108,7 +108,7 @@ class FirestoreStore extends HouseholdStore {
     return [
       for (final e in lines.entries)
         ShoppingLine(e.key as String, ((e.value as Map)['packs'] as num).toInt(), ((e.value as Map)['unitPrice'] as num).toDouble(),
-            (e.value as Map)['bought'] == true, ((e.value as Map)['auto'] as num?)?.toInt()),
+            (e.value as Map)['bought'] == true, ((e.value as Map)['auto'] as num?)?.toInt(), ((e.value as Map)['need'] as num?)?.toDouble() ?? 0),
     ]..sort((a, b) => a.key.compareTo(b.key));
   }
 
@@ -221,7 +221,7 @@ class FirestoreStore extends HouseholdStore {
     _shopping[id] = lines;
     _prevLines[id] = lines;
     await db.doc('households/$hid/shopping/$id').set({
-      'lines': {for (final l in lines) l.key: {'packs': l.packs, 'unitPrice': l.unitPrice, 'bought': l.bought, 'auto': l.auto ?? l.packs}},
+      'lines': {for (final l in lines) l.key: {'packs': l.packs, 'unitPrice': l.unitPrice, 'bought': l.bought, 'auto': l.auto ?? l.packs, 'need': l.need}},
     });
   }
 

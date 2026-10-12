@@ -531,8 +531,13 @@ class _ShoppingCard extends StatelessWidget {
           const SizedBox(height: 8),
           Builder(builder: (_) {
             final total = lines.fold<double>(0, (a, l) => a + l.packs * l.unitPrice);
+            // استهلاك الأسبوع الفعلي (جزء العبوة) — لشخص واحد قد يكون أقل بكثير من ثمن العبوات الكاملة
+            final used = lines.fold<double>(0, (a, l) {
+              final ing = program.ingredients[l.key]!;
+              return a + (l.need > 0 ? (l.need / ing.buyQty).clamp(0, l.packs.toDouble()) * l.unitPrice : l.packs * l.unitPrice);
+            });
             final done = lines.where((l) => l.bought).length;
-            return Text('اشتريت $done من ${lines.length} · ≈ ${total.toStringAsFixed(0)} ر.س (أسعار تقريبية)',
+            return Text('اشتريت $done من ${lines.length} · عبواتك ≈ ${total.toStringAsFixed(0)} ر.س، واستهلاك الأسبوع ≈ ${used.toStringAsFixed(0)} ر.س (أسعار تقريبية)',
                 style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: Brand.grey));
           }),
           const SizedBox(height: 4),
@@ -555,7 +560,11 @@ class _ShoppingCard extends StatelessWidget {
                   const SizedBox(width: 8),
                   Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                     Text(program.ingredients[l.key]!.name, style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700, decoration: l.bought ? TextDecoration.lineThrough : null, color: l.bought ? Brand.grey : null)),
-                    Text(program.ingredients[l.key]!.buyUnit, style: const TextStyle(fontSize: 13, color: Brand.grey)),
+                    Text(() {
+                      final ing = program.ingredients[l.key]!;
+                      final cover = l.need > 0 ? l.packs * ing.buyQty / l.need : 0;
+                      return cover >= 2 ? '${ing.buyUnit} · تكفي ≈ ${cover.floor()} أسابيع' : ing.buyUnit;
+                    }(), style: const TextStyle(fontSize: 13, color: Brand.grey)),
                   ])),
                   if (locked)
                     Text('× ${l.packs}', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w800))
@@ -634,8 +643,6 @@ class _NextWeekTabState extends State<_NextWeekTab> {
                   },
                 ),
               ),
-              const SizedBox(width: 8),
-              OutlinedButton.icon(icon: const Icon(Icons.restaurant_menu), label: const Text('وجباتي'), onPressed: () => showMealsManager(context, store)),
             ]),
             const SizedBox(height: 12),
             for (var d = 0; d < 7; d++)
@@ -647,12 +654,15 @@ class _NextWeekTabState extends State<_NextWeekTab> {
                   child: ExpansionTile(
                     title: Text('${library.dayNames[d]} · ${arDate(nextWeek.add(Duration(days: d)))}',
                         style: const TextStyle(fontSize: 17, fontWeight: black, color: Brand.green)),
-                    subtitle: Text([
-                      for (final slot in program.slots)
-                        slot.options.where((o) => o.id == plan.days[d][slot.id]).firstOrNull?.label ?? '',
-                    ].where((t) => t.isNotEmpty).join(' · '),
-                        maxLines: 2, overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(fontSize: 13, color: Brand.grey)),
+                    subtitle: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                      if (store.household.personal)
+                        Text('≈ ${[for (final slot in program.slots) slot.options.where((o) => o.id == plan.days[d][slot.id]).firstOrNull].whereType<MealOption>().fold<double>(0, (a, o) => a + optionNutri(program, o, portion: store.household.portion).total.kcal).round()} سعرة',
+                            style: const TextStyle(fontSize: 13.5, fontWeight: FontWeight.w800, color: Brand.honey)),
+                      Text([
+                        for (final slot in program.slots)
+                          slot.options.where((o) => o.id == plan.days[d][slot.id]).firstOrNull?.label ?? '',
+                      ].where((t) => t.isNotEmpty).join(' · '), style: const TextStyle(fontSize: 13, color: Brand.grey, height: 1.5)),
+                    ]),
                     childrenPadding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
                     children: [
                       for (final slot in program.slots)
