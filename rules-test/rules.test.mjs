@@ -279,3 +279,12 @@ test('تقديرات التغذية: قراءة عامة، وكتابة الطب
   await assertFails(setDoc(doc(anon(), 'nutrition/saudi_family__rice'), body));
   await assertSucceeds(getDoc(doc(anon(), 'nutrition/saudi_family__rice')));
 });
+
+test('الجسم والهدف (private/body): الطاهي لا يقرأ ولا يكتب، والصاحب والطبيب يقرآن ويكتبان', async () => {
+  const body = { profile: { heightCm: 165, weightKg: 87 }, target: { kcal: 1550 } };
+  await assertSucceeds(setDoc(doc(as('own'), 'households/h1/private/body'), body));
+  await assertSucceeds(getDoc(doc(as('doc'), 'households/h1/private/body')));
+  await assertFails(getDoc(doc(as('cok'), 'households/h1/private/body')));
+  await assertFails(setDoc(doc(as('cok'), 'households/h1/private/body'), body));
+  await assertFails(getDoc(doc(as('zzz'), 'households/h1/private/body')));
+});

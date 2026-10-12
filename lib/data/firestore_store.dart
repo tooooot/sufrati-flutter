@@ -47,6 +47,21 @@ class FirestoreStore extends HouseholdStore {
     final snap = await db.doc('households/$hid').get();
     final d = snap.data();
     if (d == null) throw StateError('البيت غير موجود أو لا تملك صلاحية الوصول إليه');
+    // الجسم والهدف (عمر/طول/وزن/سعرات) بيانات صحية: في private/body لا في وثيقة البيت المقروءة للطاهي أيضاً
+    Map<String, dynamic>? body;
+    if (canManage) {
+      try {
+        body = (await db.doc('households/$hid/private/body').get()).data();
+      } catch (_) {}
+      if (body == null && (d['target'] != null || d['profile'] != null)) {
+        // بيت قديم حفظها في الوثيقة العامة: ننقلها ونمسحها من هناك
+        body = {if (d['profile'] != null) 'profile': d['profile'], if (d['target'] != null) 'target': d['target']};
+        try {
+          await db.doc('households/$hid/private/body').set(body);
+          await db.doc('households/$hid').update({'target': FieldValue.delete(), 'profile': FieldValue.delete()});
+        } catch (_) {}
+      }
+    }
     final h = Household(
       id: hid,
       label: d['label'] as String? ?? '',
@@ -57,8 +72,8 @@ class FirestoreStore extends HouseholdStore {
       kids: (d['kids'] as num?)?.toInt() ?? 0,
       portion: (d['portion'] as num?)?.toDouble() ?? 1.0,
       track: d['track'] as String? ?? 'family',
-      target: (d['target'] as Map?)?.cast<String, dynamic>(),
-      profile: (d['profile'] as Map?)?.cast<String, dynamic>(),
+      target: (body?['target'] as Map?)?.cast<String, dynamic>(),
+      profile: (body?['profile'] as Map?)?.cast<String, dynamic>(),
       pantry: (d['pantry'] as List?)?.cast<String>().toSet(),
       hidden: ((d['hidden'] as List?)?.cast<String>() ?? const <String>[]).toSet(),
       favorites: ((d['favorites'] as List?)?.cast<String>() ?? const <String>[]).toSet(),
@@ -118,7 +133,10 @@ class FirestoreStore extends HouseholdStore {
   @override
   Future<void> persistHousehold(Map<String, Object?> fields) async {
     if (!canManage) return;
-    await db.doc('households/$hid').update(fields);
+    final priv = {for (final k in const ['target', 'profile']) if (fields.containsKey(k)) k: fields[k]};
+    final pub = {for (final e in fields.entries) if (!priv.containsKey(e.key)) e.key: e.value};
+    if (priv.isNotEmpty) await db.doc('households/$hid/private/body').set(priv, SetOptions(merge: true));
+    if (pub.isNotEmpty) await db.doc('households/$hid').update(pub);
   }
 
   @override

@@ -170,14 +170,18 @@ class FirestoreLinkService extends LinkService {
   @override
   Future<void> createHousehold(String label, String programId, int eaters, {Map<String, dynamic>? extra}) async {
     final ref = db.collection('households').doc();
+    // الجسم والهدف بيانات صحية: تُكتب في private/body بعد إنشاء البيت (القاعدة تحتاج عضويته)
+    final body = {for (final k in const ['profile', 'target']) if (extra?[k] != null) k: extra![k]};
+    extra = {...?extra}..remove('profile')..remove('target');
     final b = db.batch();
     b.set(ref, {
       'label': label.trim(), 'programId': programId, 'eaters': eaters, 'city': 'Jeddah', 'cookName': '',
       'cutoffDay': 5, 'cutoffTime': '20:00', 'members': {_me: Role.owner.name}, 'inviteCodes': <String>[],
-      'createdAt': FieldValue.serverTimestamp(), ...?extra,
+      'createdAt': FieldValue.serverTimestamp(), ...extra,
     });
     b.set(db.doc('users/$_me'), {'hids': FieldValue.arrayUnion([ref.id])}, SetOptions(merge: true));
     await b.commit();
+    if (body.isNotEmpty) await ref.collection('private').doc('body').set(body);
   }
 
   @override
@@ -191,12 +195,18 @@ class FirestoreLinkService extends LinkService {
         await d.reference.delete();
       }
     }
+    final body = {for (final k in const ['profile', 'target']) if (fields[k] != null) k: fields[k]};
+    final pub = {...fields}..remove('profile')..remove('target');
     await ref.update({
-      'programId': programId, 'eaters': eaters, ...fields,
+      'programId': programId, 'eaters': eaters, ...pub,
       'hidden': <String>[], 'favorites': <String>[], 'custom': <dynamic>[], 'pantry': FieldValue.delete(),
-      if (!fields.containsKey('target')) 'target': FieldValue.delete(),
-      if (!fields.containsKey('profile')) 'profile': FieldValue.delete(),
+      'target': FieldValue.delete(), 'profile': FieldValue.delete(), // نظّف أي نسخ قديمة من الوثيقة العامة
     });
+    if (body.isEmpty) {
+      try { await ref.collection('private').doc('body').delete(); } catch (_) {}
+    } else {
+      await ref.collection('private').doc('body').set(body);
+    }
   }
 
   @override
