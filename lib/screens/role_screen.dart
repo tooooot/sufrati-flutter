@@ -6,6 +6,7 @@ import '../auth/session.dart';
 import '../routing.dart';
 import '../widgets/medical_note.dart';
 import '../widgets/profile_button.dart';
+import '../platform_flags.dart';
 import '../theme.dart';
 import '../widgets/common.dart';
 
@@ -51,7 +52,7 @@ class RoleScreen extends StatelessWidget {
                   const SizedBox(height: 12),
                 ],
                 // الطبيب والأخصائي مسار مهني منفصل: لا يزاحم اختيار الأسرة
-                Center(
+                if (doctorFeaturesEnabled) Center(
                   child: TextButton.icon(
                     icon: const Icon(Icons.medical_services_outlined, size: 20),
                     label: const Text('أنا طبيب أو أخصائي تغذية ←', style: TextStyle(fontWeight: black, fontSize: 15)),

@@ -6,6 +6,7 @@ import '../auth/roles.dart';
 import '../data/links.dart';
 import '../data/role_videos.dart';
 import '../data/repository.dart';
+import '../platform_flags.dart';
 import '../theme.dart';
 import '../widgets/common.dart';
 import '../widgets/link_explainer.dart';
@@ -73,9 +74,11 @@ class HouseholdBody extends StatelessWidget {
               const _Member(icon: '👤', title: 'أنت', sub: 'مدير البيت', done: true),
               const SizedBox(height: 8),
             ],
+            if (doctorFeaturesEnabled) ...[
             _Slot(links: links, role: Role.doctor, icon: '🩺', title: personal ? 'أخصائي التغذية أو الطبيب' : 'الطبيب',
                 empty: personal ? 'يتابع خطتك ويعدّل سعراتك' : 'يتابع الخطة ويعدّلها'),
             const SizedBox(height: 8),
+            ],
             _Slot(links: links, role: Role.owner, icon: '👫', title: personal ? 'شريك' : 'شريكي في إدارة البيت',
                 empty: personal ? 'شخص يرى خطتك ويعدّلها معك' : 'الزوج أو الزوجة: يرى الخطة نفسها ويعدّلها معك (بيت واحد، لا بيتان)'),
             const SizedBox(height: 8),

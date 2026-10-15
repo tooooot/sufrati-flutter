@@ -22,7 +22,7 @@ bool _validNext(String? n) => n != null && n.startsWith('/') && !n.startsWith('/
 /// وجهات تُقبَل حتى لمن لم يختر دوراً بعد: روابط الدعوة (/i) وطبيب المتابعين (/dr) وختم التسويق (/r)
 /// وطلب الطبيب (/doctor/apply) والانضمام (/join). غيرها ← شاشة اختيار الدور أولاً.
 bool _roleless(String n) =>
-    n.startsWith('/i/') || n.startsWith('/dr/') || n.startsWith('/r/') || n.startsWith('/doctor/apply') || n.startsWith('/join/') || n == '/journey/finish';
+    n == '/sources' || n.startsWith('/i/') || n.startsWith('/dr/') || n.startsWith('/r/') || n.startsWith('/doctor/apply') || n.startsWith('/join/') || n == '/journey/finish';
 
 /// [full] المسار مع الاستعلام (لحفظه عند التحويل للدخول)، [next] وجهة محفوظة من قبل.
 String? appRedirect(Session s, String p, {String? full, String? next, bool landingForGuests = false}) {

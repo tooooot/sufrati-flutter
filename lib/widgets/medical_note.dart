@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../theme.dart';
 
@@ -30,6 +31,11 @@ class MedicalNote extends StatelessWidget {
           const SizedBox(height: 6),
           Text(src, textAlign: TextAlign.center, style: const TextStyle(fontSize: 13, color: Brand.grey, height: 1.7)),
         ],
+        TextButton.icon(
+          icon: const Icon(Icons.menu_book_outlined, size: 18),
+          label: const Text('المصادر العلمية', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 14)),
+          onPressed: () => context.push('/sources'),
+        ),
       ]),
     );
   }

@@ -9,6 +9,7 @@ import '../data/prefs.dart';
 import '../data/repository.dart';
 import '../routing.dart';
 import '../widgets/nav.dart';
+import '../platform_flags.dart';
 import '../theme.dart';
 import '../widgets/common.dart';
 
@@ -90,7 +91,7 @@ class ProfileScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 20),
                   // تبديل الدور: يظهر فقط لمن له أكثر من دور فعلي (مدير سفرتي، طبيب، أو عضو في بيت غيره). الدور يُشتق من الارتباطات لا يُختار
-                  if (session.isAdmin || links.isDoctor || links.memberships.any((m) => m.role != Role.owner)) ...[
+                  if (session.isAdmin || (doctorFeaturesEnabled && links.isDoctor) || links.memberships.any((m) => m.role != Role.owner)) ...[
                   CardBox(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                     const Text('أنت الآن تستخدم سفرتي كـ', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w800, color: Brand.grey)),
                     const SizedBox(height: 8),
@@ -98,7 +99,7 @@ class ProfileScreen extends StatelessWidget {
                       padding: const EdgeInsets.all(4),
                       decoration: BoxDecoration(color: Brand.green.withValues(alpha: .09), borderRadius: BorderRadius.circular(16)),
                       child: Row(children: [
-                        for (final r in const [Role.owner, Role.cook, Role.doctor])
+                        for (final r in [Role.owner, Role.cook, if (doctorFeaturesEnabled) Role.doctor])
                           Expanded(
                             child: GestureDetector(
                               onTap: () => _switchTo(context, r),
@@ -133,9 +134,11 @@ class ProfileScreen extends StatelessWidget {
                     padding: EdgeInsets.zero,
                     child: Column(children: [
                       _Row(Icons.soup_kitchen_outlined, 'أنا طاهٍ — لدي رمز دعوة', () => context.push('/join/cook')),
+                      if (doctorFeaturesEnabled) ...[
                       const Divider(height: 1),
                       _Row(Icons.medical_services_outlined, links.isDoctor ? 'ملفي كطبيب (معتمد)' : (links.doctorRequested ? 'طلبي كطبيب قيد المراجعة' : 'أنا طبيب أو أخصائي تغذية'),
                           () => context.push(links.isDoctor ? '/doctor/profile' : (links.doctorRequested ? '/doctor-pending' : '/doctor/apply'))),
+                      ],
                     ]),
                   ),
                   const SizedBox(height: 20),
@@ -165,7 +168,7 @@ class ProfileScreen extends StatelessWidget {
                       ]),
                     ),
                   const SizedBox(height: 20),
-                  if (links.isDoctor) ...[
+                  if (doctorFeaturesEnabled && links.isDoctor) ...[
                     const _GroupTitle('مهنتي'),
                     CardBox(padding: EdgeInsets.zero, child: _Row(Icons.badge_outlined, 'ملفي المهني ورابط متابعيّ', () => context.push('/doctor/profile'))),
                     const SizedBox(height: 20),
@@ -176,6 +179,8 @@ class ProfileScreen extends StatelessWidget {
                     child: Column(children: [
                       _Row(Icons.privacy_tip_outlined, 'سياسة الخصوصية',
                           () => launchUrl(Uri.parse('https://maeda.wardyat.net/privacy'), mode: LaunchMode.externalApplication)),
+                      const Divider(height: 1),
+                      _Row(Icons.menu_book_outlined, 'المصادر العلمية', () => context.push('/sources')),
                       const Divider(height: 1),
                       _Row(Icons.delete_forever, 'حذف حسابي وبياناتي', () => _confirmDelete(context), danger: true),
                     ]),
