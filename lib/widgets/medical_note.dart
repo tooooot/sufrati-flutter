@@ -9,10 +9,9 @@ class MedicalNote extends StatelessWidget {
   final String? programId;
   const MedicalNote({super.key, this.programId});
 
-  /// المصدر بلا اسم المستشفى (قرار سابق: التطبيق بلا اسم المستشفى). الوثيقة نفسها تُقدَّم للمراجع عند الطلب.
+  /// نص المصدر المعروض تحت الإخلاء الطبي؛ الروابط في شاشة /sources.
   static String sourceFor(String? programId) => switch (programId) {
         null => '',
-        'kidney_salama' => 'مصدر المحتوى: دليل التغذية العلاجية لمرضى الكلى الصادر عن مستشفى متخصص، منقولاً بحدوده دون إضافة أرقام غذائية من عندنا.',
         _ => 'مصدر المحتوى: مكتبة وجبات سفرتي المركّبة من مبادئ تغذية شائعة، دون حساب طبي للسعرات ولا ادعاء علاجي.',
       };
 

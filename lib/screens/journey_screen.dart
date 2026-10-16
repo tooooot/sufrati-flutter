@@ -296,7 +296,7 @@ class _JourneyScreenState extends State<JourneyScreen> {
 
   Widget _helpStylePage() => _helpGoal == 'health'
       ? _optionsPage('أي حالة؟', null, [
-          const _Opt('الكلى', 'kidney_salama', icon: '🫘'),
+          const _Opt('النظام الخفيف', 'kidney_salama', icon: '🥗'),
           const _Opt('السكري أو الضغط أو الحمل', 'soon', icon: '🩸', sub: 'قيد الإعداد'),
         ], (v) {
           _helpGoal = v as String;
@@ -326,7 +326,7 @@ class _JourneyScreenState extends State<JourneyScreen> {
     'muscle_gain': 'فائض سعرات وبروتين عالٍ يدعمان بناء العضل مع التمرين.',
     'cutting_gym': 'عجز سعرات مع بروتين عالٍ لإظهار العضل وحفظه.',
     'saudi_family': 'وجبات سعودية مألوفة لأسرتك بمقاديرها ومشترياتها.',
-    'kidney_salama': 'نظام مبني على دليل غذائي طبي لمرضى الكلى.',
+    'kidney_salama': 'وجبات خفيفة بمقادير معتدلة، لتنظيم أسبوعك.',
     'weight_loss_general': 'عجز معتدل يمكن الاستمرار عليه، بحصص محسوبة.',
     'low_carb': 'تقليل النشويات مع مرونة أكبر من الكيتو.',
     'keto_general': 'كارب منخفض جداً ودهون عالية لمن يريد الالتزام الصارم.',
@@ -452,11 +452,11 @@ class _JourneyScreenState extends State<JourneyScreen> {
         return Padding(
           padding: const EdgeInsets.all(22),
           child: Column(mainAxisAlignment: MainAxisAlignment.center, crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-            const Text('🫘', textAlign: TextAlign.center, style: TextStyle(fontSize: 56)),
+            const Text('🥗', textAlign: TextAlign.center, style: TextStyle(fontSize: 56)),
             const SizedBox(height: 10),
-            const Text('نظام مرضى الكلى', textAlign: TextAlign.center, style: TextStyle(fontSize: 24, fontWeight: black, color: Brand.green)),
+            const Text('النظام الخفيف', textAlign: TextAlign.center, style: TextStyle(fontSize: 24, fontWeight: black, color: Brand.green)),
             const SizedBox(height: 8),
-            const Text('مبني على دليل غذائي طبي منشور. لا نحسب لك سعرات آلياً، وهذا النظام ليس بديلاً عن طبيبك: اعرضه عليه قبل الالتزام به.',
+            const Text('وجبات خفيفة بمقادير معتدلة لتنظيم أسبوعك. لا نحسب لك سعرات آلياً، وهو ليس علاجاً ولا بديلاً عن طبيبك: استشره قبل الالتزام به إن كانت لديك حالة صحية.',
                 textAlign: TextAlign.center, style: TextStyle(height: 1.8, color: Brand.grey)),
             const SizedBox(height: 22),
             FilledButton(

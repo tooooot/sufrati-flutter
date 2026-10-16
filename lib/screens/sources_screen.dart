@@ -22,9 +22,6 @@ class SourcesScreen extends StatelessWidget {
           'https://jissn.biomedcentral.com/articles/10.1186/s12970-017-0177-8'),
       ('أسس الغذاء الصحي', 'منظمة الصحة العالمية: النظام الغذائي الصحي', 'https://www.who.int/news-room/fact-sheets/detail/healthy-diet'),
     ]),
-    ('التغذية في أمراض الكلى', [
-      ('إرشادات التغذية لمرضى الكلى المزمنة', 'KDOQI Clinical Practice Guideline for Nutrition in CKD، 2020', 'https://doi.org/10.1053/j.ajkd.2020.05.006'),
-    ]),
   ];
 
   @override
@@ -57,11 +54,6 @@ class SourcesScreen extends StatelessWidget {
                   ]),
                 ),
               ],
-              const SizedBox(height: 18),
-              const Text(
-                'محتوى نظام الكلى مأخوذ من دليل تغذية علاجية صادر عن مستشفى متخصص ومنقول بحدوده دون إضافة أرقام من عندنا. الوثيقة تُقدَّم عند الطلب.',
-                style: TextStyle(fontSize: 13, color: Brand.grey, height: 1.7),
-              ),
               const SizedBox(height: 14),
               OutlinedButton(onPressed: () => context.back('/'), child: const Text('‹ رجوع')),
             ]),

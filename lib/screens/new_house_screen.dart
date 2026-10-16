@@ -102,7 +102,7 @@ class _NewHouseScreenState extends State<NewHouseScreen> {
                       margin: const EdgeInsets.only(bottom: 6),
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(color: Brand.amber50, borderRadius: BorderRadius.circular(14), border: Border.all(color: Brand.honey)),
-                      child: const Text('هذا النظام لمرضى الكلى منقول من دليل مستشفى متخصص. استشر طبيبك قبل البدء، ويمكنك دعوة طبيبك لمتابعة خطتك بعد إنشاء البيت.',
+                      child: const Text('هذا نظام غذائي عام لتنظيم الوجبات وليس علاجاً لأي مرض. استشر طبيبك أو أخصائي التغذية قبل البدء إن كانت لديك حالة صحية.',
                           style: TextStyle(fontSize: 13, height: 1.7, fontWeight: FontWeight.w700)),
                     ),
                   const SizedBox(height: 10),

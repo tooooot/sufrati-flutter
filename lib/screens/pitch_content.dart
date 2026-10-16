@@ -41,7 +41,7 @@ List<PitchBeat> beatsFor(String kind, {String name = '', String lang = 'ar'}) =>
         ],
       'medical' => [
           PitchBeat('ورقة الحمية صعبة الفهم؟', 'تخاف أن تخطئ في طعامك؟', (t) => MealsVisual(t)),
-          PitchBeat('دليل طبي بوجبات بسيطة', 'نظام الكلى مبني على دليل غذائي طبي، ويمكن لأخصائيك متابعته. لا يغني عن طبيبك.', (t) => PatientsVisual(t)),
+          PitchBeat('وجبات خفيفة وبسيطة', 'النظام الخفيف يرتّب أسبوعك بوجبات معتدلة. لا يغني عن طبيبك.', (t) => PatientsVisual(t)),
           PitchBeat('اعرضه على طبيبك', 'ابدأ بدقيقة وشاركه معه برابط.', (t) => LinkShareVisual(t)),
         ],
       'withcook' => [
