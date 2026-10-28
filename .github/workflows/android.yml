@@ -53,6 +53,8 @@ jobs:
       - name: Build AAB
         # رقم النسخة يزيد تلقائياً مع كل تشغيل (أعلى من ٥ المرفوعة سابقاً)
         run: flutter build appbundle --release --build-number=$((10 + ${{ github.run_number }}))
+      - name: Build APK
+        run: flutter build apk --release --build-number=$((10 + ${{ github.run_number }}))
       - name: Verify signature (must be the upload key)
         run: |
           keytool -printcert -jarfile build/app/outputs/bundle/release/app-release.aab | grep -E "SHA1|SHA256"
@@ -60,6 +62,11 @@ jobs:
         with:
           name: sufrati-aab
           path: build/app/outputs/bundle/release/app-release.aab
+          retention-days: 7
+      - uses: actions/upload-artifact@v4
+        with:
+          name: sufrati-apk
+          path: build/app/outputs/flutter-apk/app-release.apk
           retention-days: 7
       - name: Remove key
         if: always()
