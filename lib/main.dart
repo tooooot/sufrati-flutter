@@ -12,6 +12,7 @@ import 'package:go_router/go_router.dart';
 import 'auth/auth_service.dart';
 import 'auth/firebase_auth_service.dart';
 import 'auth/session.dart';
+import 'wish.dart';
 import 'auth/roles.dart';
 import 'data/firestore_links.dart';
 import 'data/events.dart';
@@ -33,6 +34,7 @@ import 'screens/pitch_screen.dart';
 import 'screens/shop_link_screen.dart';
 import 'screens/house_create_screen.dart';
 import 'screens/household_screen.dart';
+import 'screens/first_setup_screen.dart';
 import 'screens/invite_join_screen.dart';
 import 'screens/join_screen.dart';
 import 'screens/journey_screen.dart';
@@ -177,6 +179,12 @@ class SufratiApp extends StatelessWidget {
                 builder: (store) => PatientScreen(store: store, library: library, links: links,
                     userName: _session.user?.name ?? '', showHome: _session.role != Role.doctor),
               )),
+      GoRoute(path: '/review',
+          builder: (_, _) => StoreLoader(
+                db: db, links: links, library: library, role: Role.owner,
+                builder: (store) => WeekReviewScreen(store: store, library: library),
+              )),
+      GoRoute(path: '/cook-choice', builder: (_, _) => CookChoiceScreen(links: links)),
       GoRoute(path: '/cook',
           builder: (_, _) => StoreLoader(
                 db: db, links: links, library: library, role: Role.cook,
@@ -208,7 +216,7 @@ class SufratiApp extends StatelessWidget {
           listenable: prefs,
           builder: (_, _) => MediaQuery(
             data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(prefs.fontScale)),
-            child: child!,
+            child: Stack(children: [child!, WishButton(session: _session, navKey: _router.routerDelegate.navigatorKey)]),
           ),
         ),
       );

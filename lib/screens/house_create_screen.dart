@@ -65,7 +65,7 @@ class _HouseCreateScreenState extends State<HouseCreateScreen> {
                   onPressed: ok
                       ? () async {
                           await widget.links.createHousehold(_name.text, widget.programId, _eaters);
-                          if (context.mounted) context.go('/household');
+                          if (context.mounted) context.go('/review');
                         }
                       : null,
                   child: const Text('إنشاء البيت', style: TextStyle(fontSize: 18, fontWeight: black)),

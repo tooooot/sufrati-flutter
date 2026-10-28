@@ -85,7 +85,7 @@ class _PatientScreenState extends State<PatientScreen> {
             TabItem(Icons.restaurant_menu, 'اليوم',
                 (_) => _TodayTab(store: store, library: widget.library, links: widget.links, tabs: _tabs, canInvite: widget.showHome, specialist: !widget.showHome)),
             TabItem(Icons.shopping_cart_outlined, 'المشتريات', (_) => _ShoppingTab(store: store)),
-            TabItem(Icons.calendar_month_outlined, 'الأسبوع', (_) => _NextWeekTab(store: store, library: widget.library)),
+            TabItem(Icons.calendar_month_outlined, 'الأسبوع', (_) => WeekEditor(store: store, library: widget.library)),
             if (widget.showHome || personal)
               TabItem(personal ? Icons.flag_outlined : Icons.home_outlined, planLabel,
                   (_) => PlanTab(store: store, links: widget.links, specialist: !widget.showHome, who: widget.userName, programLabel: meta.label)),
@@ -582,16 +582,16 @@ class _ShoppingCard extends StatelessWidget {
       );
 }
 
-class _NextWeekTab extends StatefulWidget {
+class WeekEditor extends StatefulWidget {
   final HouseholdStore store;
   final Library library;
-  const _NextWeekTab({required this.store, required this.library});
+  const WeekEditor({required this.store, required this.library});
 
   @override
-  State<_NextWeekTab> createState() => _NextWeekTabState();
+  State<WeekEditor> createState() => _WeekEditorState();
 }
 
-class _NextWeekTabState extends State<_NextWeekTab> {
+class _WeekEditorState extends State<WeekEditor> {
   bool _next = false; // يبدأ بأسبوعه الحالي ليراه كاملاً
   HouseholdStore get store => widget.store;
   Library get library => widget.library;
@@ -681,7 +681,17 @@ class _NextWeekTabState extends State<_NextWeekTab> {
                                   for (final o in slot.options)
                                     DropdownMenuItem(value: o.id, child: Text(o.label, style: const TextStyle(fontSize: 14))),
                                 ],
-                                onChanged: (v) => v == null ? null : store.setOption(nextWeek, d, slot.id, v),
+                                onChanged: (v) async {
+                                  if (v == null) return;
+                                  try {
+                                    await store.setOption(nextWeek, d, slot.id, v);
+                                  } catch (e) {
+                                    if (context.mounted) {
+                                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                                          duration: const Duration(seconds: 8), content: Text('تعذّر حفظ الوجبة: $e')));
+                                    }
+                                  }
+                                },
                               ),
                             ),
                           ]),

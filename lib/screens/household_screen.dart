@@ -1,3 +1,4 @@
+import 'package:firebase_core/firebase_core.dart' show FirebaseException;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
@@ -160,7 +161,16 @@ class _Slot extends StatelessWidget {
 
 /// يصدر دعوة (أو يعرض المعلّقة) ويفتح نافذة الرمز مع مشاركة واتساب — تُستدعى من «بيتي» ومن الرئيسية.
 Future<void> inviteFlow(BuildContext context, LinkService links, Role role) async {
-  final inv = links.inviteFor(role) ?? await links.createInvite(role);
+  final Invite inv;
+  try {
+    inv = links.inviteFor(role) ?? await links.createInvite(role);
+  } catch (e) {
+    if (context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          duration: const Duration(seconds: 8), content: Text('تعذّر إصدار الدعوة: ${_errText(e)}')));
+    }
+    return;
+  }
   if (!context.mounted) return;
   final who = switch (role) { Role.cook => 'الطاهي', Role.owner => 'شريك إدارة البيت', _ => 'الطبيب' };
   final link = 'https://maeda.wardyat.net/i/${inv.code}';
@@ -223,6 +233,8 @@ Future<void> inviteFlow(BuildContext context, LinkService links, Role role) asyn
     ),
   );
 }
+
+String _errText(Object e) => e is FirebaseException ? '${e.code} — ${e.message ?? ''}' : e.toString();
 
 Future<void> _confirmRemove(BuildContext context, LinkService links, Role role, String title) async {
   final ok = await showDialog<bool>(

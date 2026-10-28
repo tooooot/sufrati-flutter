@@ -700,7 +700,7 @@ class _JourneyFinishScreenState extends State<JourneyFinishScreen> {
       for (var i = 0; i < 40 && !widget.links.hasHousehold; i++) {
         await Future.delayed(const Duration(milliseconds: 250));
       }
-      if (mounted) context.go('/me');
+      if (mounted) context.go('/review');
     } catch (_) {
       if (mounted) setState(() => _error = 'تعذّر حفظ الخطة. تحقق من الاتصال وأعد المحاولة.');
     }

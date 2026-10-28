@@ -50,7 +50,7 @@ class _NewHouseScreenState extends State<NewHouseScreen> {
       await widget.links.createHousehold(_name.text, _program!, _eaters);
       final dr = widget.doctorCode;
       if (dr != null && widget.growth != null) await widget.growth!.requestLink(dr); // فشله لا يمنع إنشاء البيت
-      if (mounted) context.go('/me');
+      if (mounted) context.go('/review');
     } catch (_) {
       if (mounted) setState(() { _busy = false; _error = 'تعذّر إنشاء البيت. تأكد من الاتصال وحاول مرة أخرى.'; });
     }
