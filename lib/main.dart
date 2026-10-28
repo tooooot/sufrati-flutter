@@ -12,7 +12,6 @@ import 'package:go_router/go_router.dart';
 import 'auth/auth_service.dart';
 import 'auth/firebase_auth_service.dart';
 import 'auth/session.dart';
-import 'wish.dart';
 import 'auth/roles.dart';
 import 'data/firestore_links.dart';
 import 'data/events.dart';
@@ -216,7 +215,7 @@ class SufratiApp extends StatelessWidget {
           listenable: prefs,
           builder: (_, _) => MediaQuery(
             data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(prefs.fontScale)),
-            child: Stack(children: [child!, WishButton(session: _session, navKey: _router.routerDelegate.navigatorKey)]),
+            child: child!,
           ),
         ),
       );
