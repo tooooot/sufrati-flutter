@@ -145,7 +145,7 @@ class SufratiApp extends StatelessWidget {
       GoRoute(path: '/new-house',
           builder: (_, st) => NewHouseScreen(library: library, links: links, session: _session, growth: growth, doctorCode: st.uri.queryParameters['dr'])),
       GoRoute(path: '/p/:token', builder: (_, st) => PitchScreen(growth: growth, token: st.pathParameters['token'])),
-      GoRoute(path: '/pitch/:kind', builder: (_, st) => PitchScreen(growth: growth, kind: st.pathParameters['kind'], lang: st.uri.queryParameters['lang'])),
+      GoRoute(path: '/pitch/:kind', builder: (_, st) => PitchScreen(growth: growth, kind: st.pathParameters['kind'], lang: st.uri.queryParameters['lang'], beatMs: int.tryParse(st.uri.queryParameters['beat'] ?? ''))),
       GoRoute(path: '/s/:token', builder: (_, st) => ShopLinkScreen(db: db, token: st.pathParameters['token']!)),
       GoRoute(path: '/r/:token', builder: (_, st) => RegisteredStamp(growth: growth, session: _session, token: st.pathParameters['token']!)),
       GoRoute(path: '/specialist/nutrition',

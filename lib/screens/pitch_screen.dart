@@ -10,7 +10,9 @@ import 'pitch_content.dart';
 class PitchScreen extends StatefulWidget {
   final GrowthService growth;
   final String? token, kind, lang;
-  const PitchScreen({super.key, required this.growth, this.token, this.kind, this.lang});
+  /// مدة اللقطة بالملّي ثانية (للتسجيل مع تعليق صوتي أطول من الافتراضي)؛ تُهمَل خارج 3–20 ثانية.
+  final int? beatMs;
+  const PitchScreen({super.key, required this.growth, this.token, this.kind, this.lang, this.beatMs});
 
   @override
   State<PitchScreen> createState() => _PitchScreenState();
@@ -52,7 +54,7 @@ class _PitchScreenState extends State<PitchScreen> {
       skipLabel: c.skip,
       tapHint: c.tap,
       showBrowse: !cook,
-      beatDuration: cook ? const Duration(milliseconds: 7000) : const Duration(milliseconds: 5200), // لغة ثانية ← وقت قراءة أطول
+      beatDuration: cook ? Duration(milliseconds: (widget.beatMs != null && widget.beatMs! >= 3000 && widget.beatMs! <= 20000) ? widget.beatMs! : 7000) : const Duration(milliseconds: 5200), // لغة ثانية ← وقت قراءة أطول
       header: cook
           ? Wrap(spacing: 8, children: [
               for (final e in pitchLangs.entries)
