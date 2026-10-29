@@ -1,0 +1,21 @@
+name: Promo videos (إعلانات الأدوار)
+
+# يصيّر فيديوهات السوشال ميديا لكل دور على GitHub (لا على السيرفر). المخرج: Artifact اسمه sufrati-promo.
+on:
+  workflow_dispatch:
+
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          pip install playwright
+          playwright install --with-deps chromium
+          python3 promo/render.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: sufrati-promo
+          path: promo/out/*.mp4
+          retention-days: 14
