@@ -26,11 +26,11 @@ body.dark{background:radial-gradient(circle at 50% 38%,#24352d,#0c1713 75%)}
 .pr .ico{position:absolute;top:360px;left:0;right:0;text-align:center;font-size:420px;color:#e0a63a;height:420px}
 .pr .big{top:900px;font-size:112px;line-height:1.35}.pr .big em{font-style:normal;color:#e0a63a}
 .photo{position:absolute;top:190px;left:70px;right:70px;height:820px;border-radius:64px;overflow:hidden;box-shadow:0 30px 80px #0007}.photo img{width:100%;height:100%;object-fit:cover}
-.s .big,.f .big{font-size:88px;line-height:1.35}.s .big{top:1090px}
+.s .big,.f .big{font-size:80px;line-height:1.3}.s .big{top:1090px}
 .meal{position:absolute;left:70px;right:70px;top:1500px;background:#faf4e6;color:#1f2937;border-radius:48px;padding:38px 48px;box-shadow:0 20px 60px #0006}.meal b{display:block;font-size:40px;color:#bf8630;font-weight:900}.meal span{font-size:56px;font-weight:900;line-height:1.35}
 .f .big{top:200px}.f .note{position:absolute;left:80px;right:80px;bottom:90px;text-align:center;font-size:36px;color:#ffffffb0;font-weight:700}
-.vis{position:absolute;top:560px;left:170px;right:170px;height:1230px;border-radius:64px;overflow:hidden;background:#fff;box-shadow:0 30px 90px #000a;border:12px solid #fff}.vis img{width:100%;height:100%;object-fit:cover;object-position:top}
-.mock{position:absolute;top:760px;left:90px;right:90px;display:flex;flex-direction:column;gap:34px;color:#1f2937}
+.vis{position:absolute;top:650px;left:170px;right:170px;height:1150px;border-radius:64px;overflow:hidden;background:#fff;box-shadow:0 30px 90px #000a;border:12px solid #fff}.vis img{width:100%;height:100%;object-fit:cover;object-position:top}
+.mock{position:absolute;top:720px;left:90px;right:90px;display:flex;flex-direction:column;gap:34px;color:#1f2937}
 .photo.sm{top:560px;height:640px}.f .meal{top:1290px}
 .day{position:absolute;top:520px;left:80px;right:80px;display:flex;flex-direction:column;gap:26px}
 .row{display:flex;align-items:center;gap:30px;background:#faf4e6;border-radius:44px;padding:20px;color:#1f2937;box-shadow:0 14px 40px #0005}.row img{flex:none;width:210px;height:210px;border-radius:32px;object-fit:cover}.row b{display:block;font-size:40px;color:#bf8630;font-weight:900}.row span{font-size:50px;font-weight:900;line-height:1.3}
@@ -42,7 +42,8 @@ body.dark{background:radial-gradient(circle at 50% 38%,#24352d,#0c1713 75%)}
 """
 def src(name): return f'photos/{name}.jpg'
 def page(role, k):
-    d = T[role]; logo = '<div class="logo"><img src="logo.png"><span>سفرتي</span></div>'; cls = {'p': 'pr', 's': 's', 'f': 'f', 'c': ''}[k]; dark = ' class="dark"' if k == 'p' else ''
+    d = T[role]; logo = '<div class="logo"><img src="logo.png"><span>سفرتي</span></div>'; cls = {'p': 'pr', 's': 's', 'f': 'f', 'c': ''}[k]
+    if k == 's' and d['s_vis'][0] != 'photo': cls = 'f'; dark = ' class="dark"' if k == 'p' else ''
     if k == 'p':
         body = f'<div class="ico mi">&#{CP[d["icon"]]};</div><div class="big">{E(d["p"][0])}</div>'
     elif k == 'c':
