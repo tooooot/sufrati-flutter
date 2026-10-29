@@ -260,7 +260,10 @@ Future<void> _confirmRemove(BuildContext context, LinkService links, Role role, 
 
 /// رسالة دعوة الطاهية بلغتها: شرح الفيديو القصير (العرض الحركي بلغتها) ثم رابط الانضمام والرمز.
 String _cookInviteMessage(String lang, String link, String code) {
-  final pitch = 'https://maeda.wardyat.net/pitch/cook?lang=$lang';
+  // فيديو مسجَّل بصوت ElevenLabs للغات الأربع؛ وللعربية والإنجليزية والأمهرية العرض المتحرك داخل التطبيق
+  final pitch = const {'tl', 'so', 'bn', 'hi'}.contains(lang)
+      ? 'https://testers.wardyat.net/files/manual/videos/$lang.html'
+      : 'https://maeda.wardyat.net/pitch/cook?lang=$lang';
   final (head, watch, open, orCode) = switch (lang) {
     'am' => ('በሱፍራቲ መተግበሪያ ውስጥ የቤቴ ምግብ አብሳይ እንድትሆኑ ተጋብዘዋል።', 'አጭሩን ቪዲዮ ይመልከቱ (30 ሰከንድ)', 'ሊንኩን ከፍተው ይግቡ', 'ወይም ኮዱን ያስገቡ'),
     'tl' => ('Inaanyayahan kitang maging tagaluto sa aming bahay sa app na Sufrati.', 'Panoorin ang maikling video (30 segundo)', 'Buksan ang link at mag-sign in', 'O i-type ang code'),
