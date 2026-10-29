@@ -67,8 +67,8 @@ void main() {
     expect(appRedirect(s, '/doctor/profile'), startsWith('/login'));
   });
 
-  test('عرض الطاهي بثلاث لغات: أربع لقطات لكل لغة، ونصوص الرسوم مكتملة، واللغة المجهولة عربية', () {
-    for (final l in ['ar', 'en', 'am']) {
+  test('عرض الطاهي بسبع لغات: أربع لقطات لكل لغة، ونصوص الرسوم مكتملة، واللغة المجهولة عربية', () {
+    for (final l in pitchLangs.keys) {
       final b = cookBeats(l);
       expect(b, hasLength(4), reason: l);
       expect(chromeFor(l).cta, isNotEmpty);
