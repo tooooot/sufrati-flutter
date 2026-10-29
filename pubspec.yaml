@@ -45,6 +45,16 @@ flutter:
     - assets/data/programs/
     - assets/images/
   fonts:
+    # خطوط احتياطية لشرح الطاهية (بنغالية/هندية/حبشية): بدونها تظهر مربعات حتى تُحمَّل من الشبكة على الويب
+    - family: NotoBengali
+      fonts:
+        - asset: assets/fonts/NotoSansBengali.ttf
+    - family: NotoDevanagari
+      fonts:
+        - asset: assets/fonts/NotoSansDevanagari.ttf
+    - family: NotoEthiopic
+      fonts:
+        - asset: assets/fonts/NotoSansEthiopic.ttf
     - family: Tajawal
       fonts:
         - asset: assets/fonts/Tajawal-Regular.ttf

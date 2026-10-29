@@ -14,7 +14,7 @@ ThemeData sufratiTheme() => ThemeData(
       fontFamily: 'Tajawal',
       scaffoldBackgroundColor: Brand.cream,
       colorScheme: ColorScheme.fromSeed(seedColor: Brand.green, primary: Brand.green, secondary: Brand.honey),
-      textTheme: const TextTheme().apply(bodyColor: const Color(0xFF1F2937)),
+      textTheme: const TextTheme().apply(bodyColor: const Color(0xFF1F2937), fontFamilyFallback: const ['NotoBengali', 'NotoDevanagari', 'NotoEthiopic']),
     );
 
 /// الثقيل للعناوين والأرقام الكبيرة فقط؛ الأسماء والتفاصيل w700 فما دون.
