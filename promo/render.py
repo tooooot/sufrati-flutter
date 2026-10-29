@@ -8,7 +8,7 @@ T = json.load(open(H / 'texts.json', encoding='utf-8'))
 CP = {'restaurant_menu': 0xe533, 'fact_check': 0xe256, 'share': 0xe593, 'send': 0xe571, 'notifications_active': 0xe450, 'check_circle': 0xe159, 'person_add': 0xe492, 'calendar_month': 0xf06bb, 'shopping_cart': 0xe59c, 'alarm': 0xe072}
 def ic(n): return f'&#{CP[n]};'
 ICONS = {'owner': ['restaurant_menu', 'fact_check', 'share'], 'cook': ['send', 'notifications_active', 'check_circle'], 'partner': ['person_add', 'calendar_month', 'shopping_cart']}
-VIS = {'owner': [('img', '1_catalog.png'), ('img', '6_week.png'), ('img', '5_shopping.png')],
+VIS = {'owner': [('img', '3_result.png'), ('img', '6_week.png'), ('img', '5_shopping.png')],
        'cook': [('mock', 'invite'), ('mock', 'notify'), ('mock', 'done')],
        'partner': [('mock', 'code'), ('img', '4_today.png'), ('img', '5_shopping.png')]}
 MOCK = {
