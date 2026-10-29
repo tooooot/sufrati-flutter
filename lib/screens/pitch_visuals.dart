@@ -469,6 +469,22 @@ const cookText = <String, Map<String, String>>{
     'meal': 'እራት', 'time': '8:00 PM', 'dish': 'የተጠበሰ ዓሳ ከሩዝና አትክልት ጋር', 'i1': 'ዓሳ', 'i2': 'ሩዝ', 'i3': 'አትክልት',
     'n1': 'ከ45 ደቂቃ በኋላ', 'n2': 'የእራት ሰዓት ደርሷል', 'btn': 'ተዘጋጅቷል', 'ok': 'ለባለቤቱ ተላከ፡ ምግቡ ዝግጁ ነው',
   },
+  'tl': {
+    'meal': 'Hapunan', 'time': '8:00 PM', 'dish': 'Inihaw na isda na may kanin at gulay', 'i1': 'Isda', 'i2': 'Kanin', 'i3': 'Gulay',
+    'n1': 'Sa loob ng 45 minuto', 'n2': 'Oras na ng hapunan', 'btn': 'Naihanda na', 'ok': 'Naabisuhan ang may-ari: handa na ang pagkain',
+  },
+  'so': {
+    'meal': 'Casho', 'time': '8:00 PM', 'dish': 'Kalluun la shiilay oo bariis iyo khudrad la socda', 'i1': 'Kalluun', 'i2': 'Bariis', 'i3': 'Khudrad',
+    'n1': '45 daqiiqo gudahood', 'n2': 'Waa wakhtiga cashada', 'btn': 'La diyaariyay', 'ok': 'Mulkiilaha waa la ogeysiiyay: cuntadu waa diyaar',
+  },
+  'bn': {
+    'meal': 'রাতের খাবার', 'time': '8:00 PM', 'dish': 'ভাত ও সবজির সঙ্গে গ্রিল করা মাছ', 'i1': 'মাছ', 'i2': 'ভাত', 'i3': 'সবজি',
+    'n1': '৪৫ মিনিট পরে', 'n2': 'রাতের খাবারের সময়', 'btn': 'প্রস্তুত', 'ok': 'মালিককে জানানো হয়েছে: খাবার তৈরি',
+  },
+  'hi': {
+    'meal': 'रात का खाना', 'time': '8:00 PM', 'dish': 'चावल और सब्ज़ी के साथ ग्रिल की हुई मछली', 'i1': 'मछली', 'i2': 'चावल', 'i3': 'सब्ज़ी',
+    'n1': '45 मिनट बाद', 'n2': 'रात के खाने का समय', 'btn': 'तैयार है', 'ok': 'मालिक को सूचना भेजी गई: खाना तैयार है',
+  },
 };
 
 /// 1) بطاقة وجبة اليوم للطاهي: الاسم والوقت ثم مكوّناتها تظهر واحداً بعد الآخر.

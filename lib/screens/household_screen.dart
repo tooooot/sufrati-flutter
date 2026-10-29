@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart' show FirebaseException;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../auth/roles.dart';
 import '../data/links.dart';
@@ -12,6 +13,7 @@ import '../theme.dart';
 import '../widgets/common.dart';
 import '../widgets/link_explainer.dart';
 import '../widgets/profile_button.dart';
+import 'pitch_content.dart' show pitchLangs;
 
 /// «بيتي» كشاشة مستقلة (مسار /household) — محتواها نفسه تبويب «بيتي» في لوحة مدير البيت.
 class HouseholdScreen extends StatelessWidget {
@@ -174,12 +176,17 @@ Future<void> inviteFlow(BuildContext context, LinkService links, Role role) asyn
   if (!context.mounted) return;
   final who = switch (role) { Role.cook => 'الطاهي', Role.owner => 'شريك إدارة البيت', _ => 'الطبيب' };
   final link = 'https://maeda.wardyat.net/i/${inv.code}';
-  final msg = 'دعوة للانضمام إلى بيتي في تطبيق سفرتي بدور $who.\nافتح الرابط وسجّل دخولك فتنضم مباشرة:\n$link\n'
-      'أو اكتب الرمز يدوياً: ${inv.code}';
+  final arMsg = 'دعوة للانضمام إلى بيتي في تطبيق سفرتي بدور $who.\nافتح الرابط وسجّل دخولك فتنضم مباشرة:\n$link\n'
+      'أو اكتب الرمز يدوياً: ${inv.code}'
+      '${role == Role.cook ? '\n\nشاهد شرحاً قصيراً (نصف دقيقة):\nhttps://maeda.wardyat.net/pitch/cook?lang=ar' : ''}';
+  var lang = 'ar';
   showModalBottomSheet(
     context: context,
     showDragHandle: true,
-    builder: (_) => Padding(
+    isScrollControlled: true,
+    builder: (_) => StatefulBuilder(builder: (ctx, setSt) {
+      final msg = role == Role.cook && lang != 'ar' ? _cookInviteMessage(lang, link, inv.code) : arMsg;
+      return SingleChildScrollView(child: Padding(
       padding: const EdgeInsets.fromLTRB(24, 4, 24, 28),
       child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.stretch, children: [
         Text('رمز دعوة $who', textAlign: TextAlign.center, style: const TextStyle(fontWeight: black, fontSize: 18, color: Brand.green)),
@@ -197,25 +204,24 @@ Future<void> inviteFlow(BuildContext context, LinkService links, Role role) asyn
         FilledButton.icon(
           style: FilledButton.styleFrom(backgroundColor: const Color(0xFF25D366), minimumSize: const Size.fromHeight(50)),
           icon: const Icon(Icons.send),
-          label: const Text('إرسال بواتساب', style: TextStyle(fontWeight: black)),
+          label: Text(role == Role.cook ? 'إرسال بواتساب (${pitchLangs[lang]})' : 'إرسال بواتساب', style: const TextStyle(fontWeight: black)),
           // الفيديو الخاص بدور المستلم يُرفق مع الدعوة: الطاهي ← فيديو الطاهي، والطبيب ← فيديو الأخصائي
-          onPressed: () => RoleVideos.share(msg, switch (role) { Role.cook => 'cook', Role.owner => 'owner', _ => 'specialist' }),
+          // الطاهية: الشرح المتحرك بلغتها برابط داخل الرسالة نفسها؛ فيديو الدور الجاهز (إن وُجد) لغيرها
+          onPressed: () => role == Role.cook
+              ? launchUrl(Uri.parse('https://wa.me/?text=${Uri.encodeComponent(msg)}'), mode: LaunchMode.externalApplication)
+              : RoleVideos.share(msg, role == Role.owner ? 'owner' : 'specialist'),
         ),
         if (role == Role.cook) ...[
           const SizedBox(height: 16),
-          const Text('أرسل للطاهي شرحًا قصيرًا (نصف دقيقة) بلغته:', textAlign: TextAlign.center,
+          const Text('لغة الطاهية: تصلها الرسالة وشرح فيديو قصير بلغتها', textAlign: TextAlign.center,
               style: TextStyle(fontWeight: FontWeight.w800, fontSize: 14, color: Brand.green)),
           const SizedBox(height: 8),
-          Row(children: [
-            for (final e in const {'ar': 'العربية', 'en': 'English', 'am': 'አማርኛ'}.entries)
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 3),
-                  child: OutlinedButton(
-                    onPressed: () => RoleVideos.share(_cookPitchMessage(e.key), 'cook'),
-                    child: Text(e.value, style: const TextStyle(fontWeight: black)),
-                  ),
-                ),
+          Wrap(alignment: WrapAlignment.center, spacing: 8, runSpacing: 6, children: [
+            for (final e in pitchLangs.entries)
+              ChoiceChip(
+                label: Text(e.value, style: const TextStyle(fontWeight: black)),
+                selected: lang == e.key,
+                onSelected: (_) => setSt(() => lang = e.key),
               ),
           ]),
         ],
@@ -230,7 +236,8 @@ Future<void> inviteFlow(BuildContext context, LinkService links, Role role) asyn
           },
         ),
       ]),
-    ),
+    ));
+    }),
   );
 }
 
@@ -251,12 +258,16 @@ Future<void> _confirmRemove(BuildContext context, LinkService links, Role role, 
   if (ok == true) await links.removeRole(role);
 }
 
-/// رسالة تعريف الطاهي بالتطبيق: رابط العرض الحركي بلغته.
-String _cookPitchMessage(String lang) {
-  final link = 'https://maeda.wardyat.net/pitch/cook?lang=$lang';
-  return switch (lang) {
-    'en' => 'Watch how to use the Sufrati app (30 seconds):\n$link',
-    'am' => 'የሱፍራቲ መተግበሪያን እንዴት እንደሚጠቀሙ ይመልከቱ (30 ሰከንድ)፡\n$link',
-    _ => 'شاهد كيف تستخدم تطبيق سفرتي (نصف دقيقة):\n$link',
+/// رسالة دعوة الطاهية بلغتها: شرح الفيديو القصير (العرض الحركي بلغتها) ثم رابط الانضمام والرمز.
+String _cookInviteMessage(String lang, String link, String code) {
+  final pitch = 'https://maeda.wardyat.net/pitch/cook?lang=$lang';
+  final (head, watch, open, orCode) = switch (lang) {
+    'am' => ('በሱፍራቲ መተግበሪያ ውስጥ የቤቴ ምግብ አብሳይ እንድትሆኑ ተጋብዘዋል።', 'አጭሩን ቪዲዮ ይመልከቱ (30 ሰከንድ)', 'ሊንኩን ከፍተው ይግቡ', 'ወይም ኮዱን ያስገቡ'),
+    'tl' => ('Inaanyayahan kitang maging tagaluto sa aming bahay sa app na Sufrati.', 'Panoorin ang maikling video (30 segundo)', 'Buksan ang link at mag-sign in', 'O i-type ang code'),
+    'so' => ('Waxaa laguu casuumay inaad noqoto kookaha gurigayga ee app-ka Sufrati.', 'Daawo muuqaalka gaaban (30 ilbiriqsi)', 'Fur linkiga oo gal', 'Ama geli koodka'),
+    'bn' => ('সুফরাতি অ্যাপে আমার বাড়ির রাঁধুনি হওয়ার জন্য আপনাকে আমন্ত্রণ জানানো হচ্ছে।', 'ছোট ভিডিওটি দেখুন (৩০ সেকেন্ড)', 'লিংকটি খুলে সাইন ইন করুন', 'অথবা কোডটি লিখুন'),
+    'hi' => ('सुफ़राती ऐप पर मेरे घर की रसोइया बनने के लिए आपको आमंत्रित किया गया है।', 'छोटा वीडियो देखें (30 सेकंड)', 'लिंक खोलकर साइन इन करें', 'या कोड डालें'),
+    _ => ('You are invited to be the cook in my household on the Sufrati app.', 'Watch this short video (30 seconds)', 'Open the link and sign in', 'Or type the code'),
   };
+  return '$head\n\n1) $watch:\n$pitch\n\n2) $open:\n$link\n\n$orCode: $code';
 }
