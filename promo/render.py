@@ -22,11 +22,11 @@ CSS = """
 @font-face{font-family:T;src:url(fonts/Tajawal-ExtraBold.ttf);font-weight:800}@font-face{font-family:T;src:url(fonts/Tajawal-Black.ttf);font-weight:900}
 @font-face{font-family:MI;src:url(fonts/MaterialIcons-Regular.otf)}
 .mi{font-family:MI;font-feature-settings:'liga';font-style:normal;font-weight:400;line-height:1;direction:ltr;display:inline-block}
-*{box-sizing:border-box;margin:0}body{width:1080px;height:1920px;font-family:T,sans-serif;direction:rtl;color:#fff;background:linear-gradient(170deg,#2b7a5d,#123528 70%);position:relative;overflow:hidden}
+html{width:1080px;height:1920px;overflow:hidden}*{box-sizing:border-box;margin:0}body{width:1080px;height:1920px;font-family:T,sans-serif;direction:rtl;color:#fff;background:linear-gradient(170deg,#2b7a5d,#123528 70%);position:relative;overflow:hidden}
 .logo{position:absolute;top:70px;left:70px;display:flex;align-items:center;gap:16px;font-weight:900;font-size:44px}.logo img{width:84px;height:84px}
 .title{position:absolute;top:210px;left:70px;right:70px;background:#faf4e6;color:#1f5a44;border-radius:56px;padding:46px 56px;text-align:center;font-weight:900;font-size:82px;line-height:1.3;box-shadow:0 24px 70px #0005}
 .steps{position:absolute;top:520px;left:70px;right:70px;display:flex;flex-direction:column;gap:22px}
-.step{display:flex;align-items:center;gap:26px;background:#fff;color:#1f2937;border-radius:40px;padding:26px 34px;box-shadow:0 14px 40px #0004;font-weight:800;font-size:50px;line-height:1.35;opacity:.55;transform:scale(.97)}.step.now{opacity:1;transform:none;outline:6px solid #bf8630}.step .ic{margin-inline-start:auto;font-size:76px;color:#1f5a44}
+.step{display:flex;align-items:center;gap:26px;background:#fff;color:#1f2937;border-radius:40px;padding:26px 34px;box-shadow:0 14px 40px #0004;font-weight:800;font-size:50px;line-height:1.35;opacity:.55;transform:scale(.97)}.step.now{opacity:1;transform:none;outline:6px solid #bf8630}.step .ic{margin-inline-start:auto;font-size:76px;color:#1f5a44;width:76px;height:76px;overflow:hidden;white-space:nowrap}
 .step i{flex:none;width:92px;height:92px;border-radius:50%;background:#bf8630;color:#fff;display:grid;place-items:center;font-style:normal;font-weight:900;font-size:54px}
 .vis{position:absolute;top:1090px;left:150px;right:150px;height:760px;border-radius:56px;overflow:hidden;background:#fff;box-shadow:0 30px 90px #000a;border:10px solid #fff}.vis img{width:100%;height:100%;object-fit:cover;object-position:top}
 .mock{position:absolute;top:1090px;left:110px;right:110px;height:760px;display:flex;flex-direction:column;justify-content:center;gap:26px;color:#1f2937}
@@ -56,7 +56,7 @@ with sync_playwright() as p:
         segs = ['t', '1', '2', '3', 'c']; clips = []
         for n, s in enumerate(segs):
             f = H / f'_{role}_{n}.html'; f.write_text(page(role, n), encoding='utf-8')
-            pg.goto(f'file://{f}'); pg.wait_for_timeout(500); png = W / f'{role}_{n}.png'; pg.screenshot(path=str(png))
+            pg.goto(f'file://{f}'); pg.evaluate('document.fonts.ready'); pg.wait_for_timeout(1200); png = W / f'{role}_{n}.png'; pg.screenshot(path=str(png))
             a = H / 'audio' / f'{role}_{s}.mp3'; d = dur(a) + (1.4 if s == 'c' else 0.7); c = W / f'{role}_{n}.mp4'
             subprocess.run(['ffmpeg', '-y', '-loglevel', 'error', '-loop', '1', '-i', str(png), '-i', str(a), '-af', f'adelay=350|350,apad=whole_dur={d:.2f}',
                             '-vf', 'scale=1080:1920,fade=t=in:st=0:d=0.35,format=yuv420p', '-t', f'{d:.2f}', '-r', '30', '-c:v', 'libx264', '-crf', '21', '-c:a', 'aac', '-b:a', '160k', str(c)], check=True)
