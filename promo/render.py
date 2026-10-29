@@ -43,7 +43,8 @@ body.dark{background:radial-gradient(circle at 50% 38%,#24352d,#0c1713 75%)}
 def src(name): return f'photos/{name}.jpg'
 def page(role, k):
     d = T[role]; logo = '<div class="logo"><img src="logo.png"><span>سفرتي</span></div>'; cls = {'p': 'pr', 's': 's', 'f': 'f', 'c': ''}[k]
-    if k == 's' and d['s_vis'][0] != 'photo': cls = 'f'; dark = ' class="dark"' if k == 'p' else ''
+    if k == 's' and d['s_vis'][0] != 'photo': cls = 'f'
+    dark = ' class="dark"' if k == 'p' else ''
     if k == 'p':
         body = f'<div class="ico mi">&#{CP[d["icon"]]};</div><div class="big">{E(d["p"][0])}</div>'
     elif k == 'c':
