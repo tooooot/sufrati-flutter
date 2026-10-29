@@ -21,7 +21,7 @@ CSS = """
 html{width:1080px;height:1920px;overflow:hidden}*{box-sizing:border-box;margin:0}
 body{width:1080px;height:1920px;font-family:T,sans-serif;direction:rtl;color:#fff;background:linear-gradient(170deg,#2b7a5d,#123528 70%);position:relative;overflow:hidden}
 body.dark{background:radial-gradient(circle at 50% 38%,#24352d,#0c1713 75%)}
-.logo{position:absolute;top:70px;right:70px;display:flex;align-items:center;gap:16px;font-weight:900;font-size:46px}.logo img{width:80px;height:80px}
+.logo{position:absolute;top:70px;right:70px;display:flex;align-items:center;gap:16px;font-weight:900;font-size:46px}.logo img{width:84px;height:84px;border-radius:20px}
 .big{position:absolute;left:80px;right:80px;text-align:center;font-weight:900;color:#fff}
 .pr .ico{position:absolute;top:360px;left:0;right:0;text-align:center;font-size:420px;color:#e0a63a;height:420px}
 .pr .big{top:900px;font-size:112px;line-height:1.35}.pr .big em{font-style:normal;color:#e0a63a}
@@ -38,15 +38,15 @@ body.dark{background:radial-gradient(circle at 50% 38%,#24352d,#0c1713 75%)}
 .nt{display:flex;align-items:center;gap:34px;background:#fff;border-radius:48px;padding:42px;box-shadow:0 16px 50px #0005}.nt .c{flex:none;width:128px;height:128px;border-radius:50%;background:#bf8630;display:grid;place-items:center}.nt .c .mi{color:#fff;font-size:84px}.nt.two .c{background:#1f5a44}.nt b{font-size:56px;display:block}.nt span{font-size:46px;color:#4b5563}
 .done{background:#fff;border-radius:48px;padding:50px;box-shadow:0 16px 50px #0005}.done .m{font-weight:900;font-size:64px}.done .sub{font-size:44px;color:#4b5563;margin-top:10px}.done .go{margin-top:34px;border-radius:36px;background:#1f5a44;color:#fff;text-align:center;padding:42px;font-weight:900;font-size:68px}.toast{background:#faf4e6;color:#1f5a44;border-radius:70px;padding:40px;font-weight:900;font-size:54px;text-align:center}
 .end{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:56px;text-align:center;padding:0 80px}
-.end img{width:340px;height:340px}.end h1{font-size:150px;font-weight:900}.end .btn{background:#e0a63a;color:#1b2b24;border-radius:80px;padding:44px 90px;font-weight:900;font-size:76px;box-shadow:0 20px 60px #0006}.badges{display:flex;gap:36px}.badge{background:#fff;color:#1b2b24;border-radius:40px;padding:26px 48px;font-weight:900;font-size:56px;line-height:1.25;text-align:center}.badge small{display:block;font-size:34px;color:#bf8630}.end p{font-size:52px;font-weight:700;color:#ffffffcc}
+.end img{width:340px;height:340px;border-radius:76px;box-shadow:0 20px 60px #0006}.end h1{font-size:150px;font-weight:900}.end .btn{background:#e0a63a;color:#1b2b24;border-radius:80px;padding:44px 90px;font-weight:900;font-size:76px;box-shadow:0 20px 60px #0006}.badges{display:flex;gap:36px}.badge{background:#fff;color:#1b2b24;border-radius:40px;padding:26px 48px;font-weight:900;font-size:56px;line-height:1.25;text-align:center}.badge small{display:block;font-size:34px;color:#bf8630}.end p{font-size:52px;font-weight:700;color:#ffffffcc}
 """
 def src(name): return f'photos/{name}.jpg'
 def page(role, k):
-    d = T[role]; logo = '<div class="logo"><img src="logo.svg"><span>سفرتي</span></div>'; cls = {'p': 'pr', 's': 's', 'f': 'f', 'c': ''}[k]; dark = ' class="dark"' if k == 'p' else ''
+    d = T[role]; logo = '<div class="logo"><img src="logo.png"><span>سفرتي</span></div>'; cls = {'p': 'pr', 's': 's', 'f': 'f', 'c': ''}[k]; dark = ' class="dark"' if k == 'p' else ''
     if k == 'p':
         body = f'<div class="ico mi">&#{CP[d["icon"]]};</div><div class="big">{E(d["p"][0])}</div>'
     elif k == 'c':
-        body = f'<div class="end"><img src="logo.svg"><h1>سفرتي</h1><div class="btn">حمّل التطبيق الآن</div><div class="badges"><div class="badge"><small>متوفر على</small>Google Play</div><div class="badge"><small>متوفر على</small>App Store</div></div><p>الرابط في البايو</p></div>'
+        body = f'<div class="end"><img src="logo.png"><h1>سفرتي</h1><div class="btn">حمّل التطبيق الآن</div><div class="badges"><div class="badge"><small>متوفر على</small>Google Play</div><div class="badge"><small>متوفر على</small>App Store</div></div><p>الرابط في البايو</p></div>'
     else:
         v = d[k + '_vis']; kind = v[0]; head = f'<div class="big">{E(d[k][0])}</div>'; vis = ''
         if kind == 'photo':
